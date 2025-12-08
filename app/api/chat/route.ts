@@ -330,7 +330,7 @@ export async function POST(request: NextRequest) {
     }
 
     const apiKey = process.env.GOOGLE_GENAI_API_KEY;
-    
+
     if (!apiKey) {
       console.error("API key not found");
       return NextResponse.json(
@@ -349,13 +349,13 @@ export async function POST(request: NextRequest) {
 
     // Build full prompt with system context and history
     let fullPrompt = SYSTEM_PROMPT + "\n\n";
-    
+
     // Add conversation history
     for (const msg of chatHistory) {
       const roleLabel = msg.role === 'user' ? 'Pengguna' : 'Asisten';
       fullPrompt += `${roleLabel}: ${msg.parts[0].text}\n`;
     }
-    
+
     // Add current message
     const userMessage = message || "Tolong analisis gambar ini dan jelaskan apa yang kamu lihat.";
     fullPrompt += `Pengguna: ${userMessage}\nAsisten:`;
@@ -369,7 +369,7 @@ export async function POST(request: NextRequest) {
       const mimeType = image.match(/^data:(image\/\w+);base64,/)?.[1] || 'image/jpeg';
 
       response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         contents: [
           {
             role: "user",
@@ -388,8 +388,13 @@ export async function POST(request: NextRequest) {
     } else {
       // Text only
       response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: fullPrompt,
+        model: "gemini-2.5-flash",
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: fullPrompt }],
+          },
+        ],
       });
     }
 
@@ -403,11 +408,14 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ response: text });
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error("Error calling Gemini API:", error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    // Extract detailed error message if available
+    const errorMessage = error.message || error.toString();
+    const errorDetails = error.response ? JSON.stringify(error.response) : '';
+
     return NextResponse.json(
-      { error: `Maaf, terjadi kesalahan: ${errorMessage}` },
+      { error: `Maaf, terjadi kesalahan pada sistem AI: ${errorMessage}. ${errorDetails}` },
       { status: 500 }
     );
   }
