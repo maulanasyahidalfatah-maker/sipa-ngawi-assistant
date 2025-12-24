@@ -369,7 +369,7 @@ export async function POST(request: NextRequest) {
       const mimeType = image.match(/^data:(image\/\w+);base64,/)?.[1] || 'image/jpeg';
 
       response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-2.5-flash-lite",
         contents: [
           {
             role: "user",
@@ -388,7 +388,7 @@ export async function POST(request: NextRequest) {
     } else {
       // Text only
       response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-2.5-flash-lite",
         contents: [
           {
             role: "user",
