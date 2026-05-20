@@ -86,6 +86,17 @@ type SopIndexCache = {
   chunks: SopChunk[];
 };
 
+type ChatRequestBody = {
+  message?: string;
+  history?: HistoryMessage[];
+  image?: string;
+};
+
+type ChatResponseBody = {
+  response: string;
+  formatted?: FormattedAnswer;
+};
+
 let sopIndexPromise: Promise<SopChunk[]> | null = null;
 
 const SYSTEM_PROMPT = `Kamu adalah Layanan Informasi Polsek Rembang yang ramah, hangat, dan suka membantu seperti teman ngobrol.
@@ -282,7 +293,10 @@ function createChunkId(title: string, part: number) {
 
 async function getSopIndex(ai: GoogleGenAI) {
   if (!sopIndexPromise) {
-    sopIndexPromise = buildSopIndex(ai);
+    sopIndexPromise = buildSopIndex(ai).catch((error) => {
+      sopIndexPromise = null;
+      throw error;
+    });
   }
 
   return sopIndexPromise;
@@ -691,9 +705,52 @@ function shouldUseOrderedList(title: string) {
   return /(syarat|alur|prosedur|cara|langkah)/i.test(title);
 }
 
+function getGeminiApiKeys() {
+  const keys = [
+    process.env.GOOGLE_GENAI_API_KEYS,
+    process.env.GOOGLE_GENAI_API_KEY,
+    process.env.GOOGLE_GENAI_API_KEY_2,
+    process.env.GOOGLE_GENAI_API_KEY_3,
+    process.env.GOOGLE_GENAI_API_KEY_4,
+    process.env.GOOGLE_GENAI_API_KEY_5,
+  ]
+    .flatMap((value) => value?.split(",") ?? [])
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  return Array.from(new Set(keys));
+}
+
+function shouldFallbackToNextApiKey(error: unknown) {
+  const serializedError = serializeError(error).toLowerCase();
+
+  return [
+    "429",
+    "resource_exhausted",
+    "quota",
+    "rate limit",
+    "rate-limit",
+    "too many requests",
+    "limit",
+  ].some((marker) => serializedError.includes(marker));
+}
+
+function serializeError(error: unknown) {
+  if (error instanceof Error) {
+    return `${error.name}: ${error.message}`;
+  }
+
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return String(error);
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { message, history, image } = await request.json();
+    const body = await request.json() as ChatRequestBody;
+    const { message, image } = body;
 
     if (!message && !image) {
       return NextResponse.json(
@@ -702,88 +759,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const apiKey = process.env.GOOGLE_GENAI_API_KEY;
+    const apiKeys = getGeminiApiKeys();
 
-    if (!apiKey) {
-      console.error("API key not found");
+    if (!apiKeys.length) {
+      console.error("Gemini API key not found");
       return NextResponse.json(
-        { error: "API key tidak ditemukan" },
+        { error: "API key Gemini tidak ditemukan" },
         { status: 500 }
       );
     }
 
-    const ai = new GoogleGenAI({ apiKey });
-    const userMessage = message || "Tolong analisis gambar ini dan jelaskan apa yang kamu lihat.";
-    const retrievalQuery = buildRetrievalQuery(userMessage, history);
-    const retrievedChunks = await retrieveRelevantChunks(ai, retrievalQuery);
-    const fullPrompt = buildPrompt({
-      userMessage,
-      history,
-      retrievedChunks,
-    });
+    let lastError: unknown;
 
-    let response;
+    for (const [index, apiKey] of apiKeys.entries()) {
+      try {
+        return NextResponse.json(await createChatResponse(apiKey, body));
+      } catch (error) {
+        lastError = error;
 
-    if (image) {
-      const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
-      const mimeType = image.match(/^data:(image\/\w+);base64,/)?.[1] || "image/jpeg";
+        if (index < apiKeys.length - 1 && shouldFallbackToNextApiKey(error)) {
+          console.warn(`Gemini API key ${index + 1} terkena limit, mencoba key berikutnya.`);
+          continue;
+        }
 
-      response = await ai.models.generateContent({
-        model: GENERATION_MODEL,
-        config: {
-          temperature: 0.2,
-          topP: 0.8,
-          responseMimeType: "application/json",
-        },
-        contents: [
-          {
-            role: "user",
-            parts: [
-              { text: fullPrompt },
-              {
-                inlineData: {
-                  mimeType,
-                  data: base64Data,
-                },
-              },
-            ],
-          },
-        ],
-      });
-    } else {
-      response = await ai.models.generateContent({
-        model: GENERATION_MODEL,
-        config: {
-          temperature: 0.2,
-          topP: 0.8,
-          responseMimeType: "application/json",
-        },
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: fullPrompt }],
-          },
-        ],
-      });
+        throw error;
+      }
     }
 
-    const rawText = response.text ?? "";
-    const formatted = parseFormattedAnswer(rawText);
-    const text = formatted
-      ? formattedAnswerToPlainText(formatted)
-      : cleanAssistantResponse(rawText);
-
-    if (!text) {
-      return NextResponse.json(
-        { error: "Tidak ada respons dari AI" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
-      response: text,
-      ...(formatted ? { formatted } : {}),
-    });
+    throw lastError ?? new Error("Semua API key Gemini gagal dipakai");
   } catch (error: unknown) {
     console.error("Error calling Gemini API:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
@@ -797,6 +800,79 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+async function createChatResponse(apiKey: string, body: ChatRequestBody): Promise<ChatResponseBody> {
+  const { message, history, image } = body;
+  const ai = new GoogleGenAI({ apiKey });
+  const userMessage = message || "Tolong analisis gambar ini dan jelaskan apa yang kamu lihat.";
+  const retrievalQuery = buildRetrievalQuery(userMessage, history);
+  const retrievedChunks = await retrieveRelevantChunks(ai, retrievalQuery);
+  const fullPrompt = buildPrompt({
+    userMessage,
+    history,
+    retrievedChunks,
+  });
+
+  let response;
+
+  if (image) {
+    const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
+    const mimeType = image.match(/^data:(image\/\w+);base64,/)?.[1] || "image/jpeg";
+
+    response = await ai.models.generateContent({
+      model: GENERATION_MODEL,
+      config: {
+        temperature: 0.2,
+        topP: 0.8,
+        responseMimeType: "application/json",
+      },
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { text: fullPrompt },
+            {
+              inlineData: {
+                mimeType,
+                data: base64Data,
+              },
+            },
+          ],
+        },
+      ],
+    });
+  } else {
+    response = await ai.models.generateContent({
+      model: GENERATION_MODEL,
+      config: {
+        temperature: 0.2,
+        topP: 0.8,
+        responseMimeType: "application/json",
+      },
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: fullPrompt }],
+        },
+      ],
+    });
+  }
+
+  const rawText = response.text ?? "";
+  const formatted = parseFormattedAnswer(rawText);
+  const text = formatted
+    ? formattedAnswerToPlainText(formatted)
+    : cleanAssistantResponse(rawText);
+
+  if (!text) {
+    throw new Error("Tidak ada respons dari AI");
+  }
+
+  return {
+    response: text,
+    ...(formatted ? { formatted } : {}),
+  };
 }
 
 function buildRetrievalQuery(userMessage: string, history: HistoryMessage[] | undefined) {
