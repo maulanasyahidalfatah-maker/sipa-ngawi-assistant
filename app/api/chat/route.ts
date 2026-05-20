@@ -6,10 +6,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-const GENERATION_MODEL = "gemini-2.5-flash-lite";
+const DEFAULT_GENERATION_MODELS = ["gemini-2.5-flash-lite", "gemini-2.5-flash"];
+const GENERATION_MODELS = getEnvList(process.env.GOOGLE_GENERATION_MODELS, DEFAULT_GENERATION_MODELS);
 const EMBEDDING_MODEL = process.env.GOOGLE_EMBEDDING_MODEL ?? "gemini-embedding-001";
 const SOP_FILE_PATH = path.join(process.cwd(), "SOP.txt");
-const SOP_INDEX_CACHE_PATH = path.join(process.cwd(), ".cache", "sop-embeddings.json");
+const SOP_INDEX_CACHE_PATH = process.env.SOP_INDEX_CACHE_PATH
+  ?? path.join(process.env.VERCEL ? "/tmp" : process.cwd(), ".cache", "sop-embeddings.json");
 const SOP_INDEX_VERSION = 2;
 
 const CHUNK_MAX_CHARS = 1600;
@@ -374,8 +376,12 @@ async function readCachedSopIndex(sourceHash: string) {
 }
 
 async function writeCachedSopIndex(cache: SopIndexCache) {
-  await fs.mkdir(path.dirname(SOP_INDEX_CACHE_PATH), { recursive: true });
-  await fs.writeFile(SOP_INDEX_CACHE_PATH, JSON.stringify(cache), "utf8");
+  try {
+    await fs.mkdir(path.dirname(SOP_INDEX_CACHE_PATH), { recursive: true });
+    await fs.writeFile(SOP_INDEX_CACHE_PATH, JSON.stringify(cache), "utf8");
+  } catch (error) {
+    console.warn("Gagal menulis cache embedding SOP. Request tetap dilanjutkan tanpa cache file.", error);
+  }
 }
 
 async function retrieveRelevantChunks(ai: GoogleGenAI, query: string): Promise<RetrievedChunk[]> {
@@ -706,19 +712,26 @@ function shouldUseOrderedList(title: string) {
 }
 
 function getGeminiApiKeys() {
-  const keys = [
+  return getEnvList([
     process.env.GOOGLE_GENAI_API_KEYS,
     process.env.GOOGLE_GENAI_API_KEY,
     process.env.GOOGLE_GENAI_API_KEY_2,
     process.env.GOOGLE_GENAI_API_KEY_3,
     process.env.GOOGLE_GENAI_API_KEY_4,
     process.env.GOOGLE_GENAI_API_KEY_5,
-  ]
-    .flatMap((value) => value?.split(",") ?? [])
-    .map((value) => value.trim())
+  ]);
+}
+
+function getEnvList(value: string | undefined, fallback?: string[]): string[];
+function getEnvList(value: Array<string | undefined>, fallback?: string[]): string[];
+function getEnvList(value: string | Array<string | undefined> | undefined, fallback: string[] = []) {
+  const values = Array.isArray(value) ? value : [value];
+  const entries = values
+    .flatMap((entry) => entry?.split(",") ?? [])
+    .map((entry) => entry.trim())
     .filter(Boolean);
 
-  return Array.from(new Set(keys));
+  return Array.from(new Set(entries.length ? entries : fallback));
 }
 
 function shouldFallbackToNextApiKey(error: unknown) {
@@ -732,6 +745,12 @@ function shouldFallbackToNextApiKey(error: unknown) {
     "rate-limit",
     "too many requests",
     "limit",
+    "503",
+    "unavailable",
+    "temporarily",
+    "high demand",
+    "internal",
+    "server error",
   ].some((marker) => serializedError.includes(marker));
 }
 
@@ -814,14 +833,51 @@ async function createChatResponse(apiKey: string, body: ChatRequestBody): Promis
     retrievedChunks,
   });
 
-  let response;
+  const response = await generateChatContent(ai, fullPrompt, image);
+  const rawText = response.text ?? "";
+  const formatted = parseFormattedAnswer(rawText);
+  const text = formatted
+    ? formattedAnswerToPlainText(formatted)
+    : cleanAssistantResponse(rawText);
 
+  if (!text) {
+    throw new Error("Tidak ada respons dari AI");
+  }
+
+  return {
+    response: text,
+    ...(formatted ? { formatted } : {}),
+  };
+}
+
+async function generateChatContent(ai: GoogleGenAI, fullPrompt: string, image?: string) {
+  let lastError: unknown;
+
+  for (const model of GENERATION_MODELS) {
+    try {
+      return await callGenerationModel(ai, model, fullPrompt, image);
+    } catch (error) {
+      lastError = error;
+
+      if (shouldFallbackToNextApiKey(error) && model !== GENERATION_MODELS[GENERATION_MODELS.length - 1]) {
+        console.warn(`Model ${model} sedang tidak tersedia, mencoba model berikutnya.`);
+        continue;
+      }
+
+      throw error;
+    }
+  }
+
+  throw lastError ?? new Error("Semua model Gemini gagal dipakai");
+}
+
+async function callGenerationModel(ai: GoogleGenAI, model: string, fullPrompt: string, image?: string) {
   if (image) {
     const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
     const mimeType = image.match(/^data:(image\/\w+);base64,/)?.[1] || "image/jpeg";
 
-    response = await ai.models.generateContent({
-      model: GENERATION_MODEL,
+    return ai.models.generateContent({
+      model,
       config: {
         temperature: 0.2,
         topP: 0.8,
@@ -842,37 +898,22 @@ async function createChatResponse(apiKey: string, body: ChatRequestBody): Promis
         },
       ],
     });
-  } else {
-    response = await ai.models.generateContent({
-      model: GENERATION_MODEL,
-      config: {
-        temperature: 0.2,
-        topP: 0.8,
-        responseMimeType: "application/json",
+  }
+
+  return ai.models.generateContent({
+    model,
+    config: {
+      temperature: 0.2,
+      topP: 0.8,
+      responseMimeType: "application/json",
+    },
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: fullPrompt }],
       },
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: fullPrompt }],
-        },
-      ],
-    });
-  }
-
-  const rawText = response.text ?? "";
-  const formatted = parseFormattedAnswer(rawText);
-  const text = formatted
-    ? formattedAnswerToPlainText(formatted)
-    : cleanAssistantResponse(rawText);
-
-  if (!text) {
-    throw new Error("Tidak ada respons dari AI");
-  }
-
-  return {
-    response: text,
-    ...(formatted ? { formatted } : {}),
-  };
+    ],
+  });
 }
 
 function buildRetrievalQuery(userMessage: string, history: HistoryMessage[] | undefined) {
