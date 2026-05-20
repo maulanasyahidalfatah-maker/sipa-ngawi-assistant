@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { createHash } from "crypto";
 import { promises as fs } from "fs";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
@@ -6,8 +7,10 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 const GENERATION_MODEL = "gemini-2.5-flash-lite";
-const EMBEDDING_MODEL = "text-embedding-004";
+const EMBEDDING_MODEL = process.env.GOOGLE_EMBEDDING_MODEL ?? "gemini-embedding-001";
 const SOP_FILE_PATH = path.join(process.cwd(), "SOP.txt");
+const SOP_INDEX_CACHE_PATH = path.join(process.cwd(), ".cache", "sop-embeddings.json");
+const SOP_INDEX_VERSION = 2;
 
 const CHUNK_MAX_CHARS = 1600;
 const CHUNK_OVERLAP_CHARS = 250;
@@ -15,6 +18,34 @@ const EMBEDDING_BATCH_SIZE = 16;
 const TOP_K_CHUNKS = 5;
 const MIN_RELEVANCE_SCORE = 0.3;
 const MAX_HISTORY_MESSAGES = 8;
+
+const OVERVIEW_CONTEXT = `RINGKASAN LAYANAN YANG BISA DIJELASKAN:
+- Profil, alamat, lokasi, wilayah hukum, dan kontak Polsek Rembang Kota
+- Jam layanan SPKT 24 jam dan jam pelayanan administrasi
+- SKCK baru dan perpanjangan
+- Laporan kehilangan barang atau dokumen
+- Pengaduan dan laporan kriminal ringan
+- Izin keramaian dan izin kegiatan masyarakat
+- Informasi SIM di Satpas Polres Rembang
+- Kunjungan tahanan atau besuk
+- Pengawalan dan bantuan polisi
+- Mediasi dan problem solving warga
+- Informasi perkembangan kasus atau SP2HP
+- Tilang, barang temuan, dan kendaraan yang ditahan
+- Surat Tanda Melapor untuk WNA
+- Penipuan online dan kejahatan siber
+- Informasi rekrutmen Polri
+- KDRT dan perlindungan anak
+- Siskamling dan koordinasi Bhabinkamtibmas
+- Layanan yang tidak dilayani di Polsek`;
+
+const POLICE_RELATED_GUIDANCE = `PANDUAN UMUM UNTUK PERTANYAAN YANG MASIH BERKAITAN DENGAN KEPOLISIAN:
+- Jika warga ingin mengakui atau melaporkan tindak pidana berat, arahkan untuk segera datang ke SPKT Polsek terdekat atau langsung ke Polres.
+- Jika ada korban, keadaan darurat, atau risiko bahaya lanjutan, arahkan untuk segera menghubungi 110 atau layanan darurat setempat.
+- Sarankan warga datang dengan tenang, membawa identitas, dan menyampaikan kejadian dengan jujur kepada petugas.
+- Jangan memberi saran untuk menghindari polisi, menyembunyikan bukti, menghilangkan barang bukti, mengarang kronologi, atau kabur.
+- Untuk perkara serius, sampaikan bahwa petugas akan mengarahkan proses hukum lebih lanjut dan warga boleh meminta pendampingan hukum/keluarga sesuai kebutuhan.
+- Jika detail SOP tidak ada, tetap berikan arahan umum yang aman dan minta verifikasi langsung ke petugas.`;
 
 type HistoryMessage = {
   role: "user" | "assistant" | string;
@@ -37,6 +68,24 @@ type RetrievedChunk = SopChunk & {
   score: number;
 };
 
+type FormattedAnswerSection = {
+  title: string;
+  body?: string;
+  items?: string[];
+};
+
+type FormattedAnswer = {
+  intro?: string;
+  sections: FormattedAnswerSection[];
+  closing?: string;
+};
+
+type SopIndexCache = {
+  sourceHash: string;
+  embeddingModel: string;
+  chunks: SopChunk[];
+};
+
 let sopIndexPromise: Promise<SopChunk[]> | null = null;
 
 const SYSTEM_PROMPT = `Kamu adalah Layanan Informasi Polsek Rembang yang ramah, hangat, dan suka membantu seperti teman ngobrol.
@@ -49,19 +98,75 @@ KEPRIBADIAN:
 
 ATURAN RAG:
 1. Jawab berdasarkan KONTEKS SOP TERAMBIL dan riwayat percakapan yang relevan.
-2. Jangan mengarang detail yang tidak ada di konteks SOP.
-3. Kalau konteks SOP tidak cukup untuk menjawab, katakan dengan ramah bahwa informasinya belum tersedia di SOP, lalu arahkan warga untuk menghubungi SPKT atau datang ke Polsek.
+2. Untuk detail resmi seperti syarat, biaya, alamat, jam, dan durasi, jangan mengarang detail yang tidak ada di konteks SOP.
+3. Kalau pertanyaan masih berkaitan dengan kepolisian tetapi konteks SOP tidak lengkap, tetap bantu dengan arahan umum yang aman, lalu minta verifikasi ke SPKT/Polres.
 4. Untuk layanan yang bukan di Polsek tetapi ada di konteks SOP, tetap bantu jelaskan dan ingatkan lokasi/wewenangnya.
-5. Jika pertanyaan benar-benar tidak berhubungan dengan layanan kepolisian, jawab: "Waduh, untuk yang itu saya kurang paham ya Kak. Saya lebih jago soal layanan kepolisian seperti SKCK, laporan kehilangan, atau info seputar SIM. Ada yang bisa saya bantu soal itu?"
+5. Jika pertanyaan BENAR-BENAR tidak berhubungan dengan kepolisian, baru jawab: "Waduh, untuk yang itu saya kurang paham ya Kak. Saya lebih jago soal layanan kepolisian seperti SKCK, laporan kehilangan, atau info seputar SIM. Ada yang bisa saya bantu soal itu?"
+6. Untuk syarat, biaya, jam, alamat, durasi, dan angka apa pun, gunakan PERSIS dari KONTEKS SOP TERAMBIL.
+7. DILARANG menambah syarat/prosedur umum yang tidak tertulis di KONTEKS SOP TERAMBIL.
+8. Jika konteks membedakan layanan baru dan perpanjangan, jawab hanya bagian yang ditanyakan pengguna.
+9. Untuk daftar syarat atau alur, ambil poin langsung dari KONTEKS SOP TERAMBIL. Jangan mengganti dengan syarat versi umum.
+10. Jika pengguna bertanya umum seperti "syarat membuat SIM", jawab bagian SIM BARU secara lengkap dan sebutkan bahwa perpanjangan berbeda jika perlu.
 
-ATURAN FORMAT JAWABAN:
-1. DILARANG KERAS menggunakan tanda bintang (*) atau tanda pagar (#) dalam jawaban
-2. DILARANG menggunakan format bold, italic, atau markdown apapun
-3. Gunakan HANYA teks biasa (plain text)
-4. Untuk membuat daftar, gunakan angka (1, 2, 3) atau tanda strip (-)
-5. Untuk menekankan kata penting, gunakan HURUF KAPITAL
-6. Beri jarak antar paragraf supaya mudah dibaca
-7. Gunakan emoji secukupnya untuk kesan ramah
+ATURAN FORMAT KONTEN:
+1. Kamu WAJIB membalas dalam JSON valid saja, tanpa markdown, tanpa code fence, tanpa teks pembuka di luar JSON.
+2. Semua nilai string di dalam JSON harus berupa teks biasa.
+3. DILARANG menggunakan tanda bintang (*) atau tanda pagar (#) di dalam nilai string.
+4. DILARANG menggunakan format bold, italic, markdown, atau bullet manual di dalam nilai string.
+5. Untuk daftar, masukkan setiap poin sebagai elemen array items. Jangan menulis nomor, strip, atau bullet di awal item.
+6. Untuk menekankan kata penting, gunakan HURUF KAPITAL seperlunya.
+7. Gunakan emoji secukupnya untuk kesan ramah, hanya di intro atau closing jika cocok.
+
+SKEMA JSON WAJIB:
+{
+  "intro": "kalimat pembuka singkat, boleh kosong jika tidak perlu",
+  "sections": [
+    {
+      "title": "judul bagian singkat",
+      "body": "paragraf pendek, boleh kosong jika tidak perlu",
+      "items": ["poin daftar tanpa nomor atau bullet"]
+    }
+  ],
+  "closing": "kalimat penutup singkat, boleh kosong jika tidak perlu"
+}
+
+ATURAN FIELD JSON:
+1. sections wajib ada dan minimal 1 bagian.
+2. Gunakan title yang jelas seperti "Tempat layanan", "Syarat", "Alur", "Biaya", "Durasi atau jam layanan", "Catatan", atau "Layanan yang bisa saya jelaskan".
+3. Untuk syarat, alur, prosedur, dan daftar layanan, gunakan items agar UI bisa menampilkan daftar rapi.
+4. Untuk info singkat yang bukan daftar, gunakan body.
+5. Jangan menggabungkan banyak topik berbeda dalam satu body panjang. Pecah menjadi beberapa section.
+
+STRUKTUR JAWABAN LAYANAN:
+1. Mulai dengan satu kalimat pendek yang langsung menjawab kebutuhan pengguna. Jangan pakai sapaan waktu seperti pagi/siang/sore.
+2. Untuk layanan administratif, susun jawaban dengan label bagian berikut jika datanya ada:
+Tempat layanan:
+Syarat:
+Alur:
+Biaya:
+Durasi atau jam layanan:
+Catatan:
+3. Jika sebuah bagian tidak ada di konteks SOP, jangan dibuat-buat dan lewati bagian itu.
+4. Jika pertanyaan meminta syarat, tulis semua syarat relevan dari SOP dalam daftar angka lengkap.
+5. Jika konteks SOP memuat alur dan biaya untuk layanan yang sama, tetap sertakan secara ringkas walaupun pengguna hanya bertanya syarat.
+6. Jangan menutup jawaban dengan kalimat panjang. Cukup satu kalimat bantuan singkat.
+7. Jangan mencampur syarat pembuatan baru dengan perpanjangan kecuali pengguna memang menanyakan keduanya.
+8. Format daftar harus rapi: setiap nomor atau strip berada di baris sendiri, tanpa baris kosong antar item.
+
+KHUSUS PERTANYAAN UMUM:
+Jika pengguna bertanya "apa saja yang bisa dijelaskan", "kamu bisa bantu apa", atau sejenisnya:
+- intro berisi kalimat singkat bahwa kamu bisa membantu menjelaskan layanan Polsek Rembang.
+- Buat section title "Layanan yang bisa saya jelaskan".
+- Masukkan daftar layanan ke items, bukan paragraf.
+- closing berisi ajakan singkat agar pengguna memilih layanan yang ingin ditanyakan.
+
+KHUSUS KEJAHATAN, PENGAKUAN, ATAU DARURAT:
+Jika pengguna mengaku melakukan kejahatan, ingin menyerahkan diri, atau bertanya harus ke mana setelah kejadian pidana, tetap bantu dengan tenang:
+- Arahkan segera ke SPKT Polsek terdekat atau Polres.
+- Jika ada korban atau situasi darurat, arahkan hubungi 110.
+- Sarankan datang dengan identitas dan menjelaskan kejadian sejujur-jujurnya ke petugas.
+- Jangan menghakimi, jangan bercanda, dan jangan memberi cara menghindari proses hukum.
+- Jangan menutup dengan kalimat ringan seperti "semoga lancar". Tutup dengan "Ikuti arahan petugas ya, Kak."
 
 INFORMASI PENTING:
 - Nomor Hotline SPKT: 0822-2003-3742
@@ -73,21 +178,50 @@ function normalizeText(text: string) {
 }
 
 function splitSopIntoSections(sopText: string): SopSection[] {
-  const normalized = normalizeText(sopText);
-  const parts = normalized
-    .split(/(?=^\d+\.\s+.+$)/gm)
-    .map((part) => part.trim())
-    .filter(Boolean);
+  const sections: SopSection[] = [];
+  const lines = normalizeText(sopText).split("\n");
+  let currentTitle = "Dokumen SOP";
+  let currentLines: string[] = [];
 
-  return parts.map((part, index) => {
-    const [firstLine] = part.split("\n");
-    const isNumberedSection = /^\d+\.\s+/.test(firstLine);
+  for (const line of lines) {
+    if (isTopLevelSopHeading(line)) {
+      if (currentLines.length) {
+        sections.push({
+          title: currentTitle,
+          text: currentLines.join("\n").trim(),
+        });
+      }
 
-    return {
-      title: isNumberedSection ? firstLine.trim() : `Dokumen SOP ${index + 1}`,
-      text: part,
-    };
-  });
+      currentTitle = line.trim();
+      currentLines = [line];
+    } else {
+      currentLines.push(line);
+    }
+  }
+
+  if (currentLines.length) {
+    sections.push({
+      title: currentTitle,
+      text: currentLines.join("\n").trim(),
+    });
+  }
+
+  return sections.filter((section) => section.text.length > 0);
+}
+
+function isTopLevelSopHeading(line: string) {
+  const match = line.match(/^(\d+)\.\s+(.+)$/);
+
+  if (!match) {
+    return false;
+  }
+
+  const title = match[2].trim();
+  const letters = title.match(/[A-Za-z]/g) ?? [];
+  const uppercaseLetters = title.match(/[A-Z]/g) ?? [];
+  const uppercaseRatio = letters.length ? uppercaseLetters.length / letters.length : 0;
+
+  return title.startsWith("FAQ") || uppercaseRatio >= 0.75;
 }
 
 function splitSectionIntoChunks(section: SopSection): Omit<SopChunk, "embedding">[] {
@@ -156,6 +290,17 @@ async function getSopIndex(ai: GoogleGenAI) {
 
 async function buildSopIndex(ai: GoogleGenAI): Promise<SopChunk[]> {
   const sopText = await fs.readFile(SOP_FILE_PATH, "utf8");
+  const sourceHash = createHash("sha256")
+    .update(sopText)
+    .update(EMBEDDING_MODEL)
+    .update(String(SOP_INDEX_VERSION))
+    .digest("hex");
+  const cachedIndex = await readCachedSopIndex(sourceHash);
+
+  if (cachedIndex) {
+    return cachedIndex;
+  }
+
   const chunksWithoutEmbeddings = splitSopIntoSections(sopText).flatMap(splitSectionIntoChunks);
   const chunks: SopChunk[] = [];
 
@@ -185,7 +330,38 @@ async function buildSopIndex(ai: GoogleGenAI): Promise<SopChunk[]> {
     });
   }
 
+  await writeCachedSopIndex({
+    sourceHash,
+    embeddingModel: EMBEDDING_MODEL,
+    chunks,
+  });
+
   return chunks;
+}
+
+async function readCachedSopIndex(sourceHash: string) {
+  try {
+    const rawCache = await fs.readFile(SOP_INDEX_CACHE_PATH, "utf8");
+    const cache = JSON.parse(rawCache) as SopIndexCache;
+
+    if (
+      cache.sourceHash === sourceHash &&
+      cache.embeddingModel === EMBEDDING_MODEL &&
+      Array.isArray(cache.chunks) &&
+      cache.chunks.every((chunk) => Array.isArray(chunk.embedding) && chunk.embedding.length > 0)
+    ) {
+      return cache.chunks;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+async function writeCachedSopIndex(cache: SopIndexCache) {
+  await fs.mkdir(path.dirname(SOP_INDEX_CACHE_PATH), { recursive: true });
+  await fs.writeFile(SOP_INDEX_CACHE_PATH, JSON.stringify(cache), "utf8");
 }
 
 async function retrieveRelevantChunks(ai: GoogleGenAI, query: string): Promise<RetrievedChunk[]> {
@@ -308,10 +484,17 @@ function buildPrompt(params: {
   history?: HistoryMessage[];
   retrievedChunks: RetrievedChunk[];
 }) {
+  const overviewContext = isOverviewQuestion(params.userMessage)
+    ? `\n\nKONTEKS OVERVIEW LAYANAN:\n${OVERVIEW_CONTEXT}`
+    : "";
+  const policeRelatedGuidance = isPoliceRelatedQuestion(params.userMessage)
+    ? `\n\nKONTEKS PANDUAN UMUM KEPOLISIAN:\n${POLICE_RELATED_GUIDANCE}`
+    : "";
+
   return `${SYSTEM_PROMPT}
 
 KONTEKS SOP TERAMBIL:
-${formatRetrievedContext(params.retrievedChunks)}
+${formatRetrievedContext(params.retrievedChunks)}${overviewContext}${policeRelatedGuidance}
 
 RIWAYAT PERCAKAPAN:
 ${formatConversationHistory(params.history)}
@@ -319,10 +502,193 @@ ${formatConversationHistory(params.history)}
 INSTRUKSI AKHIR:
 - Jawab pertanyaan pengguna terakhir.
 - Prioritaskan konteks SOP terambil, bukan pengetahuan umum.
+- Untuk syarat/prosedur/biaya, gunakan hanya poin yang tertulis di konteks SOP. Jangan menambahkan poin baru.
+- Buat jawaban cukup detail: tempat layanan, syarat, alur, biaya, dan catatan penting jika datanya ada di konteks.
+- Kalau pertanyaan masih berkaitan dengan kepolisian tetapi SOP tidak lengkap, tetap bantu dengan arahan umum yang aman dan praktis.
+- Untuk pertanyaan umum tentang kemampuan asisten, isi daftar layanan pada sections[0].items, bukan paragraf panjang.
 - Jika ini pesan pertama, boleh mulai dengan sapaan hangat.
+- Balas HANYA JSON valid sesuai skema. Jangan gunakan markdown, code fence, atau teks lain di luar JSON.
 
 Pengguna: ${params.userMessage}
 Asisten:`;
+}
+
+function cleanAssistantResponse(text: string) {
+  const sectionLabels = [
+    "Tempat layanan:",
+    "Syarat:",
+    "Alur:",
+    "Biaya:",
+    "Durasi atau jam layanan:",
+    "Jam layanan:",
+    "Durasi:",
+    "Catatan:",
+  ];
+
+  const normalized = text
+    .replace(/\r\n/g, "\n")
+    .replace(/^\s*[*•]\s+/gm, "- ")
+    .replace(/([^\n])\s+(\d+\.\s+)/g, "$1\n$2")
+    .replace(/([^\n])\s+(-\s+)/g, "$1\n$2")
+    .replace(/menghubungi\s*\n\s*110/gi, "menghubungi 110")
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n[ \t]+/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  const compactedLines = normalized
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line, index, lines) => line || lines[index - 1])
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n");
+
+  return sectionLabels
+    .reduce((result, label) => {
+      const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return result.replace(new RegExp(`\\n?${escapedLabel}`, "g"), `\n\n${label}`);
+    }, compactedLines)
+    .replace(/^\n+/, "")
+    .trim();
+}
+
+function parseFormattedAnswer(rawText: string): FormattedAnswer | null {
+  const jsonText = extractJsonObject(rawText);
+
+  if (!jsonText) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(jsonText) as unknown;
+
+    if (!parsed || typeof parsed !== "object") {
+      return null;
+    }
+
+    const data = parsed as Partial<FormattedAnswer>;
+    const sections = Array.isArray(data.sections)
+      ? data.sections.map(normalizeFormattedSection).filter((section): section is FormattedAnswerSection => Boolean(section))
+      : [];
+
+    if (!sections.length) {
+      return null;
+    }
+
+    const formatted: FormattedAnswer = { sections };
+    const intro = cleanFieldText(data.intro);
+    const closing = cleanFieldText(data.closing);
+
+    if (intro) {
+      formatted.intro = intro;
+    }
+
+    if (closing) {
+      formatted.closing = closing;
+    }
+
+    return formatted;
+  } catch {
+    return null;
+  }
+}
+
+function extractJsonObject(rawText: string) {
+  const trimmed = rawText
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
+
+  if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+    return trimmed;
+  }
+
+  const firstBrace = trimmed.indexOf("{");
+  const lastBrace = trimmed.lastIndexOf("}");
+
+  if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
+    return null;
+  }
+
+  return trimmed.slice(firstBrace, lastBrace + 1);
+}
+
+function normalizeFormattedSection(section: unknown): FormattedAnswerSection | null {
+  if (!section || typeof section !== "object") {
+    return null;
+  }
+
+  const data = section as Partial<FormattedAnswerSection>;
+  const title = cleanFieldText(data.title);
+  const body = cleanFieldText(data.body);
+  const items = Array.isArray(data.items)
+    ? data.items
+        .map(cleanFieldText)
+        .filter((item): item is string => Boolean(item))
+    : [];
+
+  if (!title || (!body && !items.length)) {
+    return null;
+  }
+
+  return {
+    title,
+    ...(body ? { body } : {}),
+    ...(items.length ? { items } : {}),
+  };
+}
+
+function cleanFieldText(value: unknown) {
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  return value
+    .replace(/\r\n/g, "\n")
+    .replace(/^\s*[-*•]\s+/gm, "")
+    .replace(/^\s*\d+\.\s+/gm, "")
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n[ \t]+/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function formattedAnswerToPlainText(answer: FormattedAnswer) {
+  const blocks: string[] = [];
+
+  if (answer.intro) {
+    blocks.push(answer.intro);
+  }
+
+  answer.sections.forEach((section) => {
+    const lines = [`${section.title}:`];
+
+    if (section.body) {
+      lines.push(section.body);
+    }
+
+    if (section.items?.length) {
+      const ordered = shouldUseOrderedList(section.title);
+      section.items.forEach((item, index) => {
+        lines.push(ordered ? `${index + 1}. ${item}` : `- ${item}`);
+      });
+    }
+
+    blocks.push(lines.join("\n"));
+  });
+
+  if (answer.closing) {
+    blocks.push(answer.closing);
+  }
+
+  return cleanAssistantResponse(blocks.join("\n\n"));
+}
+
+function shouldUseOrderedList(title: string) {
+  return /(syarat|alur|prosedur|cara|langkah)/i.test(title);
 }
 
 export async function POST(request: NextRequest) {
@@ -364,6 +730,11 @@ export async function POST(request: NextRequest) {
 
       response = await ai.models.generateContent({
         model: GENERATION_MODEL,
+        config: {
+          temperature: 0.2,
+          topP: 0.8,
+          responseMimeType: "application/json",
+        },
         contents: [
           {
             role: "user",
@@ -382,6 +753,11 @@ export async function POST(request: NextRequest) {
     } else {
       response = await ai.models.generateContent({
         model: GENERATION_MODEL,
+        config: {
+          temperature: 0.2,
+          topP: 0.8,
+          responseMimeType: "application/json",
+        },
         contents: [
           {
             role: "user",
@@ -391,7 +767,11 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const text = response.text;
+    const rawText = response.text ?? "";
+    const formatted = parseFormattedAnswer(rawText);
+    const text = formatted
+      ? formattedAnswerToPlainText(formatted)
+      : cleanAssistantResponse(rawText);
 
     if (!text) {
       return NextResponse.json(
@@ -400,7 +780,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ response: text });
+    return NextResponse.json({
+      response: text,
+      ...(formatted ? { formatted } : {}),
+    });
   } catch (error: unknown) {
     console.error("Error calling Gemini API:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
@@ -424,4 +807,51 @@ function buildRetrievalQuery(userMessage: string, history: HistoryMessage[] | un
     .join("\n") ?? "";
 
   return normalizeText(`${recentUserMessages}\n${userMessage}`);
+}
+
+function isOverviewQuestion(message: string) {
+  const normalized = message.toLowerCase();
+
+  return [
+    "apa aja",
+    "apa saja",
+    "bisa jelasin",
+    "bisa bantu apa",
+    "fitur apa",
+    "layanan apa",
+    "kamu bisa apa",
+  ].some((phrase) => normalized.includes(phrase));
+}
+
+function isPoliceRelatedQuestion(message: string) {
+  const normalized = message.toLowerCase();
+
+  return [
+    "polisi",
+    "polsek",
+    "polres",
+    "spkt",
+    "lapor",
+    "melapor",
+    "laporan",
+    "kriminal",
+    "pidana",
+    "kejahatan",
+    "membunuh",
+    "bunuh",
+    "pembunuhan",
+    "mencuri",
+    "curi",
+    "penganiayaan",
+    "korban",
+    "menyerahkan diri",
+    "mengakui",
+    "kesalahan",
+    "ditangkap",
+    "hukum",
+    "saksi",
+    "bukti",
+    "darurat",
+    "110",
+  ].some((keyword) => normalized.includes(keyword));
 }

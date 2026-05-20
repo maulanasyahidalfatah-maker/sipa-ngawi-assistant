@@ -12,13 +12,10 @@ import {
   ShieldAlert,
   Phone,
   Copy,
-  ThumbsUp,
-  ThumbsDown,
-  RotateCcw,
   Check
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ShimmeringText } from '@/components/animate-ui/primitives/texts/shimmering';
+import { TextShimmer } from "@/components/core/text-shimmer";
 
 export interface Message {
   id: string;
@@ -26,6 +23,53 @@ export interface Message {
   content: string;
   timestamp: Date;
   image?: string; // base64 image data
+  formatted?: FormattedAnswer;
+}
+
+export interface FormattedAnswer {
+  intro?: string;
+  sections: FormattedAnswerSection[];
+  closing?: string;
+}
+
+export interface FormattedAnswerSection {
+  title: string;
+  body?: string;
+  items?: string[];
+}
+
+type SpeechRecognitionResultEvent = {
+  results: {
+    [index: number]: {
+      [index: number]: {
+        transcript: string;
+      };
+    };
+  };
+};
+
+type SpeechRecognitionErrorEvent = {
+  error: string;
+};
+
+type SpeechRecognitionLike = {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  onresult: ((event: SpeechRecognitionResultEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+};
+
+type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
+
+declare global {
+  interface Window {
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
+  }
 }
 
 interface ChatInterfaceProps {
@@ -45,14 +89,13 @@ export function ChatInterface({
   onSendMessage,
   isLoading,
   onToggleSidebar,
-  isSidebarOpen
 }: ChatInterfaceProps) {
   const [isListening, setIsListening] = React.useState(false);
   const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
   const [copiedId, setCopiedId] = React.useState<string | null>(null);
 
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -77,7 +120,7 @@ export function ChatInterface({
   // Initialize Speech Recognition
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
@@ -85,13 +128,13 @@ export function ChatInterface({
         recognition.continuous = false;
         recognition.interimResults = false;
 
-        recognition.onresult = (event: any) => {
+        recognition.onresult = (event) => {
           const transcript = event.results[0][0].transcript;
           setInput(transcript);
           setIsListening(false);
         };
 
-        recognition.onerror = (event: any) => {
+        recognition.onerror = (event) => {
           console.error('Speech recognition error:', event.error);
           setIsListening(false);
         };
@@ -209,6 +252,58 @@ export function ChatInterface({
       icon: Phone
     }
   ];
+
+  const shouldUseOrderedList = (title: string) => {
+    return /(syarat|alur|prosedur|cara|langkah)/i.test(title);
+  };
+
+  const renderFormattedAnswer = (formatted: FormattedAnswer) => {
+    return (
+      <div className="space-y-4 text-[15px] sm:text-base leading-7 text-neutral-800">
+        {formatted.intro && (
+          <p className="m-0">{formatted.intro}</p>
+        )}
+
+        <div className="space-y-3.5">
+          {formatted.sections.map((section, index) => {
+            const ordered = shouldUseOrderedList(section.title);
+            const ListTag = ordered ? 'ol' : 'ul';
+
+            return (
+              <section key={`${section.title}-${index}`} className="space-y-1.5">
+                <h3 className="text-[13px] sm:text-sm font-semibold leading-5 text-neutral-900">
+                  {section.title}
+                </h3>
+
+                {section.body && (
+                  <p className="m-0 text-neutral-800">{section.body}</p>
+                )}
+
+                {section.items?.length ? (
+                  <ListTag
+                    className={cn(
+                      "m-0 space-y-1 pl-5 text-neutral-800",
+                      ordered ? "list-decimal" : "list-disc"
+                    )}
+                  >
+                    {section.items.map((item, itemIndex) => (
+                      <li key={`${section.title}-${itemIndex}`} className="pl-1">
+                        {item}
+                      </li>
+                    ))}
+                  </ListTag>
+                ) : null}
+              </section>
+            );
+          })}
+        </div>
+
+        {formatted.closing && (
+          <p className="m-0">{formatted.closing}</p>
+        )}
+      </div>
+    );
+  };
 
   const renderInputCard = (isCentered: boolean) => {
     return (
@@ -405,11 +500,15 @@ export function ChatInterface({
                     /* Assistant message: plain text direct on bg, NO logo on the left */
                     <div className="w-full flex flex-col items-start py-4 sm:py-5 border-b border-neutral-200/60 last:border-b-0">
                       <div className="text-neutral-800 w-full">
-                        <p className="whitespace-pre-wrap text-[15px] sm:text-base leading-relaxed">{message.content}</p>
+                        {message.formatted ? (
+                          renderFormattedAnswer(message.formatted)
+                        ) : (
+                          <p className="whitespace-pre-wrap text-[15px] sm:text-base leading-7">{message.content}</p>
+                        )}
                       </div>
 
-                      {/* Feedback utility row */}
-                      <div className="flex items-center gap-2 sm:gap-3 mt-3 sm:mt-4">
+                      {/* Utility row */}
+                      <div className="flex items-center mt-3 sm:mt-4">
                         <button
                           onClick={() => handleCopy(message.id, message.content)}
                           className="text-neutral-400 hover:text-neutral-600 transition-colors p-1.5 rounded-lg hover:bg-neutral-100"
@@ -421,24 +520,6 @@ export function ChatInterface({
                             <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                           )}
                         </button>
-                        <button
-                          className="text-neutral-400 hover:text-neutral-600 transition-colors p-1.5 rounded-lg hover:bg-neutral-100"
-                          title="Suka"
-                        >
-                          <ThumbsUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </button>
-                        <button
-                          className="text-neutral-400 hover:text-neutral-600 transition-colors p-1.5 rounded-lg hover:bg-neutral-100"
-                          title="Tidak Suka"
-                        >
-                          <ThumbsDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </button>
-                        <button
-                          className="text-neutral-400 hover:text-neutral-600 transition-colors p-1.5 rounded-lg hover:bg-neutral-100"
-                          title="Buat Ulang"
-                        >
-                          <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </button>
                       </div>
                     </div>
                   )}
@@ -447,13 +528,13 @@ export function ChatInterface({
 
               {/* Shimmering thinking state */}
               {isLoading && (
-                <div className="w-full flex flex-col items-start py-4 sm:py-5 border-b border-neutral-200/60 last:border-b-0">
-                  <ShimmeringText
-                    wave={true}
-                    duration={1.5}
-                    className="text-[15px] sm:text-base text-neutral-500 font-medium"
-                    text="Polsek Rembang sedang memproses..."
-                  />
+                <div className="w-full flex flex-col items-start py-4 sm:py-5">
+                  <TextShimmer
+                    className="text-[15px] sm:text-base font-medium"
+                    duration={2.8}
+                  >
+                    Polsek Rembang sedang memproses...
+                  </TextShimmer>
                 </div>
               )}
 

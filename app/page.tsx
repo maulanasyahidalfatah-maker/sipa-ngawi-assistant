@@ -2,9 +2,27 @@
 
 import React, { useState } from 'react';
 import { ChatSidebar } from "@/components/chat-sidebar";
-import { ChatInterface, Message } from "@/components/chat-interface";
+import { ChatInterface, type FormattedAnswer, type Message } from "@/components/chat-interface";
 import { ObjectDetection } from "@/components/object-detection";
 import { jsPDF } from "jspdf";
+
+function isFormattedAnswer(value: unknown): value is FormattedAnswer {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const data = value as Partial<FormattedAnswer>;
+
+  return Array.isArray(data.sections) && data.sections.every((section) => {
+    return Boolean(
+      section &&
+      typeof section === 'object' &&
+      typeof section.title === 'string' &&
+      (!section.body || typeof section.body === 'string') &&
+      (!section.items || (Array.isArray(section.items) && section.items.every((item) => typeof item === 'string')))
+    );
+  });
+}
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -59,7 +77,8 @@ export default function Home() {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: data.response,
-        timestamp: new Date()
+        timestamp: new Date(),
+        ...(isFormattedAnswer(data.formatted) ? { formatted: data.formatted } : {})
       };
 
       setMessages(prev => [...prev, aiMessage]);
