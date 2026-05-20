@@ -79,6 +79,7 @@ export default function Home() {
 
   const handleNewChat = () => {
     setMessages([]);
+    setMode('chat');
   };
 
   const handleDownloadTranscript = async () => {
@@ -313,7 +314,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex w-screen overflow-hidden" style={{ backgroundColor: '#FAFAFA', height: '100dvh' }}>
+    <div className="flex w-full max-w-full overflow-hidden" style={{ backgroundColor: '#FAFAFA', height: '100dvh' }}>
       <ChatSidebar
         onNewChat={handleNewChat}
         onDownload={handleDownloadTranscript}
@@ -327,7 +328,7 @@ export default function Home() {
       />
       
       
-      <div className="flex-1 flex items-center justify-center p-0">
+      <div className="min-w-0 flex-1 flex items-center justify-center p-0">
         <div className="w-full h-full overflow-hidden">
           {mode === 'chat' ? (
             <ChatInterface

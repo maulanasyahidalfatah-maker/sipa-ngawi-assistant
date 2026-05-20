@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus, Download, ScanEye, X } from "lucide-react";
+import {
+  Plus,
+  Download,
+  ScanEye,
+  X
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ChatSidebarProps {
   onNewChat: () => void;
@@ -11,130 +17,109 @@ interface ChatSidebarProps {
   currentMode: 'chat' | 'object-detection';
 }
 
-export function ChatSidebar({ onNewChat, onDownload, onObjectDetection, isOpen, onClose, currentMode }: ChatSidebarProps) {
+export function ChatSidebar({
+  onNewChat,
+  onDownload,
+  onObjectDetection,
+  isOpen,
+  onClose,
+  currentMode
+}: ChatSidebarProps) {
+  const runMobileAction = (action: () => void) => {
+    action();
+    onClose();
+  };
+
   return (
     <>
-      {/* Overlay untuk mobile */}
+      {/* Overlay for mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/20 z-30 lg:hidden backdrop-blur-sm transition-opacity duration-300"
           onClick={onClose}
         />
       )}
 
       <aside
-        className={`
-          fixed lg:relative
-          w-64 sm:w-72 
-          flex flex-col h-screen
-          z-40
-          border-r transition-transform duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        `}
-        style={{ 
-          backgroundColor: '#FFFFFF',
-          borderColor: '#E5E7EB'
-        }}
+        className={cn(
+          "fixed inset-y-0 left-0 lg:relative lg:inset-auto w-[min(84vw,20rem)] sm:w-72 lg:w-[260px] flex flex-col h-dvh lg:h-full z-40 border-r transition-transform duration-300 ease-in-out bg-[#F9F9F9] shadow-xl lg:shadow-none",
+          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        )}
+        style={{ borderColor: '#E5E7EB' }}
       >
-
-        <div className="p-4 sm:p-5 flex items-center gap-3 relative z-10 flex-shrink-0 border-b" style={{ borderColor: '#E5E7EB' }}>
-          <img
-            src="/Untitled-design.png"
-            alt="Polsek Rembang Logo"
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover"
-          />
-          <div className="flex-1 min-w-0">
-            <h1 className="font-semibold text-base sm:text-lg leading-tight tracking-tight truncate" style={{ color: '#374151' }}>Polsek Rembang</h1>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-              <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wider" style={{ color: '#9CA3AF' }}>Virtual Assistant</p>
+        {/* Sidebar Header */}
+        <div className="p-4 flex items-center justify-between relative z-10 flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <img
+              src="/Untitled-design.png"
+              alt="Polsek Rembang Logo"
+              className="w-8 h-8 rounded-full object-cover border border-neutral-200 bg-white"
+            />
+            <div className="flex flex-col">
+              <h1 className="font-medium text-sm leading-tight text-neutral-800 tracking-tight">
+                Polsek Rembang
+              </h1>
+              <p className="text-[11px] text-neutral-500 font-medium">
+                Asisten Virtual
+              </p>
             </div>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden h-8 w-8 flex-shrink-0 hover:bg-gray-100"
-            style={{ color: '#374151' }}
+            className="lg:hidden h-8 w-8 text-neutral-500 hover:text-neutral-800 hover:bg-neutral-200/60 rounded-lg"
             onClick={onClose}
           >
-            <X className="w-4 h-4 sm:w-5 sm:h-5" />
+            <X className="w-4 h-4" />
           </Button>
         </div>
 
-        <div className="p-3 sm:p-4 relative z-10 flex-shrink-0">
-          <Button
-            onClick={onNewChat}
-            className={`w-full justify-start gap-2 sm:gap-3 transition-all duration-200 font-medium py-5 sm:py-6 text-sm sm:text-base rounded-xl border ${
-              currentMode === 'chat' 
-                ? 'shadow-sm' 
-                : 'hover:bg-gray-50'
-            }`}
-            style={currentMode === 'chat' 
-              ? { backgroundColor: '#F3F4F6', color: '#374151', borderColor: '#E5E7EB' } 
-              : { backgroundColor: 'transparent', color: '#6B7280', borderColor: '#E5E7EB' }
-            }
-          >
-            <div className="p-1 rounded-md" style={{ backgroundColor: currentMode === 'chat' ? '#0f4c92' : '#E5E7EB' }}>
-              <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: currentMode === 'chat' ? '#FFFFFF' : '#6B7280' }} />
-            </div>
-            New Chat
-          </Button>
-        </div>
+        {/* Navigation Items */}
+        <ScrollArea className="flex-1 overflow-y-auto px-3">
+          <div className="space-y-1 py-2">
 
-        <ScrollArea className="flex-1 overflow-y-auto px-3 sm:px-4">
-          <div className="space-y-6 sm:space-y-8 py-2 pb-4">
+            {/* New Chat Button / Chat Mode */}
+            <button
+              onClick={() => runMobileAction(onNewChat)}
+              className={cn(
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200",
+                currentMode === 'chat'
+                  ? "bg-white shadow-sm border border-neutral-200/80 text-neutral-900 font-medium"
+                  : "text-neutral-600 hover:bg-neutral-200/50 hover:text-neutral-900 border border-transparent font-medium"
+              )}
+            >
+              <Plus className="w-4 h-4" />
+              Obrolan Baru
+            </button>
 
-            {/* Actions Section */}
-            <div className="space-y-2 sm:space-y-3">
-              <h3 className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest px-2 sm:px-3 flex items-center gap-2" style={{ color: '#9CA3AF', letterSpacing: '0.05em' }}>
-                Actions
-              </h3>
-              <div className="space-y-1">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start gap-2 sm:gap-3 transition-colors h-9 sm:h-10 text-xs sm:text-sm rounded-lg hover:bg-gray-100"
-                  style={{ color: '#374151' }}
-                  onClick={onDownload}
-                >
-                  <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: '#6B7280' }} />
-                  <span className="truncate font-medium">Download Transcript</span>
-                </Button>
-              </div>
-            </div>
+            {/* Object Detection Mode */}
+            <button
+              onClick={() => runMobileAction(onObjectDetection)}
+              className={cn(
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200",
+                currentMode === 'object-detection'
+                  ? "bg-white shadow-sm border border-neutral-200/80 text-neutral-900 font-medium"
+                  : "text-neutral-600 hover:bg-neutral-200/50 hover:text-neutral-900 border border-transparent font-medium"
+              )}
+            >
+              <ScanEye className="w-4 h-4" />
+              Deteksi Objek AI
+            </button>
 
-            {/* YOLO Section */}
-            <div className="space-y-2 sm:space-y-3">
-              <h3 className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest px-2 sm:px-3 flex items-center gap-2" style={{ color: '#9CA3AF', letterSpacing: '0.05em' }}>
-                Experiment
-              </h3>
-              <div className="space-y-1">
-                <Button
-                  variant="ghost"
-                  className={`w-full justify-start gap-2 sm:gap-3 transition-all h-9 sm:h-10 text-xs sm:text-sm rounded-lg ${
-                    currentMode === 'object-detection'
-                      ? 'font-semibold'
-                      : 'hover:bg-gray-100'
-                  }`}
-                  style={currentMode === 'object-detection' 
-                    ? { backgroundColor: '#EFF6FF', color: '#0f4c92' } 
-                    : { color: '#374151' }
-                  }
-                  onClick={onObjectDetection}
-                >
-                  <ScanEye className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: currentMode === 'object-detection' ? '#0f4c92' : '#6B7280' }} />
-                  <span className="truncate font-medium">Object Detection</span>
-                </Button>
-              </div>
-            </div>
+            {/* Divider */}
+            <div className="my-2 border-t border-neutral-200/60 mx-1"></div>
 
-
+            {/* Download Transcript */}
+            <button
+              onClick={() => runMobileAction(onDownload)}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-200/50 hover:text-neutral-900 transition-colors border border-transparent"
+            >
+              <Download className="w-4 h-4" />
+              Unduh Transkrip
+            </button>
 
           </div>
         </ScrollArea>
-
-        <div className="p-3 sm:p-4 text-[9px] sm:text-[10px] text-center mt-auto flex-shrink-0 border-t" style={{ color: '#9CA3AF', borderColor: '#E5E7EB' }}>
-          <p>&copy; 2025 Polsek Rembang. All rights reserved.</p>
-        </div>
       </aside>
     </>
   );
