@@ -27,6 +27,16 @@ interface ObjectDetectionProps {
   onClose: () => void;
 }
 
+type DetectionBox = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  score: number;
+  class: number;
+  label: string;
+};
+
 export function ObjectDetection({ onClose }: ObjectDetectionProps) {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -53,9 +63,10 @@ export function ObjectDetection({ onClose }: ObjectDetectionProps) {
         console.log("Output names:", session.outputNames);
         setModel(session);
         setLoading(false);
-      } catch (e: any) {
+      } catch (e: unknown) {
         console.error("Failed to load model:", e);
-        setError(`Failed to load model: ${e.message}`);
+        const message = e instanceof Error ? e.message : String(e);
+        setError(`Failed to load model: ${message}`);
         setLoading(false);
       }
     };
@@ -207,7 +218,7 @@ function drawBoxes(output: ort.Tensor, canvas: HTMLCanvasElement, imgWidth: numb
     loggedOnce = true;
   }
 
-  let boxes: Array<{x: number, y: number, width: number, height: number, score: number, class: number, label: string}> = [];
+  let boxes: DetectionBox[] = [];
 
   // Detect output format
   if (dims.length === 3 && dims[2] === 6) {
@@ -322,7 +333,7 @@ function drawBoxes(output: ort.Tensor, canvas: HTMLCanvasElement, imgWidth: numb
   });
 }
 
-function iou(box1: any, box2: any) {
+function iou(box1: DetectionBox, box2: DetectionBox) {
     const x1 = Math.max(box1.x, box2.x);
     const y1 = Math.max(box1.y, box2.y);
     const x2 = Math.min(box1.x + box1.width, box2.x + box2.width);

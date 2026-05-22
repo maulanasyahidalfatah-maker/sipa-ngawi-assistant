@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored ONNX Runtime browser bundles are served as static assets.
+    "public/ort*.mjs",
   ]),
 ]);
 
