@@ -5,8 +5,8 @@ import { serializeError } from "@/lib/rag/config";
 import type { ChatRequestBody } from "@/lib/rag/types";
 import { sendBatchReportEmail, TicketItem } from "@/lib/email-service";
 
-// Menggunakan import dari @/lib/prompt (Pastikan path folder src/lib/prompt.ts sesuai)
-import { SYSTEM_PROMPT, buildUserPrompt } from "@/lib/prompt";
+// Jalur import diperbaiki langsung merujuk ke lib/rag/prompt.ts
+import { SYSTEM_PROMPT, buildUserPrompt } from "@/lib/rag/prompt";
 
 export const runtime = "nodejs";
 

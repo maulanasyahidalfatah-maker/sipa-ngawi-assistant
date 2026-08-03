@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import "./globals.css";
+import "@/app/globals.css";
 
 export const metadata: Metadata = {
   title: "SIPA-NGAWI - Portal Konsultasi Dapodik Disdikbud Ngawi",

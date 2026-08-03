@@ -45,27 +45,26 @@
 
 :root {
   --radius: 0.75rem;
-  --background: #FAFAFA; /* Off-white - Chatbase style */
-  --foreground: #0f172a; /* Slate 900 */
+  --background: #FAFAFA;
+  --foreground: #0f172a;
   --card: #ffffff;
   --card-foreground: #0f172a;
   --popover: #ffffff;
   --popover-foreground: #0f172a;
-  --primary: #0f4c92; /* Blue accent - Polsek theme */
+  --primary: #0f4c92;
   --primary-foreground: #ffffff;
-  --secondary: #f1f5f9; /* Slate 100 */
+  --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
   --muted: #f1f5f9;
-  --muted-foreground: #9CA3AF; /* Muted gray */
-  --accent: #F3F4F6; /* Light gray for hover states */
+  --muted-foreground: #9CA3AF;
+  --accent: #F3F4F6;
   --accent-foreground: #0f172a;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #E5E7EB; /* Border gray */
+  --border: #E5E7EB;
   --input: #E5E7EB;
   --ring: #0f4c92;
   
-  /* Blue theme color palette */
   --accent-blue: #0f4c92;
   --accent-blue-light: #EFF6FF;
   --user-message: #FEF3E8;
@@ -73,32 +72,30 @@
   --text-muted: #9CA3AF;
   --hover-gray: #F3F4F6;
   
-  /* Charts - keeping generic for now but matching the theme */
   --chart-1: #0f4c92;
   --chart-2: #3b82f6;
   --chart-3: #60a5fa;
   --chart-4: #93c5fd;
   --chart-5: #bfdbfe;
 
-  /* Sidebar specific - White/Light theme */
   --sidebar: #FFFFFF;
   --sidebar-foreground: #374151;
   --sidebar-primary: #374151;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #F3F4F6; /* Light gray for hover states */
+  --sidebar-accent: #F3F4F6;
   --sidebar-accent-foreground: #374151;
   --sidebar-border: #E5E7EB;
   --sidebar-ring: #0f4c92;
 }
 
 .dark {
-  --background: #020617; /* Slate 950 */
+  --background: #020617;
   --foreground: #f8fafc;
   --card: #0f172a;
   --card-foreground: #f8fafc;
   --popover: #0f172a;
   --popover-foreground: #f8fafc;
-  --primary: #3b82f6; /* Brighter blue for dark mode */
+  --primary: #3b82f6;
   --primary-foreground: #ffffff;
   --secondary: #1e293b;
   --secondary-foreground: #f8fafc;
@@ -124,13 +121,15 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--border);
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--foreground);
   }
   html, body {
-    @apply w-full overflow-hidden;
+    width: 100%;
+    overflow: hidden;
     height: 100dvh;
     position: fixed;
     overscroll-behavior: none;
@@ -139,14 +138,12 @@
     height: 100dvh;
   }
   
-  /* Mobile viewport fix */
   @supports (-webkit-touch-callout: none) {
     html, body {
       height: -webkit-fill-available;
     }
   }
   
-  /* Prevent zoom on input focus for mobile */
   input[type="text"],
   input[type="email"],
   input[type="tel"],
@@ -156,7 +153,6 @@
     font-size: 16px !important;
   }
   
-  /* Ensure inputs don't trigger zoom on mobile */
   @media screen and (max-width: 768px) {
     input, textarea, select {
       font-size: 16px !important;
