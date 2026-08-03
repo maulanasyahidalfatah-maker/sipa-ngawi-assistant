@@ -1,53 +1,51 @@
-# Polsek Chatbot Application
+# 🏛️ SIPA-NGAWI (Sistem Informasi & Pelayanan Asisten Pendidikan Ngawi)
 
-Aplikasi chatbot cerdas untuk kepolisian sektor dengan fitur deteksi objek berbasis AI.
+![Next.js](https://img.shields.io/badge/Next.js-14%2B-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.0-38B2AC?style=for-the-badge&logo=tailwind-css)
+![Google Gemini AI](https://img.shields.io/badge/Google_Gemini-API-8E7CC3?style=for-the-badge&logo=googlegemini)
 
-## Fitur Utama
-- Antarmuka chat interaktif
-- Deteksi objek real-time menggunakan model YOLOv8
-- Integrasi ONNX Runtime untuk inferensi AI
-- Komponen UI modern dengan shadcn/ui
+**SIPA-NGAWI** adalah portal konsultasi dan asisten virtual berbasis Kecerdasan Buatan (AI) resmi untuk **Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi**. Sistem ini dirancang untuk membantu operator sekolah, guru, dan masyarakat umum dalam menyelesaikan kendala teknis Data Pokok Pendidikan (Dapodik), VervalPD/PTK, perizinan, serta informasi pelestarian kebudayaan daerah secara responsif dan akurat.
 
-## Struktur Direktori
-```
-├── app/               # Halaman Next.js
-│   ├── api/chat/      # Endpoint API untuk fitur chat
-│   ├── layout.tsx     # Layout utama
-│   └── page.tsx       # Halaman utama
-├── components/        # Komponen UI
-│   ├── chat-*         # Komponen chat
-│   ├── object-detection.tsx # Deteksi objek
-│   └── ui/            # Komponen shadcn/ui
-├── lib/               # Utilities
-├── public/            # Aset statis
-│   ├── models/        # Model AI (YOLO, ONNX)
-│   └── *.svg          # Ikon dan gambar
-```
+---
 
-## Prasyarat
-- Node.js v18+
-- npm v9+
+## 🌟 Fitur Utama
 
-## Instalasi
-1. Clone repositori
-2. Install dependencies:
-```bash
-npm install
-```
+- 🤖 **AI Customer Service & Technical Assistance (Gemini API):**
+  - Menggunakan model cerdas Google Gemini dengan sistem *Multi-Key Fallback* otomatis untuk menjamin kestabilan layanan.
+  - Mengadopsi metode **RAG (Retrieval-Augmented Generation)** berbasis file pengetahuan lokal (`SOP.txt`) agar jawaban konsisten dan akurat sesuai aturan Disdikbud Ngawi.
 
-## Menjalankan Aplikasi
-```bash
-npm run dev
-```
-Buka http://localhost:3000 di browser
+- 📋 **Formulir Pengaduan Layanan Integratif:**
+  - Dilengkapi formulir tiket pengaduan terstruktur untuk laporan teknis yang membutuhkan penanganan manual oleh tim Admin Dinas.
+  - **Google Sheets Webhook Integration:** Data pengaduan dikirim secara *real-time* dan tercatat otomatis pada spreadsheet Google Sheets resmi.
 
-## Model AI
-Aplikasi menggunakan:
-- YOLOv8n (yolov8n.pt) untuk deteksi objek
-- ONNX Runtime untuk inferensi di browser
+- 🎨 **Antarmuka & Rebranding Khas Pemkab Ngawi:**
+  - Identitas visual disesuaikan dengan warna resmi Disdikbud Ngawi (**Hijau `#006837`**, **Biru `#00529B`**, dan **Emas `#FDB913`**).
+  - Tampilan responsif (Mobile & Desktop), modern, ramah aksesibilitas, dan cepat menggunakan **shadcn/ui** serta **Tailwind CSS**.
 
-## Konfigurasi
-File konfigurasi penting:
-- `next.config.ts` - Konfigurasi Next.js
-- `postcss.config.mjs` - Konfigurasi PostCSS
-- `tsconfig.json` - Konfigurasi TypeScript
+---
+
+## 📂 Struktur Direktori Proyek
+
+```text
+sipa-ngawi/
+├── app/                        # Next.js App Router
+│   ├── api/
+│   │   └── chat/
+│   │       └── route.ts        # Endpoint API Chat Gemini & Webhook Pengaduan
+│   ├── globals.css             # Konfigurasi Tailwind CSS & Styling Global
+│   ├── layout.tsx              # Root Layout, Metadata, & Viewport SIPA-NGAWI
+│   └── page.tsx                # Halaman Utama Portal
+├── components/                 # Komponen UI React
+│   ├── chat-interface.tsx      # Komponen Antarmuka Chat & Form Pengaduan
+│   └── ui/                     # Komponen Atomik (shadcn/ui)
+├── lib/                        # Library, Utility, & Logika RAG
+│   ├── rag/
+│   │   ├── prompt.ts           # Persona, System Rules, & Prompt Engineer AI
+│   │   └── sop.ts              # Loader & Engine Pencarian RAG
+│   └── utils.ts                # Helper Utility Functions
+├── public/                     # Aset Statis (Icon, Logo, & Images)
+├── .env.local                  # Environment Variables (API Key & Webhook URL)
+├── package.json                # Dependencies & Script Proyek
+├── README.md                   # Dokumentasi Resmi Proyek
+└── SOP.txt                     # Knowledge Base SOP Teknis Disdikbud Ngawi

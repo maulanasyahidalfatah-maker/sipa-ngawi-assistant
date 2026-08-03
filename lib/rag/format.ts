@@ -21,7 +21,9 @@ export function sanitizeFormattedAnswer(value: unknown): FormattedAnswer {
   const data = parsed.success ? parsed.data : coerceFormattedAnswerLike(value);
 
   if (!data) {
-    return fallbackFormattedAnswer();
+    return fallbackFormattedAnswer(
+      typeof value === "string" ? value : "Informasi terkait pertanyaan Anda belum dapat ditampilkan secara rapi. Silakan tanyakan kembali secara spesifik."
+    );
   }
 
   const sections = data.sections
@@ -29,7 +31,9 @@ export function sanitizeFormattedAnswer(value: unknown): FormattedAnswer {
     .filter((section): section is FormattedAnswerSection => Boolean(section));
 
   if (!sections.length) {
-    return fallbackFormattedAnswer();
+    return fallbackFormattedAnswer(
+      typeof value === "string" ? value : "SIPA-NGAWI tidak menemukan detail relevan pada dokumen SOP Disdikbud."
+    );
   }
 
   const intro = cleanFieldText(data.intro);
@@ -42,12 +46,17 @@ export function sanitizeFormattedAnswer(value: unknown): FormattedAnswer {
   };
 }
 
-export function fallbackFormattedAnswer(message = "Maaf, jawaban belum bisa disusun dengan rapi. Silakan coba tanyakan lagi dengan lebih spesifik."): FormattedAnswer {
+// PERBAIKAN 1: Fallback bisa menerima string teks utuh agar tidak melempar pesan error kaku
+export function fallbackFormattedAnswer(message?: string): FormattedAnswer {
+  const textContent = message && message.trim().length > 0 
+    ? message 
+    : "Maaf, sistem belum menemukan informasi yang spesifik dalam dokumen SOP. Silakan ajukan pertanyaan lain terkait Dapodik atau Verval Disdikbud Ngawi.";
+
   return {
     sections: [
       {
-        title: "Catatan",
-        body: message,
+        title: "Informasi SIPA-NGAWI",
+        body: textContent,
       },
     ],
   };
@@ -98,6 +107,7 @@ export function cleanFieldText(value: unknown) {
     .trim();
 }
 
+// PERBAIKAN 2: Pembersihan residual Call Center Polri / Polsek dan penyesuaian ke Disdikbud Ngawi
 export function cleanAssistantResponse(text: string) {
   const sectionLabels = [
     "Tempat layanan:",
@@ -108,14 +118,13 @@ export function cleanAssistantResponse(text: string) {
     "Jam layanan:",
     "Durasi:",
     "Catatan:",
+    "Informasi SIPA-NGAWI:",
   ];
 
   const normalized = text
     .replace(/\r\n/g, "\n")
     .replace(/^\s*[*•]\s+/gm, "- ")
     .replace(/([^\n])\s+(\d+\.\s+)/g, "$1\n$2")
-    .replace(/menghubungi\s*\n\s*110/gi, "menghubungi 110")
-    .replace(/Call Center Polri\s*\n\s*110/gi, "Call Center Polri 110")
     .replace(/[ \t]{2,}/g, " ")
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n[ \t]+/g, "\n")

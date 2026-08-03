@@ -1,133 +1,104 @@
-import { ChatGoogle } from "@langchain/google";
-import { HumanMessage, SystemMessage, type ContentBlock } from "@langchain/core/messages";
-import { GENERATION_MODELS, shouldFallbackToNextModelOrKey } from "./config";
-import { fallbackFormattedAnswer, formattedAnswerToPlainText, formattedAnswerSchema, sanitizeFormattedAnswer } from "./format";
+import Groq from "groq-sdk";
 import { buildUserPrompt, SYSTEM_PROMPT } from "./prompt";
-import { buildRetrievalQuery, retrieveRelevantDocuments } from "./retriever";
-import type { ChatRequestBody, ChatResponseBody, FormattedAnswer, HistoryMessage } from "./types";
+import type { 
+  ChatRequestBody, 
+  ChatResponseBody, 
+  FormattedAnswer 
+} from "./types";
 
-export async function createChatResponse(apiKey: string, body: ChatRequestBody): Promise<ChatResponseBody> {
-  const { message, history, image } = body;
-  const userMessage = message || "Tolong analisis gambar ini dan jelaskan apa yang kamu lihat.";
-  const retrievalQuery = buildRetrievalQuery(userMessage, history);
-  const retrievedDocuments = await retrieveRelevantDocuments(apiKey, retrievalQuery);
-  const formatted = await generateFormattedAnswer({
-    apiKey,
+export async function createChatResponse(apiKeyPayload: string, body: ChatRequestBody): Promise<ChatResponseBody> {
+  const { message, history } = body;
+  const userMessage = (message || "Halo").trim();
+
+  // Ambil API Key Groq dari .env.local (Mendukung string dipisah koma)
+  const rawKeys = process.env.GROQ_API_KEYS || apiKeyPayload || process.env.GROQ_API_KEY || "";
+  const apiKeys = rawKeys.split(",").map((k) => k.trim()).filter(Boolean);
+
+  const groqModel = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+
+  // Susun Prompt
+  const userPromptText = buildUserPrompt({
     userMessage,
     history,
-    image,
-    retrievedDocuments,
+    retrievedDocuments: [], // Bypass dokumen RAG sementara
   });
-  const response = formattedAnswerToPlainText(formatted);
 
+  if (apiKeys.length === 0) {
+    return createErrorResponse("GROQ_API_KEYS tidak ditemukan. Pastikan sudah diisi di .env.local");
+  }
+
+  let lastErrorDetails = "";
+
+  // =======================================================================
+  // LOOPING MULTI-KEY: Rotasi Otomatis Jika Terkena Rate Limit (429)
+  // =======================================================================
+  for (let i = 0; i < apiKeys.length; i++) {
+    const currentKey = apiKeys[i];
+    try {
+      console.log(`[Groq RAG] Mengirim request menggunakan API Key ke-${i + 1}...`);
+      const groq = new Groq({ apiKey: currentKey });
+
+      const completion = await groq.chat.completions.create({
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: userPromptText },
+        ],
+        model: groqModel,
+        temperature: 0.2,
+        max_tokens: 1024,
+      });
+
+      const answerText = completion.choices[0]?.message?.content || "Mohon maaf, tidak ada respons.";
+
+      // Jika berhasil, langsung kembalikan respons ke route!
+      return {
+        response: answerText,
+        formatted: {
+          sections: [
+            {
+              title: "Jawaban SIPA-NGAWI",
+              body: answerText,
+            },
+          ],
+        },
+      };
+    } catch (error: any) {
+      lastErrorDetails = error instanceof Error ? error.message : String(error);
+
+      // Cek apakah error merupakan Rate Limit 429 atau kuota token habis
+      const isRateLimit =
+        error?.status === 429 ||
+        error?.error?.type === "tokens" ||
+        error?.error?.code === "rate_limit_exceeded";
+
+      if (isRateLimit && i < apiKeys.length - 1) {
+        console.warn(`⚠️ [Groq RAG] Key ke-${i + 1} terkena Rate Limit (429). Otomatis beralih ke Key ke-${i + 2}...`);
+        continue; // Lanjut ke iterasi key berikutnya (jangan break)
+      }
+
+      // Jika errornya bukan 429 (misal 401 salah token) atau jika ini sudah key terakhir
+      console.error(`❌ [Groq API Error pada Key ke-${i + 1}]:`, lastErrorDetails);
+      break; // Hentikan loop dan turun ke return error di bawah
+    }
+  }
+
+  // Jika semua percobaan gagal (semua key limit)
+  return createErrorResponse(`[Groq API Error]: Semua kuota kunci API sedang penuh/limit. Detail terakhir: ${lastErrorDetails}`);
+}
+
+/**
+ * Helper internal untuk membuat format respons balasan saat terjadi Error
+ */
+function createErrorResponse(errorMessage: string): ChatResponseBody {
   return {
-    response,
-    formatted,
+    response: errorMessage,
+    formatted: {
+      sections: [
+        {
+          title: "Peringatan Sistem",
+          body: errorMessage,
+        },
+      ],
+    },
   };
-}
-
-async function generateFormattedAnswer(params: {
-  apiKey: string;
-  userMessage: string;
-  history?: HistoryMessage[];
-  image?: string;
-  retrievedDocuments: Awaited<ReturnType<typeof retrieveRelevantDocuments>>;
-}): Promise<FormattedAnswer> {
-  let lastError: unknown;
-
-  for (const modelName of GENERATION_MODELS) {
-    try {
-      return await generateWithModel({ ...params, modelName });
-    } catch (error) {
-      lastError = error;
-
-      if (shouldFallbackToNextModelOrKey(error) && modelName !== GENERATION_MODELS[GENERATION_MODELS.length - 1]) {
-        console.warn(`Model ${modelName} sedang tidak tersedia, mencoba model berikutnya.`);
-        continue;
-      }
-
-      throw error;
-    }
-  }
-
-  throw lastError ?? new Error("Semua model Gemini gagal dipakai");
-}
-
-async function generateWithModel(params: {
-  apiKey: string;
-  modelName: string;
-  userMessage: string;
-  history?: HistoryMessage[];
-  image?: string;
-  retrievedDocuments: Awaited<ReturnType<typeof retrieveRelevantDocuments>>;
-}) {
-  const chatModel = new ChatGoogle({
-    model: params.modelName,
-    apiKey: params.apiKey,
-    temperature: 0.2,
-    topP: 0.8,
-  });
-  const structuredModel = chatModel.withStructuredOutput(formattedAnswerSchema, {
-    name: "FormattedAnswer",
-  });
-
-  try {
-    const result = await structuredModel.invoke(buildMessages(params));
-    return sanitizeFormattedAnswer(result);
-  } catch (firstError) {
-    if (shouldFallbackToNextModelOrKey(firstError)) {
-      throw firstError;
-    }
-
-    console.warn("Structured output gagal divalidasi, mencoba satu kali repair.", firstError);
-
-    try {
-      const repairedResult = await structuredModel.invoke(buildMessages({ ...params, repairMode: true }));
-      return sanitizeFormattedAnswer(repairedResult);
-    } catch (repairError) {
-      if (shouldFallbackToNextModelOrKey(repairError)) {
-        throw repairError;
-      }
-
-      console.warn("Repair structured output gagal.", repairError);
-      return fallbackFormattedAnswer("Maaf, jawaban belum bisa disusun dengan format yang valid. Silakan coba tanyakan lagi dengan lebih spesifik.");
-    }
-  }
-}
-
-function buildMessages(params: {
-  userMessage: string;
-  history?: HistoryMessage[];
-  image?: string;
-  retrievedDocuments: Awaited<ReturnType<typeof retrieveRelevantDocuments>>;
-  repairMode?: boolean;
-}) {
-  const userPrompt = buildUserPrompt({
-    userMessage: params.userMessage,
-    history: params.history,
-    retrievedDocuments: params.retrievedDocuments,
-    repairMode: params.repairMode,
-  });
-
-  return [
-    new SystemMessage(SYSTEM_PROMPT),
-    new HumanMessage({
-      ...(params.image
-        ? { contentBlocks: buildMultimodalContent(userPrompt, params.image) }
-        : { content: userPrompt }),
-    }),
-  ];
-}
-
-function buildMultimodalContent(prompt: string, image: string): ContentBlock.Standard[] {
-  return [
-    {
-      type: "text",
-      text: prompt,
-    },
-    {
-      type: "image",
-      url: image,
-    },
-  ];
 }

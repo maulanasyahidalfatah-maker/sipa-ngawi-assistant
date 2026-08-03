@@ -1,6 +1,5 @@
 import { MemoryVectorStore } from "@langchain/classic/vectorstores/memory";
-import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
-import { TaskType } from "@google/generative-ai";
+import { GoogleGenerativeAI, TaskType } from "@google/generative-ai";
 import { createHash } from "crypto";
 import { promises as fs } from "fs";
 import path from "path";
@@ -120,20 +119,28 @@ async function buildVectorStore(apiKey: string): Promise<VectorStoreBundle> {
 }
 
 function createSopEmbeddings(apiKey: string) {
-  const documentEmbeddings = new GoogleGenerativeAIEmbeddings({
-    apiKey,
-    modelName: EMBEDDING_MODEL,
-    taskType: TaskType.RETRIEVAL_DOCUMENT,
-  });
-  const queryEmbeddings = new GoogleGenerativeAIEmbeddings({
-    apiKey,
-    modelName: EMBEDDING_MODEL,
-    taskType: TaskType.RETRIEVAL_QUERY,
-  });
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
 
   return {
-    embedDocuments: (documents: string[]) => documentEmbeddings.embedDocuments(documents),
-    embedQuery: (document: string) => queryEmbeddings.embedQuery(document),
+    embedDocuments: async (documents: string[]) => {
+      const results: number[][] = [];
+      for (const text of documents) {
+        const res = await model.embedContent({
+          content: { role: "user", parts: [{ text }] },
+          taskType: TaskType.RETRIEVAL_DOCUMENT,
+        });
+        results.push(res.embedding.values);
+      }
+      return results;
+    },
+    embedQuery: async (text: string) => {
+      const res = await model.embedContent({
+        content: { role: "user", parts: [{ text }] },
+        taskType: TaskType.RETRIEVAL_QUERY,
+      });
+      return res.embedding.values;
+    },
   };
 }
 
@@ -161,7 +168,7 @@ async function readCachedSopIndex() {
       Array.isArray(cache.documents) &&
       Array.isArray(cache.embeddings) &&
       cache.documents.length === cache.embeddings.length &&
-      cache.embeddings.every((embedding) => Array.isArray(embedding) && embedding.length > 0)
+      cache.embeddings.every((embedding) => Array.isArray(embedding) && embedding.length > 0 && embedding.some(val => val !== 0))
     ) {
       return cache;
     }
@@ -189,7 +196,7 @@ async function writeCachedSopIndex(documents: SopDocument[], embeddings: number[
     await fs.mkdir(path.dirname(SOP_INDEX_CACHE_PATH), { recursive: true });
     await fs.writeFile(SOP_INDEX_CACHE_PATH, JSON.stringify(cache), "utf8");
   } catch (error) {
-    console.warn("Gagal menulis cache embedding SOP. Request tetap dilanjutkan tanpa cache file.", error);
+    console.warn("Gagal menulis cache embedding SOP.", error);
   }
 }
 
@@ -226,11 +233,11 @@ function buildRetrievedResult(query: string, document: SopDocument, semanticScor
 function intentSectionBoost(query: string, document: SopDocument) {
   const title = document.metadata.sectionTitle.toLowerCase();
 
-  if (isLossReportQuery(query) && /(sktlk|kehilangan)/i.test(title)) {
+  if (isDapodikInvalQuery(query) && /(inval|sinkron|validasi|dapodik)/i.test(title)) {
     return 1;
   }
 
-  if (isCommunityDisturbanceQuery(query) && /(pengaduan|mediasi|siskamling)/i.test(title)) {
+  if (isPtkResiduQuery(query) && /(ptk|verval|nuptk|residu|siswa|pd)/i.test(title)) {
     return 0.35;
   }
 
@@ -240,53 +247,47 @@ function intentSectionBoost(query: string, document: SopDocument) {
 function expandRetrievalQuery(query: string) {
   const additions: string[] = [];
 
-  if (isCommunityDisturbanceQuery(query)) {
-    additions.push("pengaduan laporan kriminal perselisihan warga tipiring mediasi problem solving bhabinkamtibmas ketertiban lingkungan RT RW SPKT");
+  if (isDapodikInvalQuery(query)) {
+    additions.push("dapodik data inval gagal sinkronisasi validasi rombel sarpas ptk siswa kurikulum jenjang");
   }
 
-  if (isLossReportQuery(query)) {
-    additions.push("SKTLK laporan kehilangan dokumen barang hilang KTP SIM ATM buku tabungan BPKB sertifikat kronologi SPKT biaya gratis");
+  if (isPtkResiduQuery(query)) {
+    additions.push("vervalpd vervalptk residu nik nuptk nisn mutasi siswa penarikan ptk dinas pendidikan ngawi");
   }
 
   if (!additions.length) {
     return query;
   }
 
-  return normalizeText(`${query}
-${additions.join("\n")}`);
+  return normalizeText(`${query}\n${additions.join("\n")}`);
 }
 
-function isCommunityDisturbanceQuery(query: string) {
+function isDapodikInvalQuery(query: string) {
   return [
-    "bising",
-    "kebisingan",
-    "ganggu",
-    "terganggu",
-    "sound",
-    "horeng",
-    "speaker",
-    "musik",
-    "karaoke",
-    "tetangga",
-    "keributan",
-    "ribut",
-    "berisik",
-    "ketertiban",
+    "inval",
+    "invalid",
+    "sinkron",
+    "sinkronisasi",
+    "dapodik",
+    "gagal sinkron",
+    "beranda",
+    "sarpas",
   ].some((keyword) => query.toLowerCase().includes(keyword));
 }
 
-function isLossReportQuery(query: string) {
+function isPtkResiduQuery(query: string) {
   return [
-    "hilang",
-    "kehilangan",
-    "kecurian",
-    "dokumen",
-    "ktp",
-    "sim",
-    "atm",
-    "buku tabungan",
-    "bpkb",
-    "sertifikat",
+    "ptk",
+    "guru",
+    "nuptk",
+    "verval",
+    "vervalpd",
+    "vervalptk",
+    "residu",
+    "siswa",
+    "mutasi",
+    "nisn",
+    "nik",
   ].some((keyword) => query.toLowerCase().includes(keyword));
 }
 

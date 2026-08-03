@@ -1,14 +1,17 @@
-export const DEFAULT_GENERATION_MODELS = ["gemini-2.5-flash-lite", "gemini-2.5-flash"];
+// Hanya gunakan gemini-2.0-flash
+export const DEFAULT_GENERATION_MODELS = ["gemini-2.0-flash"];
 export const GENERATION_MODELS = getEnvList(process.env.GOOGLE_GENERATION_MODELS, DEFAULT_GENERATION_MODELS);
-export const EMBEDDING_MODEL = process.env.GOOGLE_EMBEDDING_MODEL ?? "gemini-embedding-001";
 
-export const CHUNK_MAX_CHARS = 1600;
-export const CHUNK_OVERLAP_CHARS = 250;
-export const TOP_K_CHUNKS = 5;
-export const TOP_K_CANDIDATES = 12;
-export const MIN_RELEVANCE_SCORE = 0.3;
-export const MAX_HISTORY_MESSAGES = 8;
-export const SOP_INDEX_VERSION = 4;
+export const EMBEDDING_MODEL = process.env.GOOGLE_EMBEDDING_MODEL ?? "text-embedding-004";
+
+export const CHUNK_MAX_CHARS = 1000;
+export const CHUNK_OVERLAP_CHARS = 150;
+export const TOP_K_CHUNKS = 3;
+export const TOP_K_CANDIDATES = 6;
+export const MIN_RELEVANCE_SCORE = 0.1;
+export const MAX_HISTORY_MESSAGES = 4;
+
+export const SOP_INDEX_VERSION = 11;
 
 export function getGeminiApiKeys() {
   return getEnvList([
@@ -51,6 +54,8 @@ export function shouldFallbackToNextModelOrKey(error: unknown) {
     "high demand",
     "internal",
     "server error",
+    "404",
+    "not found"
   ].some((marker) => serializedError.includes(marker));
 }
 

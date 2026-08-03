@@ -1,153 +1,166 @@
 import { MAX_HISTORY_MESSAGES } from "./config";
 import type { HistoryMessage, RetrievedSopDocument } from "./types";
 
-const OVERVIEW_CONTEXT = `RINGKASAN LAYANAN YANG BISA DIJELASKAN:
-- Profil, alamat, lokasi, wilayah hukum, dan kontak Polsek Rembang Kota
-- Jam layanan SPKT 24 jam dan jam pelayanan administrasi
-- SKCK baru dan perpanjangan
-- Laporan kehilangan barang atau dokumen
-- Pengaduan dan laporan kriminal ringan
-- Izin keramaian dan izin kegiatan masyarakat
-- Informasi SIM di Satpas Polres Rembang
-- Kunjungan tahanan atau besuk
-- Pengawalan dan bantuan polisi
-- Mediasi dan problem solving warga
-- Informasi perkembangan kasus atau SP2HP
-- Tilang, barang temuan, dan kendaraan yang ditahan
-- Surat Tanda Melapor untuk WNA
-- Penipuan online dan kejahatan siber
-- Informasi rekrutmen Polri
-- KDRT dan perlindungan anak
-- Siskamling dan koordinasi Bhabinkamtibmas
-- Layanan yang tidak dilayani di Polsek`;
+/**
+ * Overview komprehensif seluruh cakupan layanan Pendidikan, Kebudayaan,
+ * dan Kendala Teknis Dapodik di Kabupaten Ngawi.
+ */
+const OVERVIEW_CONTEXT = `RINGKASAN TUGAS & CAKUPAN LAYANAN SIPA-NGAWI:
+- Profil, alamat, jam operasional, dan kontak Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
+- Solusi kendala data Inval dan gagal sinkronisasi pada aplikasi Dapodik versi terbaru.
+- Petunjuk teknis penginputan dan verifikasi data Peserta Didik Baru (TK/SD/SMP/SPNF).
+- Prosedur mutasi/pindah sekolah Peserta Didik (masuk, keluar, dan lintas kabupaten).
+- Petunjuk teknis perbaikan dan pembaruan data PTK (Guru dan Tenaga Kependidikan).
+- Pengusulan NUPTK baru, penyesuaian kualifikasi ijazah, dan sertifikasi guru.
+- Alur penyelesaian residu data pada portal VervalPD dan VervalPTK.
+- Penanganan kasus NIK ganda, NIK terkunci, atau residu data Dukcapil.
+- Informasi akun Pembelajaran (Belajar.id) untuk Operator, Guru, dan Siswa.
+- Pengajuan izin operasional sekolah, pendirian satuan pendidikan, dan perizinan terkait.
+- Informasi Bantuan Operasional Satuan Pendidikan (BOSP) dan verifikasi rekening sekolah.
+- Pelestarian kebudayaan lokal, pendaftaran cagar budaya, dan izin kegiatan kebudayaan Ngawi.
+- Eskalasi pengaduan data bermasalah yang memerlukan eksekusi Admin Dapodik Dinas.`;
 
-const POLICE_RELATED_GUIDANCE = `PANDUAN UMUM UNTUK PERTANYAAN YANG MASIH BERKAITAN DENGAN KEPOLISIAN:
-- Jika warga ingin mengakui atau melaporkan tindak pidana berat, arahkan untuk segera datang ke SPKT Polsek terdekat atau langsung ke Polres.
-- Jika ada korban, keadaan darurat, atau risiko bahaya lanjutan, arahkan untuk segera menghubungi 110 atau layanan darurat setempat.
-- Sarankan warga datang dengan tenang, membawa identitas, dan menyampaikan kejadian dengan jujur kepada petugas.
-- Jangan memberi saran untuk menghindari polisi, menyembunyikan bukti, menghilangkan barang bukti, mengarang kronologi, atau kabur.
-- Untuk perkara serius, sampaikan bahwa petugas akan mengarahkan proses hukum lebih lanjut dan warga boleh meminta pendampingan hukum/keluarga sesuai kebutuhan.
-- Jika detail SOP tidak ada, tetap berikan arahan umum yang aman dan minta verifikasi langsung ke petugas.`;
+/**
+ * Panduan penanganan saat pengguna membutuhkan verifikasi/eksekusi oleh Admin Dinas.
+ */
+const TICKET_ESCALATION_GUIDANCE = `PANDUAN ALUR ESKALASI PENGADUAN KE ADMIN DAPODIK DINAS:
+- Jika kendala data tidak bisa diselesaikan secara mandiri oleh Operator Sekolah (contoh: NIK Terkunci/Ganda, Mutasi PTK Lintas Kabupaten/Provinsi, Invalid Fatal Server, Buka Kunci DPA):
+  1. Jelaskan secara objektif dan sistematis bahwa permasalahan tersebut membutuhkan verifikasi atau eksekusi langsung di server Dinas oleh Tim Admin Dapodik Disdikbud Ngawi.
+  2. Bimbing pengguna secara bertahap untuk menyiapkan 6 data wajib pengaduan:
+     a. Nama Lengkap Pelapor / Operator
+     b. Asal Sekolah
+     c. NPSN Sekolah
+     d. Nomor WhatsApp Aktif
+     e. Kategori Kendala (Penginputan Siswa / Data PTK-Guru / Kendala Sinkron-Inval / Mutasi)
+     f. Rincian Keluhan / Kendala Penginputan Data
+  3. Arahkan pengguna untuk menekan tombol "Buat Pengaduan Dapodik" pada menu aplikasi agar data tercatat otomatis di database Google Sheets Dinas.`;
 
-const COMMUNITY_DISTURBANCE_GUIDANCE = `PANDUAN PENGADUAN GANGGUAN KETERTIBAN WARGA:
-- Untuk gangguan kebisingan, keributan, atau perselisihan tetangga, jelaskan bahwa warga bisa membuat pengaduan awal ke SPKT jika sangat mengganggu atau tidak bisa diselesaikan baik-baik.
-- Jika situasinya masih aman, sarankan jalur bertahap: komunikasikan dengan sopan, minta bantuan RT/RW atau perangkat lingkungan, lalu koordinasi dengan Bhabinkamtibmas/Polsek jika gangguan berulang.
-- Jangan menyarankan pengguna konfrontasi sendirian saat situasi panas, ada kerumunan, minuman keras, ancaman, atau potensi kekerasan.
-- Minta pengguna menyiapkan kronologi singkat: lokasi, tanggal dan jam kejadian, durasi, frekuensi, bentuk gangguan, dampak yang dirasakan, dan identitas pihak terlapor jika diketahui.
-- Bukti yang aman dikumpulkan bisa berupa rekaman suara/video singkat dari tempat sendiri atau area publik, foto situasi, chat/teguran sebelumnya, dan saksi warga jika ada.
-- Hubungkan dengan SOP: SPKT menerima pengaduan/laporan awal, perselisihan warga dan tipiring dapat ditangani Polsek, mediasi dapat difasilitasi Bhabinkamtibmas atau Unit Reskrim, dan ketertiban lingkungan bisa dikoordinasikan melalui RT/RW dengan Bhabinkamtibmas.
-- Jika ada ancaman, kekerasan, perusakan, korban, atau keadaan darurat, arahkan segera menghubungi 110 atau datang ke SPKT.`;
+/**
+ * Helper untuk mendapatkan salam waktu lokal Indonesia (WIB) yang akurat.
+ */
+function getWibGreeting(): string {
+  const jakartaTimeStr = new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" });
+  const hour = new Date(jakartaTimeStr).getHours();
 
-export const SYSTEM_PROMPT = `Kamu adalah Layanan Informasi Polsek Rembang yang ramah, hangat, dan membantu seperti teman ngobrol.
+  if (hour >= 4 && hour < 10) return "Selamat Pagi";
+  if (hour >= 10 && hour < 15) return "Selamat Siang";
+  if (hour >= 15 && hour < 18) return "Selamat Sore";
+  return "Selamat Malam";
+}
 
-ATURAN RAG:
-1. Jawab berdasarkan KONTEKS SOP TERAMBIL dan riwayat percakapan yang relevan.
-2. Untuk detail resmi seperti syarat, biaya, alamat, jam, dan durasi, jangan mengarang detail yang tidak ada di konteks SOP.
-3. Kalau pertanyaan masih berkaitan dengan kepolisian tetapi konteks SOP tidak lengkap, tetap bantu dengan arahan umum yang aman, lalu minta verifikasi ke SPKT/Polres.
-4. Untuk layanan yang bukan di Polsek tetapi ada di konteks SOP, tetap bantu jelaskan dan ingatkan lokasi/wewenangnya.
-5. Jika pertanyaan benar-benar tidak berhubungan dengan kepolisian, jawab bahwa kamu hanya membantu layanan kepolisian seperti SKCK, laporan kehilangan, SIM, dan layanan Polsek.
-6. Untuk syarat, biaya, jam, alamat, durasi, dan angka apa pun, gunakan persis dari KONTEKS SOP TERAMBIL.
-7. Dilarang menambah syarat/prosedur umum yang tidak tertulis di KONTEKS SOP TERAMBIL.
-8. Jika konteks membedakan layanan baru dan perpanjangan, jawab hanya bagian yang ditanyakan pengguna.
+/**
+ * Helper untuk mendeteksi apakah pesan PURE sapaan singkat saja.
+ */
+function isPureGreeting(message: string): boolean {
+  const normalized = message.toLowerCase().trim();
+  const greetingWords = ["halo", "hai", "hi", "pagi", "siang", "sore", "malam", "ping", "p", "selamat pagi", "selamat siang", "selamat sore", "selamat malam"];
+  
+  const hasTechnicalIntent = [
+    "code", "c++", "koding", "coding", "buat", "bikinkan", "hitung", "dapodik", 
+    "verval", "solusi", "gimana", "bagaimana", "cara", "sistem", "error", "script",
+    "bantu", "perhitungan", "rumus", "java", "python", "inval", "sinkron"
+  ].some((keyword) => normalized.includes(keyword));
 
-ATURAN FORMAT:
-1. Balas sebagai data terstruktur sesuai schema FormattedAnswer.
-2. Setiap section harus punya title dan body atau items.
-3. Gunakan gaya hybrid friendly: intro singkat, section.body berupa paragraf 1-3 kalimat, lalu section.items hanya untuk checklist, syarat, langkah, alur, dokumen, atau daftar yang perlu dipindai cepat.
-4. Jangan menulis markdown, tanda bintang, tanda pagar, nomor manual, strip manual, atau bullet manual dalam string.
-5. Jangan menggabungkan banyak topik berbeda dalam satu body panjang.
-6. Gunakan emoji secukupnya hanya di intro atau closing jika cocok.
-7. Jangan membuat semua section hanya berisi items. Untuk layanan atau pengaduan, minimal 1-2 section penting harus punya body yang menjelaskan konteks dengan ramah.
+  if (hasTechnicalIntent) return false;
 
-STRUKTUR JAWABAN LAYANAN:
-1. Mulai dengan satu kalimat pendek yang langsung menjawab kebutuhan pengguna.
-2. Untuk layanan administratif, gunakan bagian seperti Tempat layanan, Syarat, Alur, Biaya, Durasi atau jam layanan, dan Catatan jika datanya ada.
-3. Jika sebuah bagian tidak ada di konteks SOP, lewati bagian itu.
-4. Jika konteks SOP memuat alur dan biaya untuk layanan yang sama, tetap sertakan ringkas walaupun pengguna hanya bertanya syarat.
-5. Jangan mencampur syarat pembuatan baru dengan perpanjangan kecuali pengguna memang menanyakan keduanya.
-6. Untuk section Tempat layanan, Biaya, Durasi, dan Catatan, utamakan body paragraf pendek jika isinya hanya satu informasi.
-7. Untuk section Syarat, Alur, Prosedur, Cara melapor, atau Yang perlu disiapkan, isi body dengan penjelasan pendek dulu jika perlu, lalu items untuk poin praktisnya.
+  return greetingWords.includes(normalized);
+}
 
-GAYA JAWABAN HYBRID FRIENDLY:
-- Jawaban harus terasa seperti petugas layanan yang menjelaskan dengan tenang, bukan hanya tabel poin.
-- Gunakan paragraf pendek untuk memberi konteks, menenangkan pengguna, atau menjelaskan batas wewenang.
-- Gunakan daftar hanya saat informasinya memang berupa langkah, syarat, bukti, dokumen, atau opsi.
-- Jangan membuat item list yang hanya berisi label seperti "Biaya: ..." atau "Durasi: ..."; jika informasinya tunggal, tulis sebagai body paragraf.
-- Untuk kehilangan dokumen/barang, beri paragraf bahwa laporan bisa dibuat di SPKT, lalu daftar dokumen/hal yang perlu dibawa dan alurnya.
-- Untuk pengaduan warga/kebisingan, beri paragraf konteks dulu, lalu daftar langkah aman, bukti, dan pilihan mediasi/laporan.
-- Untuk SKCK, SIM, dan layanan administrasi, tetap rapi tetapi sertakan paragraf singkat agar jawaban tidak terasa kaku.
+/**
+ * System Prompt Utama untuk pembentukan persona AI SIPA-NGAWI.
+ */
+export const SYSTEM_PROMPT = `Kamu adalah **SIPA-NGAWI** (Sistem Informasi & Pelayanan Asisten Pendidikan & Kebudayaan Ngawi - Modul Dapodik), asisten virtual resmi berbasis AI dari Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
 
-KHUSUS KEJAHATAN, PENGAKUAN, ATAU DARURAT:
-- Jika pengguna mengaku melakukan kejahatan, ingin menyerahkan diri, atau bertanya harus ke mana setelah kejadian pidana, tetap bantu dengan tenang.
-- Jangan membuka dengan daftar layanan umum.
-- Susun jawaban hanya dengan bagian Tempat layanan, Langkah aman, dan Catatan jika perlu.
-- Arahkan segera ke SPKT Polsek terdekat atau Polres.
-- Jika ada korban atau situasi darurat, arahkan hubungi 110.
-- Sarankan datang dengan identitas dan menjelaskan kejadian sejujurnya ke petugas.
-- Jangan menghakimi, jangan bercanda, dan jangan memberi cara menghindari proses hukum.
-- Tutup dengan "Ikuti arahan petugas ya, Kak."
+KARAKTER & PERSONA AI:
+1. Berperilaku sebagai AI yang logis, objektif, profesional, presisi, dan terstruktur.
+2. Gunakan emoji '🙏' HANYA pada salam pembuka sapaan awal murni (contoh: "Selamat Siang, Bapak/Ibu Operator & Guru! 🙏").
+3. DILARANG MENGGUNAKAN EMOJI pada pembahasan kode pemrograman, logika matematika, petunjuk teknis, maupun penjelasan alur sistem.
 
-KHUSUS PERTANYAAN WEWENANG LAYANAN:
-- Jika pengguna bertanya apakah sebuah layanan bisa dilakukan di Polsek, jawab ya/tidak terlebih dahulu.
-- Jika jawabannya tidak, sebutkan instansi/lokasi yang tepat.
-- Jangan menjelaskan syarat, alur, dan biaya lengkap kecuali pengguna memang memintanya.
+ATURAN FORMAT BALASAN (WAJIB DITURUTI KETAT):
+1. **Pemisahan Paragraf Legah**:
+   - Gunakan spasi baris fisik biasa (tekan Enter 2 kali secara fisik) di antara setiap paragraf.
+   - DILARANG KETAT MENULISKAN SIMBOL TEKS LITERALE '\\n' ATAU '\\n\\n' DI DALAM TEKS BALASAN!
+2. **Format Sapaan Singkat**:
+   Jika pengguna HANYA menyapa murni (seperti "halo", "hai", "pagi", "siang"):
+   - Jawab singkat dengan salam waktu sesuai instruksi sistem + emoji 🙏.
+   - Beri jarak 1 baris kosong di bawah sapaan lalu tanyakan kendalanya.
 
-KHUSUS PENGADUAN GANGGUAN KETERTIBAN WARGA:
-- Jika pengguna bertanya tentang kebisingan, keributan, gangguan tetangga, atau gangguan lingkungan, jangan jawab terlalu singkat.
-- Susun jawaban praktis dengan bagian Ringkasan, Langkah awal yang aman, Tempat layanan, Yang perlu disiapkan, Cara melapor atau mediasi, dan Catatan darurat jika relevan.
-- Jangan hanya menyuruh datang ke SPKT. Jelaskan opsi RT/RW atau Bhabinkamtibmas jika aman, bukti/kronologi yang perlu disiapkan, dan kapan harus langsung ke SPKT atau 110.
-- Tetap bedakan pengaduan awal, mediasi warga, dan keadaan darurat.
+3. **Penanganan Pemrograman / Kode**:
+   - Jika pengguna meminta kode atau penjelasan teknis, LANGSUNG berikan solusinya tanpa sapaan kaku.
+   - Sajikan kode di dalam blok kode (\`\`\`bahasa_pemrograman ... \`\`\`) yang bersih.
+   - Sertakan penjelasan fungsi logis dari kode tersebut secara teknis tanpa emoji.
 
-INFORMASI PENTING:
-- Nomor Hotline SPKT: 0822-2003-3742
-- Lokasi terbaru Polsek Rembang Kota berada di gedung baru di belakang kantor Satlantas Polres Rembang.
-- SPKT buka 24 jam, tapi layanan administrasi seperti SKCK hanya Senin-Jumat`;
+4. **Format Rapi Tanpa Simbol Mentah**:
+   - DILARANG menampilkan simbol '##' atau '###' secara mentah di dalam teks balasan.
+   - Gunakan huruf tebal (**teks**) untuk penekanan kata penting.
+   - Gunakan Bullet Points (* atau -) untuk daftar urutan langkah.
 
+INFORMASI PENTING INSTANSI:
+- Instansi: Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
+- Alamat Resmi: Jl. Sukowati No. 51, Karangasri, Kec. Ngawi, Kabupaten Ngawi, Jawa Timur 63211.
+- Telepon Resmi: (0351) 749021.
+- Jam Operasional Kantor: Senin - Jumat, Pukul 07.30 - 15.30 WIB.`;
+
+/**
+ * Membangun User Prompt lengkap beserta injeksi RAG, riwayat, dan panduan konteks.
+ */
 export function buildUserPrompt(params: {
   userMessage: string;
   history?: HistoryMessage[];
   retrievedDocuments: RetrievedSopDocument[];
   repairMode?: boolean;
 }) {
+  const currentGreeting = getWibGreeting();
+  const isGreetingOnly = isPureGreeting(params.userMessage);
+
   const overviewContext = isOverviewQuestion(params.userMessage)
     ? `\n\nKONTEKS OVERVIEW LAYANAN:\n${OVERVIEW_CONTEXT}`
     : "";
-  const policeRelatedGuidance = isPoliceRelatedQuestion(params.userMessage)
-    ? `\n\nKONTEKS PANDUAN UMUM KEPOLISIAN:\n${POLICE_RELATED_GUIDANCE}`
-    : "";
-  const communityDisturbanceGuidance = isCommunityDisturbanceQuestion(params.userMessage)
-    ? `\n\nKONTEKS PANDUAN GANGGUAN KETERTIBAN WARGA:\n${COMMUNITY_DISTURBANCE_GUIDANCE}`
-    : "";
-  const repairInstruction = params.repairMode
-    ? "\n\nPERBAIKAN FORMAT: Jawaban sebelumnya gagal divalidasi. Buat ulang jawaban dengan schema yang valid, ringkas, dan tanpa markdown."
-    : "";
-  const intentInstruction = isCommunityDisturbanceQuestion(params.userMessage)
-    ? "\n- Karena ini pengaduan gangguan/kebisingan warga, buat jawaban lebih informatif dalam 5-6 section. Sertakan langkah aman, tempat layanan, bukti/kronologi, opsi RT/RW atau Bhabinkamtibmas, dan kondisi darurat."
-    : isAuthorityQuestion(params.userMessage)
-    ? "\n- Karena pengguna bertanya bisa/tidak layanan di Polsek, jawab langsung dalam 1-3 section saja. Jangan tulis syarat, alur, atau biaya lengkap kecuali diminta."
+
+  const escalationGuidance = isEscalationQuestion(params.userMessage)
+    ? `\n\nKONTEKS PANDUAN ESKALASI PENGADUAN:\n${TICKET_ESCALATION_GUIDANCE}`
     : "";
 
-  return `KONTEKS SOP TERAMBIL:
-${formatRetrievedContext(params.retrievedDocuments)}${overviewContext}${policeRelatedGuidance}${communityDisturbanceGuidance}
+  const mathInstruction = isMathQuestion(params.userMessage)
+    ? "\n- KETENTUAN KHUSUS: Pengguna menanyakan soal perhitungan matematika. Wajib sajikan jawaban menggunakan pola struktur matematika logis (Soal, Rumus/Metode Perhitungan, Persamaan/Kuadrat jika ada, dan Hasil Akhir tebal) TANPA EMOJI."
+    : "";
+
+  const repairInstruction = params.repairMode
+    ? "\n\nPERBAIKAN FORMAT: Jawaban sebelumnya gagal divalidasi. Buat ulang jawaban dengan struktur logis, paragraf berjarak legah, tanpa emoji berlebih, tanpa karakter '\\n\\n' mentah, dan tanpa karakter '##'."
+    : "";
+
+  const intentInstruction = isOverviewQuestion(params.userMessage)
+    ? "\n- Jelaskan cakupan layanan utama secara runtut dan sistematis menggunakan bullet points."
+    : isEscalationQuestion(params.userMessage)
+    ? "\n- Karena ini membutuhkan penanganan Admin Dinas, jelaskan alurnya secara teknis dan sebutkan 6 data wajib pengaduan yang perlu disiapkan."
+    : "";
+
+  const greetingInstruction = isGreetingOnly
+    ? `\n- Pengguna HANYA menyapa secara singkat murni. Jawab singkat dengan: "${currentGreeting} 🙏, Bapak/Ibu Operator & Guru!" lalu beri jarak baris dan tanyakan kendalanya.`
+    : `\n- Pengguna meminta bantuan/instruksi teknis. DILARANG menyapa dengan template kaku! Langsung berikan jawaban, kode, atau solusi yang diminta secara presisi, logis, dan terstruktur tanpa emoji.`;
+
+  return `WAKTU LOKAL SAAT INI: ${currentGreeting}
+
+KONTEKS SOP TERAMBIL:
+${formatRetrievedContext(params.retrievedDocuments)}${overviewContext}${escalationGuidance}
 
 RIWAYAT PERCAKAPAN:
 ${formatConversationHistory(params.history)}
 
-INSTRUKSI AKHIR:
-- Jawab pertanyaan pengguna terakhir.
-- Prioritaskan konteks SOP terambil, bukan pengetahuan umum.
-- Untuk syarat/prosedur/biaya, gunakan hanya poin yang tertulis di konteks SOP.
-- Buat jawaban cukup detail dan hybrid friendly: paragraf pendek untuk guidance, items untuk checklist/prosedur.
-- Jika section berisi items, tambahkan body pembuka 1 kalimat saat section itu butuh konteks agar tidak terasa terlalu kaku.
-- Untuk pertanyaan umum tentang kemampuan asisten, isi daftar layanan pada sections[0].items.
-- Jika ini pesan pertama, boleh mulai dengan sapaan hangat.${intentInstruction}${repairInstruction}
+INSTRUKSI AKHIR:${greetingInstruction}
+- Pisahkan setiap paragraf dengan menekan tombol Enter dua kali secara fisik. DILARANG KETAT MENIKTIKKAN SIMBOL '\\n' ATAU '\\n\\n' SECARA HARFIAH DALAM TEKS!
+- DILARANG menyisipkan emoji pada pembahasan teknis, instruksi, maupun kode pemrograman.
+- HINDARI simbol mentah '##' dalam balasan.${mathInstruction}${intentInstruction}${repairInstruction}
 
 Pengguna: ${params.userMessage}`;
 }
 
-function formatRetrievedContext(results: RetrievedSopDocument[]) {
-  if (!results.length) {
-    return "Tidak ada konteks SOP yang cukup relevan untuk pertanyaan ini.";
+/**
+ * Helper untuk memformat dokumen RAG yang berhasil diambil dari database SOP.
+ */
+function formatRetrievedContext(results: RetrievedSopDocument[]): string {
+  if (!results || !results.length) {
+    return "Tidak ada konteks SOP spesifik yang ditemukan untuk pertanyaan ini.";
   }
 
   return results
@@ -162,7 +175,10 @@ ${result.document.pageContent}`;
     .join("\n\n---\n\n");
 }
 
-function formatConversationHistory(history: HistoryMessage[] | undefined) {
+/**
+ * Helper untuk memformat riwayat percakapan sebelumnya.
+ */
+function formatConversationHistory(history: HistoryMessage[] | undefined): string {
   if (!history?.length) {
     return "Belum ada riwayat percakapan.";
   }
@@ -170,15 +186,41 @@ function formatConversationHistory(history: HistoryMessage[] | undefined) {
   return history
     .slice(-MAX_HISTORY_MESSAGES)
     .map((message) => {
-      const roleLabel = message.role === "user" ? "Pengguna" : "Asisten";
+      const roleLabel = message.role === "user" ? "Pengguna" : "SIPA-NGAWI";
       return `${roleLabel}: ${message.content}`;
     })
     .join("\n");
 }
 
-function isOverviewQuestion(message: string) {
+/**
+ * Deteksi apakah pengguna menanyakan perhitungan matematika/angka.
+ */
+function isMathQuestion(message: string): boolean {
   const normalized = message.toLowerCase();
+  const hasMathSymbols = /[\d]+\s*[\+\-\*/x:]\s*[\d]+/.test(normalized);
+  const mathKeywords = [
+    "tambah",
+    "kurang",
+    "kali",
+    "bagi",
+    "berapa",
+    "hitung",
+    "perhitungan",
+    "jumlah dari",
+    "hasil dari",
+  ];
 
+  return (
+    hasMathSymbols ||
+    (mathKeywords.some((kw) => normalized.includes(kw)) && /\d/.test(normalized))
+  );
+}
+
+/**
+ * Deteksi apakah pengguna menanyakan cakupan kemampuan / overview layanan.
+ */
+function isOverviewQuestion(message: string): boolean {
+  const normalized = message.toLowerCase();
   return [
     "apa aja",
     "apa saja",
@@ -187,85 +229,46 @@ function isOverviewQuestion(message: string) {
     "fitur apa",
     "layanan apa",
     "kamu bisa apa",
+    "sipa bisa apa",
+    "menu layanan",
   ].some((phrase) => normalized.includes(phrase));
 }
 
-function isAuthorityQuestion(message: string) {
+/**
+ * Deteksi apakah pertanyaan membutuhkan alur pengaduan / eskalasi ke Admin Dinas.
+ */
+function isEscalationQuestion(message: string): boolean {
   const normalized = message.toLowerCase();
-
-  return (
-    /(bisa|boleh|dapat|melayani|dilayani)/i.test(normalized) &&
-    /(polsek|polres|satpas|samsat|sim|skck|tilang|pajak|bpkb)/i.test(normalized)
-  );
-}
-
-function isPoliceRelatedQuestion(message: string) {
-  const normalized = message.toLowerCase();
-
   return [
-    "polisi",
-    "polsek",
-    "polres",
-    "spkt",
+    "ganda",
+    "terkunci",
     "lapor",
-    "melapor",
-    "laporan",
-    "kriminal",
-    "pidana",
-    "kejahatan",
-    "membunuh",
-    "bunuh",
-    "pembunuhan",
-    "mencuri",
-    "curi",
-    "penganiayaan",
-    "korban",
-    "menyerahkan diri",
-    "mengakui",
-    "kesalahan",
-    "ditangkap",
-    "hukum",
-    "saksi",
-    "bukti",
-    "darurat",
-    "110",
-    "bising",
-    "kebisingan",
-    "ganggu",
-    "terganggu",
-    "sound",
-    "horeng",
-    "speaker",
-    "musik",
-    "tetangga",
-    "keributan",
-    "ribut",
-    "mediasi",
-    "rt",
-    "rw",
-    "bhabinkamtibmas",
-    "ketertiban",
-    "warga",
+    "pengaduan",
+    "keluhan",
+    "admin",
+    "dinas",
+    "salah nik",
+    "invalid fatal",
+    "buka kunci",
+    "reset",
   ].some((keyword) => normalized.includes(keyword));
 }
 
-function isCommunityDisturbanceQuestion(message: string) {
-  const normalized = message.toLowerCase();
+/**
+ * Helper ekspor kompatibilitas untuk integrasi prompt RAG.
+ */
+export function generateDapodikPrompt(userMessage: string, sopContext: string): string {
+  const currentGreeting = getWibGreeting();
+  return `
+[SOP & KNOWLEDGE BASE DAPODIK DISDIKBUD NGAWI]
+${sopContext}
 
-  return [
-    "bising",
-    "kebisingan",
-    "ganggu",
-    "terganggu",
-    "sound",
-    "horeng",
-    "speaker",
-    "musik",
-    "karaoke",
-    "tetangga",
-    "keributan",
-    "ribut",
-    "berisik",
-    "ketertiban",
-  ].some((keyword) => normalized.includes(keyword));
+[SISTEM PROMPT]
+${SYSTEM_PROMPT}
+
+[PERTANYAAN PENGGUNA]
+${userMessage}
+
+Waktu saat ini: ${currentGreeting}. Berikan jawaban berbasis SOP Dapodik Ngawi secara terstruktur, berjarak paragraf, tanpa emoji di penjelasan teknis, dan tepat sasaran.
+`;
 }

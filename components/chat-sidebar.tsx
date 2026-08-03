@@ -1,9 +1,12 @@
+"use client";
+
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Plus,
   Download,
-  ScanEye,
+  FileSpreadsheet,
   X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,31 +14,42 @@ import { cn } from "@/lib/utils";
 interface ChatSidebarProps {
   onNewChat: () => void;
   onDownload: () => void;
-  onObjectDetection: () => void;
+  onOpenForm?: () => void;
   isOpen: boolean;
   onClose: () => void;
-  currentMode: 'chat' | 'object-detection';
+  currentMode?: "chat" | "form";
 }
 
 export function ChatSidebar({
   onNewChat,
   onDownload,
-  onObjectDetection,
+  onOpenForm,
   isOpen,
   onClose,
-  currentMode
+  currentMode = "chat",
 }: ChatSidebarProps) {
-  const runMobileAction = (action: () => void) => {
-    action();
+  // Fungsi penangan aksi menu (Mendukung aksi mobile & fallback modal)
+  const runAction = (action?: () => void) => {
+    if (action) {
+      action();
+    } else {
+      // Fallback jika onOpenForm lupa dikirim dari parent component
+      const fallbackBtn = document.querySelector(
+        'button[data-trigger="open-pengaduan"]'
+      ) as HTMLButtonElement;
+      if (fallbackBtn) {
+        fallbackBtn.click();
+      }
+    }
     onClose();
   };
 
   return (
     <>
-      {/* Overlay for mobile */}
+      {/* Overlay Backdrop Tampilan Mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/20 z-30 lg:hidden backdrop-blur-sm transition-opacity duration-300"
+          className="fixed inset-0 bg-black/20 z-30 lg:hidden backdrop-blur-xs transition-opacity duration-300"
           onClick={onClose}
         />
       )}
@@ -45,77 +59,86 @@ export function ChatSidebar({
           "fixed inset-y-0 left-0 lg:relative lg:inset-auto w-[min(84vw,20rem)] sm:w-72 lg:w-[260px] flex flex-col h-dvh lg:h-full z-40 border-r transition-transform duration-300 ease-in-out bg-[#F9F9F9] shadow-xl lg:shadow-none",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
-        style={{ borderColor: '#E5E7EB' }}
+        style={{ borderColor: "#E5E7EB" }}
       >
-        {/* Sidebar Header */}
-        <div className="p-4 flex items-center justify-between relative z-10 flex-shrink-0">
+        {/* Sidebar Header: Branding Resmi Disdikbud Kab. Ngawi */}
+        <div className="p-4 flex items-center justify-between relative z-10 flex-shrink-0 border-b border-neutral-200/80">
           <div className="flex items-center gap-3">
-            <img
-              src="/Untitled-design.png"
-              alt="Polsek Rembang Logo"
-              className="w-8 h-8 rounded-full object-cover border border-neutral-200 bg-white"
-            />
+            <div className="w-9 h-9 relative flex-shrink-0 flex items-center justify-center">
+              <img
+                src="/logo-ngawi.png"
+                alt="Logo Pemkab Ngawi"
+                className="w-full h-full object-contain drop-shadow-xs"
+              />
+            </div>
+
             <div className="flex flex-col">
-              <h1 className="font-medium text-sm leading-tight text-neutral-800 tracking-tight">
-                Polsek Rembang
+              <h1 className="font-bold text-sm leading-tight text-[#006837] tracking-tight">
+                SIPA-NGAWI
               </h1>
               <p className="text-[11px] text-neutral-500 font-medium">
-                Asisten Virtual
+                Disdikbud Kab. Ngawi
               </p>
             </div>
           </div>
+
           <Button
             variant="ghost"
             size="icon"
             className="lg:hidden h-8 w-8 text-neutral-500 hover:text-neutral-800 hover:bg-neutral-200/60 rounded-lg"
             onClick={onClose}
+            type="button"
+            title="Tutup Menu"
           >
             <X className="w-4 h-4" />
           </Button>
         </div>
 
-        {/* Navigation Items */}
+        {/* Menu Navigasi Sidebar */}
         <ScrollArea className="flex-1 overflow-y-auto px-3">
-          <div className="space-y-1 py-2">
+          <div className="space-y-1 py-3">
 
-            {/* New Chat Button / Chat Mode */}
+            {/* 1. Tombol Obrolan Baru */}
             <button
-              onClick={() => runMobileAction(onNewChat)}
+              type="button"
+              onClick={() => runAction(onNewChat)}
               className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200",
-                currentMode === 'chat'
-                  ? "bg-white shadow-sm border border-neutral-200/80 text-neutral-900 font-medium"
-                  : "text-neutral-600 hover:bg-neutral-200/50 hover:text-neutral-900 border border-transparent font-medium"
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 font-medium cursor-pointer",
+                currentMode === "chat"
+                  ? "bg-white shadow-xs border border-neutral-200 text-[#006837]"
+                  : "text-neutral-600 hover:bg-green-50 hover:text-[#006837] border border-transparent"
               )}
             >
-              <Plus className="w-4 h-4" />
-              Obrolan Baru
+              <Plus className="w-4 h-4 text-[#006837] shrink-0" />
+              <span>Obrolan Baru</span>
             </button>
 
-            {/* Object Detection Mode */}
+            {/* 2. Menu Form Pengaduan / Tiket (Sudah Terhubung Sempurna) */}
             <button
-              onClick={() => runMobileAction(onObjectDetection)}
+              type="button"
+              onClick={() => runAction(onOpenForm)}
               className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200",
-                currentMode === 'object-detection'
-                  ? "bg-white shadow-sm border border-neutral-200/80 text-neutral-900 font-medium"
-                  : "text-neutral-600 hover:bg-neutral-200/50 hover:text-neutral-900 border border-transparent font-medium"
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 font-medium cursor-pointer",
+                currentMode === "form"
+                  ? "bg-white shadow-xs border border-neutral-200 text-[#006837]"
+                  : "text-neutral-600 hover:bg-green-50 hover:text-[#006837] border border-transparent"
               )}
             >
-              <ScanEye className="w-4 h-4" />
-              Deteksi Objek AI
+              <FileSpreadsheet className="w-4 h-4 text-[#006837] shrink-0" />
+              <span>Pengaduan / Tiket</span>
             </button>
 
-            {/* Divider */}
-            <div className="my-2 border-t border-neutral-200/60 mx-1"></div>
+            {/* Pembatas Line */}
+            <div className="my-2 border-t border-neutral-200/80 mx-1" />
 
-            {/* Download Transcript */}
+            {/* 3. Unduh Transkrip Percakapan */}
             <button
-              onClick={() => runMobileAction(onDownload)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-200/50 hover:text-neutral-900 transition-colors border border-transparent"
+              type="button"
+              onClick={() => runAction(onDownload)}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:bg-neutral-200/60 hover:text-neutral-900 transition-colors border border-transparent cursor-pointer"
             >
-              <Download className="w-4 h-4" />
-              Unduh Transkrip
+              <Download className="w-4 h-4 text-neutral-500 shrink-0" />
+              <span>Unduh Transkrip PDF</span>
             </button>
 
           </div>
