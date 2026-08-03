@@ -707,7 +707,7 @@ export function ChatInterface({
     <div className="flex min-w-0 flex-col w-full h-full overflow-hidden relative bg-[#FAFAFA]">
       {/* Header Bar Utama */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200 bg-white/90 backdrop-blur-md sticky top-0 z-40 shrink-0 shadow-sm border-t-4 border-t-[#006837]">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <Button
             variant="ghost"
             size="icon"
@@ -717,23 +717,17 @@ export function ChatInterface({
           >
             <Menu className="w-5 h-5" />
           </Button>
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 relative flex-shrink-0 flex items-center justify-center">
-              <img
-                src="/logo-ngawi.png"
-                alt="Logo Pemkab Ngawi"
-                className="w-full h-full object-contain drop-shadow-sm"
-              />
-            </div>
 
-            <div>
-              <h1 className="font-bold text-sm sm:text-base text-[#006837] leading-tight">
-                SIPA-NGAWI
-              </h1>
-              <p className="text-[10px] sm:text-xs text-neutral-500">
-                Disdikbud Kabupaten Ngawi
-              </p>
-            </div>
+          {/* LOGO DENGAN SUB-TEXT DI BAWAHNYA (TANPA TEKS SIPA-NGAWI SAMPLING) */}
+          <div className="flex flex-col items-start min-w-0">
+            <img
+              src="/Asisten-Virtual-SIPA-NGAWI.png"
+              alt="Logo SIPA-NGAWI Disdikbud Ngawi"
+              className="h-12 sm:h-16 w-auto object-contain drop-shadow-sm"
+            />
+            <p className="text-[10px] sm:text-xs text-neutral-500 font-medium tracking-tight truncate">
+              Asisten Virtual Disdikbud Kabupaten Ngawi
+            </p>
           </div>
         </div>
 
@@ -742,7 +736,7 @@ export function ChatInterface({
             variant="outline"
             size="sm"
             onClick={onNewChat}
-            className="h-8 gap-1.5 text-xs text-neutral-600 hover:text-[#006837] hover:bg-green-50 rounded-full border-neutral-200"
+            className="h-8 gap-1.5 text-xs text-neutral-600 hover:text-[#006837] hover:bg-green-50 rounded-full border-neutral-200 shrink-0 ml-2"
             type="button"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -756,16 +750,15 @@ export function ChatInterface({
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 w-full min-h-0">
           <div className="min-h-full w-full max-w-2xl mx-auto flex flex-col items-center justify-center py-6 sm:py-10">
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 text-center">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 relative flex-shrink-0 flex items-center justify-center">
+              <div className="h-16 sm:h-24 w-auto relative flex-shrink-0 flex items-center justify-center">
                 <img
-                  src="/logo-ngawi.png"
-                  alt="Logo Pemkab Ngawi"
-                  className="w-full h-full object-contain drop-shadow-md"
+                  src="/Asisten-Virtual-LOGO-SIPA-NGAWI.png"
+                  alt="Logo SIPA-NGAWI"
+                  className="h-full w-auto object-contain drop-shadow-md"
                 />
               </div>
 
               <div>
-                {/* Sapaan dinamis waktu + emoji salam 🙏 yang rapi */}
                 <h1 className="text-xl sm:text-2xl font-bold text-[#006837] tracking-tight leading-tight">
                   {getGreetingText()} 🙏, Bapak/Ibu Operator &amp; Guru!
                 </h1>
@@ -1126,7 +1119,7 @@ export function ChatInterface({
                     <p className="text-neutral-600 mt-0.5 leading-relaxed">{formData.rincian}</p>
                   </div>
                   <div className="pt-2 text-[10px] text-neutral-400 italic">
-                    * Laporan tersimpan di database server Dinas &amp; direkapitulasi berkala ke <strong>avidusfathcorp@gmail.com</strong>.
+                    * Laporan tersimpan di database server Dinas &amp; direkapitulasi berkala.
                   </div>
                 </div>
 

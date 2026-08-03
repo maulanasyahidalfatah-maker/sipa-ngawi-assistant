@@ -1,10 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
+import OpenAI from "openai";
 import { createChatResponse } from "@/lib/rag/service";
 import { serializeError } from "@/lib/rag/config";
 import type { ChatRequestBody } from "@/lib/rag/types";
 import { sendBatchReportEmail, TicketItem } from "@/lib/email-service";
 
+// Menggunakan import dari @/lib/prompt (Pastikan path folder src/lib/prompt.ts sesuai)
+import { SYSTEM_PROMPT, buildUserPrompt } from "@/lib/prompt";
+
 export const runtime = "nodejs";
+
+/**
+ * Inisialisasi SDK OpenAI untuk Endpoint DeepSeek
+ */
+const deepseek = new OpenAI({
+  baseURL: "https://api.deepseek.com",
+  apiKey: process.env.DEEPSEEK_API_KEY || "",
+});
 
 /**
  * Penampung memori sementara di server untuk melacak batch 30 pengaduan
@@ -12,9 +24,6 @@ export const runtime = "nodejs";
 let ticketMemoryBatch: TicketItem[] = [];
 let globalTicketCounter = 0;
 
-/**
- * Interface Payload untuk Submit Pengaduan
- */
 export interface TicketDataPayload {
   namaPelapor: string;
   asalSekolah: string;
@@ -31,9 +40,10 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as ChatRequestBody & {
       action?: string;
       ticketData?: TicketDataPayload;
+      history?: any[];
     };
 
-    const { message, image, action, ticketData } = body;
+    const { message, image, action, ticketData, history = [] } = body;
 
     // =========================================================================
     // FITUR 1: SUBMIT PENGADUAN DAPODIK KE GOOGLE SHEETS & REKAP EMAIL PDF
@@ -63,10 +73,9 @@ export async function POST(request: NextRequest) {
         ticketNumber: globalTicketCounter.toString(),
       };
 
-      // Simpan tiket ke memori batch
       ticketMemoryBatch.push(newTicket);
 
-      // 1. Meneruskan data ke Webhook Google Sheets (jika dikonfigurasi)
+      // Webhook Google Sheets
       const webhookUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK;
       let sheetStatus = "Skipped (Webhook URL belum diset)";
 
@@ -78,15 +87,12 @@ export async function POST(request: NextRequest) {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(newTicket),
-            redirect: "follow", // Mencegah error saat Google Apps Script melakukan redirect 302
+            redirect: "follow",
           });
 
           if (sheetResponse.ok) {
             sheetStatus = "Tersimpan ke Google Sheets";
           } else {
-            console.warn(
-              `⚠️ Google Sheets Webhook Response Not OK: ${sheetResponse.statusText}`
-            );
             sheetStatus = `Gagal Sheets (${sheetResponse.statusText})`;
           }
         } catch (err) {
@@ -95,19 +101,15 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // 2. OTOMASI EMAIL REKAP PDF VIA RESEND
-      // Dikirim setiap kali mencapai kelipatan 30 data pengaduan
+      // Email Rekap via Resend (Setiap 30 Tiket)
       let emailStatus = "Menunggu kuota 30 pengaduan";
 
       if (ticketMemoryBatch.length >= 30) {
         try {
-          // Panggil fungsi pengirim email & PDF dari lib/email-service.ts
           await sendBatchReportEmail([...ticketMemoryBatch], globalTicketCounter);
           emailStatus = `Rekap PDF 30 pengaduan berhasil dikirim ke ${
             process.env.EMAIL_REKAP_TARGET || "avidusfathcorp@gmail.com"
           }`;
-          
-          // Reset batch memory setelah berhasil dikirim
           ticketMemoryBatch = [];
         } catch (emailErr) {
           console.error("❌ Error sending Resend batch email:", emailErr);
@@ -128,7 +130,7 @@ export async function POST(request: NextRequest) {
     }
 
     // =========================================================================
-    // FITUR 2: CHAT AI GROQ DENGAN RAG DAPODIK & FORMATTER LOGIKA
+    // FITUR 2: CHAT AI DUAL ENGINE (GROQ RAG + DEEPSEEK FALLBACK)
     // =========================================================================
     if (!message && !image) {
       return NextResponse.json(
@@ -137,55 +139,70 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Mengambil API Key Groq dari .env.local (Mendukung Multi-Key dipisah koma)
-    const rawKeys =
+    const rawGroqKeys =
       process.env.GROQ_API_KEYS ||
       process.env.GROQ_API_KEY ||
       process.env.GOOGLE_GENAI_API_KEYS ||
       "";
 
-    const apiKeys = rawKeys
+    const groqApiKeys = rawGroqKeys
       .split(",")
       .map((k) => k.trim())
       .filter(Boolean);
 
-    // -------------------------------------------------------------------------
-    // DEBUG LOGGING: Cek Groq API Keys yang berhasil dibaca oleh Next.js
-    // -------------------------------------------------------------------------
-    console.log("==========================================");
-    console.log("🔍 [DEBUG SIPA-NGAWI] Checking Loaded Groq API Keys:");
-    console.log(`Jumlah Key Terdeteksi: ${apiKeys.length}`);
-    if (apiKeys.length > 0) {
-      console.log(
-        "Key Pertama Aktif:",
-        `${apiKeys[0].substring(0, 6)}...${apiKeys[0].substring(apiKeys[0].length - 4)}`
-      );
-    } else {
-      console.log("Key Ditemukan: TIDAK DITEMUKAN");
-    }
-    console.log("==========================================");
-
-    if (apiKeys.length === 0) {
-      console.error(
-        "❌ GROQ_API_KEYS tidak ditemukan di environment variables."
-      );
-      return NextResponse.json(
-        {
-          error:
-            "Kunci API Groq (GROQ_API_KEYS) tidak ditemukan pada file .env.local",
-        },
-        { status: 500 }
-      );
+    // OPSI A: UTAMAKAN ENGINE GROQ RAG
+    if (groqApiKeys.length > 0) {
+      try {
+        console.log("🚀 [SIPA-NGAWI] Memproses pesan via Groq RAG Service...");
+        const chatResponse = await createChatResponse(rawGroqKeys, body);
+        console.log("✅ [SIPA-NGAWI] Berhasil mendapat respons dari Groq API!");
+        return NextResponse.json(chatResponse);
+      } catch (groqError: unknown) {
+        const groqErrMsg =
+          groqError instanceof Error ? groqError.message : String(groqError);
+        console.warn(
+          `⚠️ [SIPA-NGAWI] Groq API bermasalah/limit (${groqErrMsg}). Beralih ke DeepSeek API...`
+        );
+      }
     }
 
-    // Menggunakan string multi-key lengkap (atau key pertama) ke RAG Service
-    const apiKeyPayload = rawKeys;
+    // OPSI B: FALLBACK KE DEEPSEEK API
+    try {
+      console.log("⚡ [SIPA-NGAWI] Memproses pesan via DeepSeek API (deepseek-chat)...");
 
-    console.log("🚀 Mengirim request ke Groq API via RAG Service...");
-    const chatResponse = await createChatResponse(apiKeyPayload, body);
-    console.log("✅ Berhasil mendapat respons dari Groq API!");
+      const formattedUserPrompt = buildUserPrompt({
+        userMessage: message || "",
+        history: history,
+        retrievedDocuments: [],
+      });
 
-    return NextResponse.json(chatResponse);
+      const deepseekCompletion = await deepseek.chat.completions.create({
+        model: "deepseek-chat",
+        messages: [
+          {
+            role: "system",
+            content: SYSTEM_PROMPT,
+          },
+          {
+            role: "user",
+            content: formattedUserPrompt,
+          },
+        ],
+        temperature: 0.3,
+        max_tokens: 2048,
+      });
+
+      const deepseekReply =
+        deepseekCompletion.choices[0]?.message?.content || "";
+
+      return NextResponse.json({
+        reply: deepseekReply,
+        content: deepseekReply,
+      });
+    } catch (deepseekError: unknown) {
+      console.error("❌ [SIPA-NGAWI] DeepSeek API Error:", deepseekError);
+      throw deepseekError;
+    }
   } catch (error: unknown) {
     console.error("💥 Error pada API Route /api/chat:", error);
     const errorMessage =
