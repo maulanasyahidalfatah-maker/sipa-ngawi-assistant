@@ -834,10 +834,27 @@ export function ChatInterface({
         <>
           <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
             <div className="max-w-3xl mx-auto space-y-5 sm:space-y-6 px-3 py-5 sm:p-6 sm:py-8">
-              {messages.map((message) => {
+              {messages.map((message, idx) => {
+                // Pengecekan pesan sebelumnya dari user untuk menghindari false positive saat menanyakan developer
+                const prevUserMsg =
+                  idx > 0 && messages[idx - 1].role === "user"
+                    ? messages[idx - 1].content.toLowerCase()
+                    : "";
+
+                const isDeveloperQuery = [
+                  "developer",
+                  "pembuat",
+                  "dikembangkan",
+                  "merancang",
+                  "maulana",
+                  "siapa kamu",
+                ].some((kw) => prevUserMsg.includes(kw));
+
+                // Form pengaduan HANYA MUNCUL jika BUKAN query developer DAN pesan AI mengarahkan pengaduan
                 const isComplaintResponse =
                   message.role === "assistant" &&
-                  /pengaduan|tiket|formulir|form pengaduan|buat pengaduan|laporkan/i.test(
+                  !isDeveloperQuery &&
+                  /buat pengaduan|formulir pengaduan|lapor|tiket pengaduan|sertakan detail data diri|6 data wajib/i.test(
                     message.content
                   );
 
@@ -870,7 +887,7 @@ export function ChatInterface({
                           <FormattedTextContent content={message.content} />
                         </div>
 
-                        {/* BANNER REKOMENDASI PENGADUAN DALAM CHAT */}
+                        {/* BANNER REKOMENDASI PENGADUAN DALAM CHAT (Hanya untuk keluhan asli) */}
                         {isComplaintResponse && (
                           <div className="w-full mt-4 p-4 border border-green-200 bg-green-50/80 rounded-2xl space-y-3 shadow-xs">
                             <div className="flex items-center gap-2 text-[#006837] font-bold text-sm sm:text-base">
