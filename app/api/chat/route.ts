@@ -40,13 +40,55 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as ChatRequestBody & {
       action?: string;
       ticketData?: TicketDataPayload;
+      targetEmail?: string;
+      dataRekap?: any[];
       history?: any[];
     };
 
-    const { message, image, action, ticketData, history = [] } = body;
+    const { message, image, action, ticketData, targetEmail, dataRekap, history = [] } = body;
 
     // =========================================================================
-    // FITUR 1: SUBMIT PENGADUAN DAPODIK KE GOOGLE SHEETS & REKAP EMAIL PDF
+    // FITUR 1: HANDLER EMAIL MANUAL UNTUK DUNDUH / KIRIM TRANSKRIP REKAPITULASI
+    // =========================================================================
+    if (action === "send_email_transcript") {
+      const emailTarget = targetEmail || process.env.EMAIL_REKAP_TARGET || "avidusfathcorp@gmail.com";
+      const recordsToSend: TicketItem[] = (dataRekap && dataRekap.length > 0)
+        ? dataRekap.map((item: any, idx: number) => ({
+            timestamp: new Date().toISOString(),
+            namaPelapor: item.namaPelapor || "-",
+            asalSekolah: item.asalSekolah || "-",
+            npsn: item.npsn || "-",
+            noWhatsapp: item.noWhatsapp || "-",
+            kategoriKendala: item.kategori || item.kategoriKendala || "-",
+            rincianKeluhan: item.rincian || item.rincianKeluhan || "-",
+            ticketNumber: (idx + 1).toString(),
+          }))
+        : ticketMemoryBatch;
+
+      if (recordsToSend.length === 0) {
+        return NextResponse.json(
+          { error: "Tidak ada data rekapitulasi pengaduan untuk dikirim." },
+          { status: 400 }
+        );
+      }
+
+      try {
+        await sendBatchReportEmail(recordsToSend, globalTicketCounter || recordsToSend.length);
+        return NextResponse.json({
+          success: true,
+          message: `Rekapitulasi ${recordsToSend.length} pengaduan berhasil dikirim ke ${emailTarget}`,
+        });
+      } catch (emailErr) {
+        console.error("❌ Error sending manual report email:", emailErr);
+        return NextResponse.json(
+          { error: "Gagal mengirimkan email rekapitulasi ke server SMTP." },
+          { status: 500 }
+        );
+      }
+    }
+
+    // =========================================================================
+    // FITUR 2: SUBMIT PENGADUAN DAPODIK KE GOOGLE SHEETS & REKAP EMAIL AUTOMATION
     // =========================================================================
     if (action === "submit_ticket" || ticketData) {
       if (!ticketData) {
@@ -73,7 +115,11 @@ export async function POST(request: NextRequest) {
         ticketNumber: globalTicketCounter.toString(),
       };
 
-      ticketMemoryBatch.push(newTicket);
+      ticketMemoryBatch.unshift(newTicket);
+      // Batasi memori server maksimal 30 tiket paling baru
+      if (ticketMemoryBatch.length > 30) {
+        ticketMemoryBatch = ticketMemoryBatch.slice(0, 30);
+      }
 
       // Webhook Google Sheets
       const webhookUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK;
@@ -101,8 +147,8 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Email Rekap via Resend (Setiap 30 Tiket)
-      let emailStatus = "Menunggu kuota 30 pengaduan";
+      // Email Rekap Otomatis via Email Service (Pemicu saat mencapai kelipatan 30 Tiket)
+      let emailStatus = "Pengaduan baru berhasil dicatat";
 
       if (ticketMemoryBatch.length >= 30) {
         try {
@@ -110,10 +156,9 @@ export async function POST(request: NextRequest) {
           emailStatus = `Rekap PDF 30 pengaduan berhasil dikirim ke ${
             process.env.EMAIL_REKAP_TARGET || "avidusfathcorp@gmail.com"
           }`;
-          ticketMemoryBatch = [];
         } catch (emailErr) {
-          console.error("❌ Error sending Resend batch email:", emailErr);
-          emailStatus = "Gagal mengirim email rekap PDF";
+          console.error("❌ Error sending automatic batch email:", emailErr);
+          emailStatus = "Gagal mengirim email rekap PDF otomatis";
         }
       }
 
@@ -130,7 +175,7 @@ export async function POST(request: NextRequest) {
     }
 
     // =========================================================================
-    // FITUR 2: CHAT AI DUAL ENGINE (GROQ RAG + DEEPSEEK FALLBACK)
+    // FITUR 3: CHAT AI DUAL ENGINE (GROQ RAG + DEEPSEEK FALLBACK)
     // =========================================================================
     if (!message && !image) {
       return NextResponse.json(
@@ -198,6 +243,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         reply: deepseekReply,
         content: deepseekReply,
+        response: deepseekReply,
       });
     } catch (deepseekError: unknown) {
       console.error("❌ [SIPA-NGAWI] DeepSeek API Error:", deepseekError);

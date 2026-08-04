@@ -28,7 +28,7 @@ export interface Message {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
-  image?: string; // base64 image data
+  image?: string;
   formatted?: FormattedAnswer;
 }
 
@@ -96,11 +96,11 @@ interface ChatInterfaceProps {
   onToggleSidebar: () => void;
   isSidebarOpen?: boolean;
   onNewChat?: () => void;
+  isModalOpen: boolean;
+  setIsModalOpen: (open: boolean) => void;
+  onPengaduanSubmitted?: (data: PengaduanData) => void;
 }
 
-/**
- * Master Data Sekolah Kabupaten Ngawi Terintegrasi per Jenjang
- */
 const DAFTAR_SEKOLAH_NGAWI = [
   // --- PAUD / TK ---
   { nama: "TK Negeri Pembina Ngawi", jenjang: "TK/PAUD" },
@@ -163,9 +163,13 @@ const DAFTAR_SEKOLAH_NGAWI = [
   { nama: "MAN 2 Ngawi", jenjang: "SMA/SMK/MA" },
 ];
 
-/**
- * Helper untuk mengubah **teks** menjadi elemen <strong>
- */
+const DAFTAR_KATEGORI_KENDALA = [
+  "Kendala Data PTK-Guru dan Penginputan Siswa",
+  "Gagal Sinkronisasi Dapodik",
+  "Residu VervalPD / VervalPTK",
+  "Mutasi / Penarikan Siswa",
+];
+
 function parseBoldText(text: string) {
   if (!text) return "";
   const parts = text.split(/(\*\*.*?\*\*)/g);
@@ -181,17 +185,11 @@ function parseBoldText(text: string) {
   });
 }
 
-/**
- * PARSER CERDAS CHAT AI:
- * - HANYA membuat Kotak Hitam (Code Block) jika berisi kode pemrograman (```).
- * - Pesan biasa, instruksi, dan matematika tampil bersih di latar terang dengan jeda paragraf yang rapi.
- */
 function FormattedTextContent({ content }: { content: string }) {
   const [copiedCodeIndex, setCopiedCodeIndex] = useState<number | null>(null);
 
   if (!content) return null;
 
-  // Split konten berdasarkan Triple Backtick (```)
   const parts = content.split(/(```[\s\S]*?```)/g);
 
   return (
@@ -199,7 +197,6 @@ function FormattedTextContent({ content }: { content: string }) {
       {parts.map((part, index) => {
         if (!part) return null;
 
-        // 1. JIKA KHUSUS KODE PEMROGRAMAN (Diapit ```)
         if (part.startsWith("```") && part.endsWith("```")) {
           const rawCode = part.slice(3, -3).trim();
           const lines = rawCode.split("\n");
@@ -248,7 +245,6 @@ function FormattedTextContent({ content }: { content: string }) {
           );
         }
 
-        // 2. UNTUK PESAN CHAT BIASA (Tampil Bersih di Latar Terang, Paragraf Berjarak)
         const lines = part.split("\n");
         const elements: React.ReactNode[] = [];
         let currentListItems: string[] = [];
@@ -276,7 +272,6 @@ function FormattedTextContent({ content }: { content: string }) {
             return;
           }
 
-          // Render Judul (Menghapus ## / ###)
           if (trimmed.startsWith("#")) {
             flushList(`${index}-${lIdx}`);
             const cleanHeading = trimmed.replace(/^#{1,6}\s*/, "").trim();
@@ -291,14 +286,12 @@ function FormattedTextContent({ content }: { content: string }) {
             return;
           }
 
-          // Render Bullet Point (* / - / •)
           if (trimmed.startsWith("* ") || trimmed.startsWith("- ") || trimmed.startsWith("• ")) {
             const cleanItem = trimmed.replace(/^[\*\-\•]\s+/, "").trim();
             currentListItems.push(cleanItem);
             return;
           }
 
-          // Render Paragraf Biasa (Ditambahkan mb-3 sm:mb-4 agar paragraf pasti berjarak legah)
           flushList(`${index}-${lIdx}`);
           elements.push(
             <p
@@ -326,14 +319,24 @@ export function ChatInterface({
   isLoading,
   onToggleSidebar,
   onNewChat,
+  isModalOpen,
+  setIsModalOpen,
+  onPengaduanSubmitted,
 }: ChatInterfaceProps) {
   const [isListening, setIsListening] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // State Modal Form Pengaduan & Transkrip
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // State Dropdown Custom Sekolah
+  const [isSekolahDropdownOpen, setIsSekolahDropdownOpen] = useState(false);
+  const sekolahDropdownRef = useRef<HTMLDivElement>(null);
+
+  // State Dropdown Custom Kategori Kendala
+  const [isKategoriDropdownOpen, setIsKategoriDropdownOpen] = useState(false);
+  const kategoriDropdownRef = useRef<HTMLDivElement>(null);
+
+  // State Form Pengaduan (DEFAULT KATEGORI KOSONG "")
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pengaduanSuccess, setPengaduanSuccess] = useState(false);
   const [formData, setFormData] = useState<PengaduanData>({
@@ -341,7 +344,7 @@ export function ChatInterface({
     asalSekolah: "",
     npsn: "",
     noWhatsapp: "",
-    kategori: "Kendala Data PTK-Guru dan Penginputan Siswa",
+    kategori: "",
     rincian: "",
   });
 
@@ -367,6 +370,26 @@ export function ChatInterface({
       )}px`;
     }
   }, [input]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        sekolahDropdownRef.current &&
+        !sekolahDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsSekolahDropdownOpen(false);
+      }
+      if (
+        kategoriDropdownRef.current &&
+        !kategoriDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsKategoriDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -409,21 +432,23 @@ export function ChatInterface({
     };
   }, [setInput]);
 
-  // Fungsi membuka form pengaduan secara manual (Form Kosong)
+  const filteredSekolah = DAFTAR_SEKOLAH_NGAWI.filter((item) =>
+    item.nama.toLowerCase().includes((formData.asalSekolah || "").toLowerCase())
+  );
+
   const handleOpenBlankComplaintModal = () => {
     setFormData({
       namaPelapor: "",
       asalSekolah: "",
       npsn: "",
       noWhatsapp: "",
-      kategori: "Kendala Data PTK-Guru dan Penginputan Siswa",
+      kategori: "",
       rincian: "",
     });
     setPengaduanSuccess(false);
     setIsModalOpen(true);
   };
 
-  // Ekstrak data otomatis dari teks pesan assistant jika ada kriteria pengaduan
   const handleOpenComplaintModal = (content: string) => {
     let nama = "";
     let sekolah = "";
@@ -523,12 +548,21 @@ export function ChatInterface({
     }
   };
 
-  // Submit Form Pengaduan ke API Backend `/api/chat`
   const handleSubmitPengaduan = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!formData.kategori) {
+      alert("Silakan pilih Kategori Kendala terlebih dahulu!");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      if (onPengaduanSubmitted) {
+        onPengaduanSubmitted(formData);
+      }
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -558,12 +592,10 @@ export function ChatInterface({
     }
   };
 
-  // Fungsi Cetak Transkrip PDF
   const handlePrintPDF = () => {
     window.print();
   };
 
-  // Fungsi Sapaan Waktu Presisi
   const getGreetingText = () => {
     const hour = new Date().getHours();
     if (hour >= 4 && hour < 10) return "Selamat Pagi";
@@ -718,7 +750,6 @@ export function ChatInterface({
             <Menu className="w-5 h-5" />
           </Button>
 
-          {/* LOGO DENGAN SUB-TEXT DI BAWAHNYA (TANPA TEKS SIPA-NGAWI SAMPLING) */}
           <div className="flex flex-col items-start min-w-0">
             <img
               src="/Asisten-Virtual-SIPA-NGAWI.png"
@@ -770,7 +801,7 @@ export function ChatInterface({
 
             {renderInputCard(true)}
 
-            {/* BARIS SHORTCUT TOMBOL AKSI TERMASUK FORM PENGADUAN */}
+            {/* BARIS SHORTCUT TOMBOL AKSI */}
             <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-center sm:px-2">
               <button
                 type="button"
@@ -806,8 +837,9 @@ export function ChatInterface({
               {messages.map((message) => {
                 const isComplaintResponse =
                   message.role === "assistant" &&
-                  (message.content.includes("Data Wajib Pengaduan") ||
-                    message.content.includes("Buat Pengaduan Dapodik"));
+                  /pengaduan|tiket|formulir|form pengaduan|buat pengaduan|laporkan/i.test(
+                    message.content
+                  );
 
                 return (
                   <div key={message.id} className="w-full">
@@ -952,7 +984,8 @@ export function ChatInterface({
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
+                    {/* CUSTOM AUTOCOMPLETE DROPDOWN UNTUK ASAL SEKOLAH */}
+                    <div className="relative" ref={sekolahDropdownRef}>
                       <label className="block font-semibold text-neutral-700 mb-1">
                         Asal Sekolah *
                       </label>
@@ -960,27 +993,58 @@ export function ChatInterface({
                         <input
                           type="text"
                           required
-                          list="daftar-sekolah-ngawi-list"
                           value={formData.asalSekolah}
-                          onChange={(e) =>
-                            setFormData({ ...formData, asalSekolah: e.target.value })
-                          }
-                          placeholder="Ketik / pilih sekolah (misal: SMPN 2 Karangjati)"
+                          onFocus={() => setIsSekolahDropdownOpen(true)}
+                          onChange={(e) => {
+                            setFormData({ ...formData, asalSekolah: e.target.value });
+                            setIsSekolahDropdownOpen(true);
+                          }}
+                          placeholder="Ketik / pilih sekolah..."
                           className="w-full px-3 py-2 pr-8 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm"
                         />
-
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-neutral-400">
-                          <ChevronDown className="w-4 h-4" />
-                        </div>
-
-                        <datalist id="daftar-sekolah-ngawi-list">
-                          {DAFTAR_SEKOLAH_NGAWI.map((sekolah, idx) => (
-                            <option key={`sekolah-${idx}`} value={sekolah.nama}>
-                              {sekolah.jenjang}
-                            </option>
-                          ))}
-                        </datalist>
+                        <button
+                          type="button"
+                          onClick={() => setIsSekolahDropdownOpen(!isSekolahDropdownOpen)}
+                          className="absolute inset-y-0 right-0 flex items-center px-2.5 text-neutral-400 hover:text-[#006837] transition-colors"
+                        >
+                          <ChevronDown
+                            className={cn(
+                              "w-4 h-4 transition-transform duration-200",
+                              isSekolahDropdownOpen ? "rotate-180 text-[#006837]" : ""
+                            )}
+                          />
+                        </button>
                       </div>
+
+                      {/* POP-UP DROPDOWN LIST CUSTOM SEKOLAH */}
+                      {isSekolahDropdownOpen && (
+                        <div className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100">
+                          {filteredSekolah.length > 0 ? (
+                            filteredSekolah.map((sekolah, idx) => (
+                              <button
+                                key={`sekolah-${idx}`}
+                                type="button"
+                                onClick={() => {
+                                  setFormData({ ...formData, asalSekolah: sekolah.nama });
+                                  setIsSekolahDropdownOpen(false);
+                                }}
+                                className="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-[#006837] transition-colors flex justify-between items-center"
+                              >
+                                <span className="font-medium text-neutral-800 hover:text-[#006837]">
+                                  {sekolah.nama}
+                                </span>
+                                <span className="text-[10px] bg-neutral-100 text-neutral-500 px-1.5 py-0.5 rounded font-mono shrink-0 ml-2">
+                                  {sekolah.jenjang}
+                                </span>
+                              </button>
+                            ))
+                          ) : (
+                            <div className="px-3 py-2.5 text-neutral-400 italic text-center">
+                              Sekolah tidak ditemukan (Ketik manual jika tidak ada)
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     <div>
@@ -1016,35 +1080,57 @@ export function ChatInterface({
                     />
                   </div>
 
-                  <div>
+                  {/* CUSTOM INTERACTIVE DROPDOWN KATEGORI KENDALA (BERSIH & KOSONG DI AWAL) */}
+                  <div className="relative" ref={kategoriDropdownRef}>
                     <label className="block font-semibold text-neutral-700 mb-1">
-                      Kategori Kendala
+                      Kategori Kendala *
                     </label>
-                    <div className="relative">
-                      <select
-                        value={formData.kategori}
-                        onChange={(e) =>
-                          setFormData({ ...formData, kategori: e.target.value })
-                        }
-                        className="w-full px-3 py-2 pr-8 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm appearance-none cursor-pointer"
+                    <div
+                      onClick={() => setIsKategoriDropdownOpen(!isKategoriDropdownOpen)}
+                      className="w-full px-3 py-2 pr-8 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm flex items-center justify-between cursor-pointer select-none"
+                    >
+                      <span
+                        className={cn(
+                          "truncate font-medium",
+                          formData.kategori ? "text-neutral-800" : "text-neutral-400"
+                        )}
                       >
-                        <option value="Kendala Data PTK-Guru dan Penginputan Siswa">
-                          Kendala Data PTK-Guru dan Penginputan Siswa
-                        </option>
-                        <option value="Gagal Sinkronisasi Dapodik">
-                          Gagal Sinkronisasi Dapodik
-                        </option>
-                        <option value="Residu VervalPD / VervalPTK">
-                          Residu VervalPD / VervalPTK
-                        </option>
-                        <option value="Mutasi / Penarikan Siswa">
-                          Mutasi / Penarikan Siswa
-                        </option>
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-neutral-500">
-                        <ChevronDown className="w-4 h-4 text-neutral-500" />
-                      </div>
+                        {formData.kategori || "--- Pilih Kategori Kendala ---"}
+                      </span>
+                      <ChevronDown
+                        className={cn(
+                          "w-4 h-4 text-neutral-500 transition-transform duration-200 shrink-0",
+                          isKategoriDropdownOpen ? "rotate-180 text-[#006837]" : ""
+                        )}
+                      />
                     </div>
+
+                    {/* POP-UP LIST CUSTOM KATEGORI KENDALA */}
+                    {isKategoriDropdownOpen && (
+                      <div className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100">
+                        {DAFTAR_KATEGORI_KENDALA.map((kat, idx) => (
+                          <button
+                            key={`kategori-${idx}`}
+                            type="button"
+                            onClick={() => {
+                              setFormData({ ...formData, kategori: kat });
+                              setIsKategoriDropdownOpen(false);
+                            }}
+                            className={cn(
+                              "w-full text-left px-3 py-2.5 hover:bg-green-50 hover:text-[#006837] transition-colors font-medium flex items-center justify-between",
+                              formData.kategori === kat
+                                ? "bg-green-50/70 text-[#006837] font-semibold"
+                                : "text-neutral-700"
+                            )}
+                          >
+                            <span>{kat}</span>
+                            {formData.kategori === kat && (
+                              <Check className="w-3.5 h-3.5 text-[#006837]" />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div>

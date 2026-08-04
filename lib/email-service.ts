@@ -1,9 +1,6 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-
-// Inisialisasi Resend dengan API Key dari .env.local
-const resend = new Resend(process.env.RESEND_API_KEY || "re_dummy_key");
 
 export interface TicketItem {
   timestamp: string;
@@ -22,7 +19,7 @@ export interface TicketItem {
 export function generateComplaintsPDF(tickets: TicketItem[]): Buffer {
   const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
 
-  // Header Dokumen Resmi
+  // Header Dokumen Resmi Disdikbud Ngawi
   doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(0, 104, 55); // Warna Hijau #006837
@@ -93,33 +90,36 @@ export function generateComplaintsPDF(tickets: TicketItem[]): Buffer {
 }
 
 /**
- * 2. Fungsi Pengirim Email Batch PDF ke avidusfathcorp@gmail.com via Resend
+ * 2. Fungsi Pengirim Email Batch PDF ke avidusfathcorp@gmail.com via Nodemailer (Gmail SMTP)
  */
 export async function sendBatchReportEmail(
   tickets: TicketItem[],
   totalCount: number
 ) {
+  const senderEmail = process.env.SMTP_EMAIL || "avidusfathcorp@gmail.com";
+  const senderPass = process.env.SMTP_PASSWORD || "nzto qijf zbxj lqxs";
   const targetEmail = process.env.EMAIL_REKAP_TARGET || "avidusfathcorp@gmail.com";
-  const apiKey = process.env.RESEND_API_KEY;
-
-  if (!apiKey || apiKey.includes("PASTE_API_KEY")) {
-    console.warn(
-      "⚠️ [SIPA-NGAWI] RESEND_API_KEY belum diisi di .env.local. Pengiriman email PDF dilewati."
-    );
-    return;
-  }
 
   try {
-    // Generate PDF Buffer
+    // 1. Inisialisasi Transporter Nodemailer (Gmail SMTP)
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: senderEmail,
+        pass: senderPass,
+      },
+    });
+
+    // 2. Generate PDF Buffer secara otomatis
     const pdfBuffer = generateComplaintsPDF(tickets);
 
-    // Kirim via Resend API
-    const response = await resend.emails.send({
-      from: "SIPA-NGAWI System <onboarding@resend.dev>", // Gunakan sender bawaan Resend
-      to: [targetEmail],
+    // 3. Eksekusi Pengiriman Email beserta Lampiran PDF
+    const info = await transporter.sendMail({
+      from: `"SIPA-NGAWI System" <${senderEmail}>`,
+      to: targetEmail,
       subject: `[REKAP 30 PENGADUAN] Transkrip Pengaduan Dapodik Disdikbud Ngawi - Tiket #${totalCount}`,
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; max-width: 600px;">
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; max-width: 600px; margin: auto;">
           <h2 style="color: #006837; margin-bottom: 5px;">Laporan Rekapitulasi Pengaduan Official</h2>
           <p style="color: #666; font-size: 13px; margin-top: 0;">SIPA-NGAWI Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi</p>
           <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;" />
@@ -142,15 +142,16 @@ export async function sendBatchReportEmail(
         {
           filename: `Transkrip_Pengaduan_SIPA_NGAWI_${Date.now()}.pdf`,
           content: pdfBuffer,
+          contentType: "application/pdf",
         },
       ],
     });
 
     console.log(
-      `✉️ [SIPA-NGAWI] Email rekap PDF (${tickets.length} data) berhasil dikirim ke ${targetEmail}. Resend ID:`,
-      response.data?.id
+      `✉️ [SIPA-NGAWI] Email rekap PDF (${tickets.length} data) berhasil dikirim via Gmail SMTP ke ${targetEmail}. Message ID:`,
+      info.messageId
     );
   } catch (error) {
-    console.error("❌ Error sending Resend email with PDF:", error);
+    console.error("❌ Error sending Gmail SMTP email with PDF:", error);
   }
 }
