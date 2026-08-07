@@ -613,7 +613,7 @@ export function ChatInterface({
     }
   };
 
-  // SUBMIT PENGADUAN & TERUSKAN DATA TERMASUK BUKTI PELAPOR KE ADMIN
+  // ✅ SUBMIT PENGADUAN & TERUSKAN DATA TERMASUK SIMPAN KE LOCALSTORAGE ADMIN
   const handleSubmitPengaduan = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -634,6 +634,34 @@ export function ChatInterface({
         ...formData,
         buktiKeluhanPelapor: selectedImage || formData.buktiKeluhanPelapor,
       };
+
+      // ✅ SIMPAN LANGSUNG KE LOCALSTORAGE AGAR DASHBOARD ADMIN BISA MEMBACA KELUHAN BARU
+      if (typeof window !== "undefined") {
+        try {
+          const existingRaw = localStorage.getItem("sipa_rekap_pengaduan");
+          const existingData = existingRaw ? JSON.parse(existingRaw) : [];
+
+          const newAdminTicket = {
+            id: `TK-0${existingData.length + 3}`,
+            namaPelapor: payload.namaPelapor,
+            noWhatsapp: payload.noWhatsapp,
+            asalSekolah: payload.asalSekolah,
+            npsn: payload.npsn,
+            kategori: payload.kategori,
+            rincian: payload.rincian,
+            status: "PENDING",
+            createdAt: new Date().toLocaleDateString("id-ID"),
+          };
+
+          const updatedData = [newAdminTicket, ...existingData];
+          localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(updatedData));
+          
+          // Trigger storage event manual agar tab admin merefresh otomatis
+          window.dispatchEvent(new Event("storage"));
+        } catch (err) {
+          console.error("Gagal menyimpan pengaduan ke localStorage:", err);
+        }
+      }
 
       if (onPengaduanSubmitted) {
         onPengaduanSubmitted(payload);
@@ -1328,7 +1356,7 @@ export function ChatInterface({
                   </div>
                 </form>
               ) : (
-                /* ✅ MODAL STRUK/KONFIRMASI UNTUK PELAPOR (SISI PUBLIK DENGAN SLA DAN TAMPILAN BERSIH) */
+                /* MODAL STRUK/KONFIRMASI UNTUK PELAPOR (SISI PUBLIK DENGAN SLA DAN TAMPILAN BERSIH) */
                 <div id="transkrip-pdf" className="space-y-4 text-neutral-800">
                   <div className="text-center border-b border-neutral-200 pb-3 pr-8">
                     <div className="w-10 h-10 bg-green-100 text-green-700 rounded-full flex items-center justify-center mx-auto mb-2">
