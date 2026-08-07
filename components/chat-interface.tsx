@@ -19,6 +19,10 @@ import {
   Printer,
   AlertCircle,
   ChevronDown,
+  Mail,
+  Download,
+  Clock,
+  CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TextShimmer } from "@/components/core/text-shimmer";
@@ -46,11 +50,13 @@ export interface FormattedAnswerSection {
 
 export interface PengaduanData {
   namaPelapor: string;
+  laporanUntukDataDari: string;
   asalSekolah: string;
   npsn: string;
   noWhatsapp: string;
   kategori: string;
   rincian: string;
+  buktiKeluhanPelapor?: string;
 }
 
 type SpeechRecognitionResultEvent = {
@@ -101,6 +107,17 @@ interface ChatInterfaceProps {
   onPengaduanSubmitted?: (data: PengaduanData) => void;
 }
 
+// MAPPING LOGIKA SINKRONISASI NPSN KE ASAL SEKOLAH
+const DATABASE_SEKOLAH_NGAWI: { [npsn: string]: { nama: string; jenjang: string } } = {
+  "20508506": { nama: "SMPN 2 KARANGJATI", jenjang: "SMP/MTs" },
+  "205758857": { nama: "SMPN 3 NGAWI", jenjang: "SMP/MTs" },
+  "20546740": { nama: "SMKN 1 NGAWI", jenjang: "SMA/SMK/MA" },
+  "20539345": { nama: "SDN MARGOMULYO 1 NGAWI", jenjang: "SD/MI" },
+  "20539350": { nama: "SMAN 1 NGAWI", jenjang: "SMA/SMK/MA" },
+  "20539352": { nama: "SMAN 2 NGAWI", jenjang: "SMA/SMK/MA" },
+};
+
+// DAFTAR SEKOLAH LENGKAP UTUH KABUPATEN NGAWI
 const DAFTAR_SEKOLAH_NGAWI = [
   // --- PAUD / TK ---
   { nama: "TK Negeri Pembina Ngawi", jenjang: "TK/PAUD" },
@@ -134,9 +151,9 @@ const DAFTAR_SEKOLAH_NGAWI = [
   { nama: "SMPN 5 Ngawi", jenjang: "SMP/MTs" },
   { nama: "SMPN 1 Karangjati", jenjang: "SMP/MTs" },
   { nama: "SMPN 2 Karangjati", jenjang: "SMP/MTs" },
+  { nama: "SMPN 3 Karangjati", jenjang: "SMP/MTs" },
   { nama: "SMPN 1 Bringin", jenjang: "SMP/MTs" },
   { nama: "SMPN 2 Bringin", jenjang: "SMP/MTs" },
-  { nama: "SMP Bringin", jenjang: "SMP/MTs" },
   { nama: "SMPN 1 Pangkur", jenjang: "SMP/MTs" },
   { nama: "SMPN 1 Geneng", jenjang: "SMP/MTs" },
   { nama: "SMPN 1 Padas", jenjang: "SMP/MTs" },
@@ -158,9 +175,16 @@ const DAFTAR_SEKOLAH_NGAWI = [
   { nama: "SMKN 1 Geneng", jenjang: "SMA/SMK/MA" },
   { nama: "SMKN 1 Bringin", jenjang: "SMA/SMK/MA" },
   { nama: "SMKN 1 Kasreman", jenjang: "SMA/SMK/MA" },
-  { nama: "SMK Bringin", jenjang: "SMA/SMK/MA" },
+  { nama: "SMKN 1 Paron", jenjang: "SMA/SMK/MA" },
   { nama: "MAN 1 Ngawi", jenjang: "SMA/SMK/MA" },
   { nama: "MAN 2 Ngawi", jenjang: "SMA/SMK/MA" },
+];
+
+const DAFTAR_SUBJEK_DATA = [
+  "Murid / Siswa",
+  "Guru / PTK",
+  "Kepala Sekolah",
+  "Operator Sekolah (OPS)",
 ];
 
 const DAFTAR_KATEGORI_KENDALA = [
@@ -168,6 +192,11 @@ const DAFTAR_KATEGORI_KENDALA = [
   "Gagal Sinkronisasi Dapodik",
   "Residu VervalPD / VervalPTK",
   "Mutasi / Penarikan Siswa",
+  "Perubahan Jam Mengajar (JP) Backend",
+  "NIK Terkunci / Residu Ganda",
+  "Buka Kunci DPA / Server Dinas",
+  "Mutasi PTK / Peserta Didik Lintas Kabupaten",
+  "Keterangan Tambahan / Kendala Lainnya",
 ];
 
 function parseBoldText(text: string) {
@@ -223,7 +252,7 @@ function FormattedTextContent({ content }: { content: string }) {
                 <button
                   type="button"
                   onClick={handleCopyCode}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-neutral-700/60 hover:bg-neutral-600 text-neutral-200 transition-colors text-xs"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-neutral-700/60 hover:bg-neutral-600 text-neutral-200 transition-colors text-xs cursor-pointer"
                 >
                   {copiedCodeIndex === index ? (
                     <>
@@ -332,20 +361,26 @@ export function ChatInterface({
   const [isSekolahDropdownOpen, setIsSekolahDropdownOpen] = useState(false);
   const sekolahDropdownRef = useRef<HTMLDivElement>(null);
 
+  // State Dropdown Custom Subjek Data
+  const [isSubjekDropdownOpen, setIsSubjekDropdownOpen] = useState(false);
+  const subjekDropdownRef = useRef<HTMLDivElement>(null);
+
   // State Dropdown Custom Kategori Kendala
   const [isKategoriDropdownOpen, setIsKategoriDropdownOpen] = useState(false);
   const kategoriDropdownRef = useRef<HTMLDivElement>(null);
 
-  // State Form Pengaduan (DEFAULT KATEGORI KOSONG "")
+  // State Form Pengaduan Lengkap
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pengaduanSuccess, setPengaduanSuccess] = useState(false);
   const [formData, setFormData] = useState<PengaduanData>({
     namaPelapor: "",
+    laporanUntukDataDari: "",
     asalSekolah: "",
     npsn: "",
     noWhatsapp: "",
     kategori: "",
     rincian: "",
+    buktiKeluhanPelapor: undefined,
   });
 
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
@@ -371,6 +406,26 @@ export function ChatInterface({
     }
   }, [input]);
 
+  // LOGIKA SINKRONISASI NPSN -> ASAL SEKOLAH
+  const handleNpsnChange = (val: string) => {
+    const cleanNpsn = val.trim();
+    const matchedSekolah = DATABASE_SEKOLAH_NGAWI[cleanNpsn];
+
+    if (matchedSekolah) {
+      setFormData((prev) => ({
+        ...prev,
+        npsn: cleanNpsn,
+        asalSekolah: matchedSekolah.nama,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        npsn: val,
+        asalSekolah: "",
+      }));
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -378,6 +433,12 @@ export function ChatInterface({
         !sekolahDropdownRef.current.contains(event.target as Node)
       ) {
         setIsSekolahDropdownOpen(false);
+      }
+      if (
+        subjekDropdownRef.current &&
+        !subjekDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsSubjekDropdownOpen(false);
       }
       if (
         kategoriDropdownRef.current &&
@@ -439,11 +500,13 @@ export function ChatInterface({
   const handleOpenBlankComplaintModal = () => {
     setFormData({
       namaPelapor: "",
+      laporanUntukDataDari: "",
       asalSekolah: "",
       npsn: "",
       noWhatsapp: "",
       kategori: "",
       rincian: "",
+      buktiKeluhanPelapor: selectedImage || undefined,
     });
     setPengaduanSuccess(false);
     setIsModalOpen(true);
@@ -470,6 +533,7 @@ export function ChatInterface({
       namaPelapor: nama || prev.namaPelapor,
       asalSekolah: sekolah || prev.asalSekolah,
       rincian: rincian || prev.rincian,
+      buktiKeluhanPelapor: selectedImage || prev.buktiKeluhanPelapor,
     }));
 
     setPengaduanSuccess(false);
@@ -548,6 +612,7 @@ export function ChatInterface({
     }
   };
 
+  // SUBMIT PENGADUAN & TERUSKAN DATA TERMASUK BUKTI PELAPOR KE ADMIN
   const handleSubmitPengaduan = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -556,11 +621,21 @@ export function ChatInterface({
       return;
     }
 
+    if (!formData.laporanUntukDataDari) {
+      alert("Silakan pilih Laporan untuk Data Dari terlebih dahulu!");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      const payload: PengaduanData = {
+        ...formData,
+        buktiKeluhanPelapor: selectedImage || formData.buktiKeluhanPelapor,
+      };
+
       if (onPengaduanSubmitted) {
-        onPengaduanSubmitted(formData);
+        onPengaduanSubmitted(payload);
       }
 
       const response = await fetch("/api/chat", {
@@ -569,18 +644,21 @@ export function ChatInterface({
         body: JSON.stringify({
           action: "submit_ticket",
           ticketData: {
-            namaPelapor: formData.namaPelapor,
-            asalSekolah: formData.asalSekolah,
-            npsn: formData.npsn,
-            noWhatsapp: formData.noWhatsapp,
-            kategoriKendala: formData.kategori,
-            rincianKeluhan: formData.rincian,
+            namaPelapor: payload.namaPelapor,
+            laporanUntukDataDari: payload.laporanUntukDataDari,
+            asalSekolah: payload.asalSekolah,
+            npsn: payload.npsn,
+            noWhatsapp: payload.noWhatsapp,
+            kategoriKendala: payload.kategori,
+            rincianKeluhan: payload.rincian,
+            buktiKeluhanPelapor: payload.buktiKeluhanPelapor,
+            slaDays: 5,
           },
         }),
       });
 
       if (!response.ok) {
-        console.warn("Respon server bermasalah, tetap mengaktifkan modal sukses.");
+        console.warn("Respon server bermasalah, pengaduan diproses secara lokal.");
       }
 
       setPengaduanSuccess(true);
@@ -650,7 +728,7 @@ export function ChatInterface({
               <button
                 type="button"
                 onClick={removeImage}
-                className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors shadow-md"
+                className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors shadow-md cursor-pointer"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -684,7 +762,7 @@ export function ChatInterface({
             <Button
               size="icon"
               variant="ghost"
-              className="h-8 w-8 sm:h-9 sm:w-9 rounded-full text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors shrink-0"
+              className="h-8 w-8 sm:h-9 sm:w-9 rounded-full text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors shrink-0 cursor-pointer"
               title="Upload tangkapan layar/dokumen"
               onClick={() => fileInputRef.current?.click()}
               type="button"
@@ -698,7 +776,7 @@ export function ChatInterface({
               size="icon"
               variant="ghost"
               className={cn(
-                "rounded-full h-8 w-8 sm:h-9 sm:w-9 transition-all duration-200 shrink-0",
+                "rounded-full h-8 w-8 sm:h-9 sm:w-9 transition-all duration-200 shrink-0 cursor-pointer",
                 isListening
                   ? "bg-red-50 text-red-500 hover:bg-red-100 animate-pulse border border-red-200"
                   : "text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100"
@@ -717,7 +795,7 @@ export function ChatInterface({
 
             <button
               type="button"
-              className="rounded-full h-8 w-8 sm:h-9 sm:w-9 transition-all duration-200 flex items-center justify-center disabled:opacity-30 border border-transparent shadow-sm shrink-0"
+              className="rounded-full h-8 w-8 sm:h-9 sm:w-9 transition-all duration-200 flex items-center justify-center disabled:opacity-30 border border-transparent shadow-sm shrink-0 cursor-pointer"
               style={{
                 backgroundColor:
                   input.trim() || selectedImage ? "#006837" : "#F3F4F6",
@@ -743,7 +821,7 @@ export function ChatInterface({
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden h-9 w-9 text-neutral-700 hover:bg-neutral-100 rounded-lg shrink-0"
+            className="lg:hidden h-9 w-9 text-neutral-700 hover:bg-neutral-100 rounded-lg shrink-0 cursor-pointer"
             onClick={onToggleSidebar}
             type="button"
           >
@@ -767,7 +845,7 @@ export function ChatInterface({
             variant="outline"
             size="sm"
             onClick={onNewChat}
-            className="h-8 gap-1.5 text-xs text-neutral-600 hover:text-[#006837] hover:bg-green-50 rounded-full border-neutral-200 shrink-0 ml-2"
+            className="h-8 gap-1.5 text-xs text-neutral-600 hover:text-[#006837] hover:bg-green-50 rounded-full border-neutral-200 shrink-0 ml-2 cursor-pointer"
             type="button"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -806,7 +884,7 @@ export function ChatInterface({
               <button
                 type="button"
                 onClick={handleOpenBlankComplaintModal}
-                className="flex min-w-0 items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 text-[12px] sm:text-sm font-semibold rounded-full border border-green-300 bg-green-50 text-[#006837] hover:bg-[#006837] hover:text-white transition-all duration-200 shadow-sm col-span-2 sm:col-span-1"
+                className="flex min-w-0 items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 text-[12px] sm:text-sm font-semibold rounded-full border border-green-300 bg-green-50 text-[#006837] hover:bg-[#006837] hover:text-white transition-all duration-200 shadow-sm col-span-2 sm:col-span-1 cursor-pointer"
               >
                 <FileText className="w-4 h-4 shrink-0" />
                 <span>Buat Pengaduan Dapodik</span>
@@ -819,7 +897,7 @@ export function ChatInterface({
                     key={action.id}
                     type="button"
                     onClick={() => handleQuickAction(action.message)}
-                    className="flex min-w-0 items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 text-[12px] sm:text-sm font-medium rounded-full border border-neutral-200 bg-white text-neutral-600 hover:text-[#006837] hover:bg-green-50 hover:border-green-300 transition-all duration-200 shadow-sm"
+                    className="flex min-w-0 items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 text-[12px] sm:text-sm font-medium rounded-full border border-neutral-200 bg-white text-neutral-600 hover:text-[#006837] hover:bg-green-50 hover:border-green-300 transition-all duration-200 shadow-sm cursor-pointer"
                   >
                     <IconComponent className="w-3.5 h-3.5 text-[#006837] shrink-0" />
                     <span className="min-w-0 truncate">{action.label}</span>
@@ -835,7 +913,6 @@ export function ChatInterface({
           <ScrollArea className="min-h-0 flex-1 overflow-y-auto">
             <div className="max-w-3xl mx-auto space-y-5 sm:space-y-6 px-3 py-5 sm:p-6 sm:py-8">
               {messages.map((message, idx) => {
-                // Pengecekan pesan sebelumnya dari user untuk menghindari false positive saat menanyakan developer
                 const prevUserMsg =
                   idx > 0 && messages[idx - 1].role === "user"
                     ? messages[idx - 1].content.toLowerCase()
@@ -850,11 +927,10 @@ export function ChatInterface({
                   "siapa kamu",
                 ].some((kw) => prevUserMsg.includes(kw));
 
-                // Form pengaduan HANYA MUNCUL jika BUKAN query developer DAN pesan AI mengarahkan pengaduan
                 const isComplaintResponse =
                   message.role === "assistant" &&
                   !isDeveloperQuery &&
-                  /buat pengaduan|formulir pengaduan|lapor|tiket pengaduan|sertakan detail data diri|6 data wajib/i.test(
+                  /buat pengaduan|formulir pengaduan|lapor|tiket pengaduan|sertakan detail data diri/i.test(
                     message.content
                   );
 
@@ -887,7 +963,6 @@ export function ChatInterface({
                           <FormattedTextContent content={message.content} />
                         </div>
 
-                        {/* BANNER REKOMENDASI PENGADUAN DALAM CHAT (Hanya untuk keluhan asli) */}
                         {isComplaintResponse && (
                           <div className="w-full mt-4 p-4 border border-green-200 bg-green-50/80 rounded-2xl space-y-3 shadow-xs">
                             <div className="flex items-center gap-2 text-[#006837] font-bold text-sm sm:text-base">
@@ -895,12 +970,12 @@ export function ChatInterface({
                               <span>Lengkapi &amp; Kirim Pengaduan Resmi</span>
                             </div>
                             <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
-                              Sistem mendeteksi rincian keluhan Anda. Klik tombol di bawah untuk membuka Form Pengaduan Otomatis, menyimpan data ke database Dinas, dan mencetak Transkrip Pengaduan.
+                              Sistem mendeteksi rincian keluhan Anda. Klik tombol di bawah untuk membuka Form Pengaduan Otomatis, menyimpan data ke database Dinas, dan memproses tiket pengaduan.
                             </p>
                             <Button
                               type="button"
                               onClick={() => handleOpenComplaintModal(message.content)}
-                              className="w-full sm:w-auto bg-[#006837] hover:bg-[#00522c] text-white font-semibold py-2.5 px-5 rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm transition-all"
+                              className="w-full sm:w-auto bg-[#006837] hover:bg-[#00522c] text-white font-semibold py-2.5 px-5 rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
                             >
                               <FileText className="w-4 h-4" />
                               Buka Form &amp; Buat Pengaduan Dapodik
@@ -912,7 +987,7 @@ export function ChatInterface({
                           <button
                             type="button"
                             onClick={() => handleCopy(message.id, message.content)}
-                            className="text-neutral-400 hover:text-[#006837] transition-colors p-1.5 rounded-lg hover:bg-neutral-100 flex items-center space-x-1 text-xs"
+                            className="text-neutral-400 hover:text-[#006837] transition-colors p-1.5 rounded-lg hover:bg-neutral-100 flex items-center space-x-1 text-xs cursor-pointer"
                             title="Salin Tanggapan"
                           >
                             {copiedId === message.id ? (
@@ -960,292 +1035,388 @@ export function ChatInterface({
         </>
       )}
 
-      {/* MODAL POP-UP FORM PENGADUAN & TRANSKRIP PDF */}
+      {/* MODAL POP-UP FORM PENGADUAN & TRANSKRIP UNTUK PELAPOR (SISI PUBLIK) */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-neutral-100 p-5 sm:p-6 relative">
+          <div className="bg-white rounded-3xl shadow-xl max-w-xl w-full max-h-[90vh] flex flex-col border border-neutral-100 relative overflow-hidden">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 p-2 text-neutral-400 hover:text-neutral-700 rounded-full hover:bg-neutral-100 transition-colors"
+              className="absolute top-4 right-4 z-20 p-2 text-neutral-400 hover:text-neutral-700 rounded-full hover:bg-neutral-100 transition-colors bg-white/80 backdrop-blur-xs cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
-            {!pengaduanSuccess ? (
-              <form onSubmit={handleSubmitPengaduan} className="space-y-4">
-                <div className="border-b border-neutral-100 pb-3">
-                  <h2 className="text-lg font-bold text-[#006837]">
-                    Form Pengaduan Resmi Dapodik
-                  </h2>
-                  <p className="text-xs text-neutral-500 mt-0.5">
-                    Disdikbud Kabupaten Ngawi - Notifikasi Otomatis ke Admin
-                  </p>
-                </div>
-
-                <div className="space-y-3 text-xs sm:text-sm">
-                  <div>
-                    <label className="block font-semibold text-neutral-700 mb-1">
-                      Nama Lengkap Pelapor / Operator *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.namaPelapor}
-                      onChange={(e) =>
-                        setFormData({ ...formData, namaPelapor: e.target.value })
-                      }
-                      placeholder="Contoh: Burhanudin"
-                      className="w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837]"
-                    />
+            <div className="p-5 sm:p-6 overflow-y-auto flex-1 my-1 mr-1 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-300">
+              {!pengaduanSuccess ? (
+                <form onSubmit={handleSubmitPengaduan} className="space-y-3.5">
+                  <div className="border-b border-neutral-100 pb-2.5 pr-8">
+                    <h2 className="text-lg font-bold text-[#006837]">
+                      Form Pengaduan Resmi Dapodik
+                    </h2>
+                    <p className="text-xs text-neutral-500 mt-0.5">
+                      Disdikbud Kabupaten Ngawi - Notifikasi SLA Waktu Tunggu 5 Hari Kerja
+                    </p>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {/* CUSTOM AUTOCOMPLETE DROPDOWN UNTUK ASAL SEKOLAH */}
-                    <div className="relative" ref={sekolahDropdownRef}>
-                      <label className="block font-semibold text-neutral-700 mb-1">
-                        Asal Sekolah *
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          required
-                          value={formData.asalSekolah}
-                          onFocus={() => setIsSekolahDropdownOpen(true)}
-                          onChange={(e) => {
-                            setFormData({ ...formData, asalSekolah: e.target.value });
-                            setIsSekolahDropdownOpen(true);
-                          }}
-                          placeholder="Ketik / pilih sekolah..."
-                          className="w-full px-3 py-2 pr-8 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setIsSekolahDropdownOpen(!isSekolahDropdownOpen)}
-                          className="absolute inset-y-0 right-0 flex items-center px-2.5 text-neutral-400 hover:text-[#006837] transition-colors"
-                        >
-                          <ChevronDown
-                            className={cn(
-                              "w-4 h-4 transition-transform duration-200",
-                              isSekolahDropdownOpen ? "rotate-180 text-[#006837]" : ""
-                            )}
-                          />
-                        </button>
-                      </div>
-
-                      {/* POP-UP DROPDOWN LIST CUSTOM SEKOLAH */}
-                      {isSekolahDropdownOpen && (
-                        <div className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100">
-                          {filteredSekolah.length > 0 ? (
-                            filteredSekolah.map((sekolah, idx) => (
-                              <button
-                                key={`sekolah-${idx}`}
-                                type="button"
-                                onClick={() => {
-                                  setFormData({ ...formData, asalSekolah: sekolah.nama });
-                                  setIsSekolahDropdownOpen(false);
-                                }}
-                                className="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-[#006837] transition-colors flex justify-between items-center"
-                              >
-                                <span className="font-medium text-neutral-800 hover:text-[#006837]">
-                                  {sekolah.nama}
-                                </span>
-                                <span className="text-[10px] bg-neutral-100 text-neutral-500 px-1.5 py-0.5 rounded font-mono shrink-0 ml-2">
-                                  {sekolah.jenjang}
-                                </span>
-                              </button>
-                            ))
-                          ) : (
-                            <div className="px-3 py-2.5 text-neutral-400 italic text-center">
-                              Sekolah tidak ditemukan (Ketik manual jika tidak ada)
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
+                  <div className="space-y-3 text-xs sm:text-sm">
+                    {/* BARIS 1: NAMA LENGKAP PELAPOR */}
                     <div>
                       <label className="block font-semibold text-neutral-700 mb-1">
-                        NPSN Sekolah *
+                        Nama Lengkap Pelapor / Operator *
                       </label>
                       <input
                         type="text"
                         required
-                        value={formData.npsn}
+                        value={formData.namaPelapor}
                         onChange={(e) =>
-                          setFormData({ ...formData, npsn: e.target.value })
+                          setFormData({ ...formData, namaPelapor: e.target.value })
                         }
-                        placeholder="205xxxxx"
+                        placeholder="Contoh: Burhanudin"
                         className="w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837]"
                       />
                     </div>
-                  </div>
 
-                  <div>
-                    <label className="block font-semibold text-neutral-700 mb-1">
-                      Nomor WhatsApp Aktif *
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      value={formData.noWhatsapp}
-                      onChange={(e) =>
-                        setFormData({ ...formData, noWhatsapp: e.target.value })
-                      }
-                      placeholder="081234567890"
-                      className="w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837]"
-                    />
-                  </div>
+                    {/* BARIS 2: GRID 2 KOLOM (ASAL SEKOLAH & NOMOR WHATSAPP) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="relative" ref={sekolahDropdownRef}>
+                        <label className="block font-semibold text-neutral-700 mb-1">
+                          Asal Sekolah *
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            required
+                            value={formData.asalSekolah}
+                            onFocus={() => setIsSekolahDropdownOpen(true)}
+                            onChange={(e) => {
+                              setFormData({ ...formData, asalSekolah: e.target.value });
+                              setIsSekolahDropdownOpen(true);
+                            }}
+                            placeholder="Ketik / pilih sekolah..."
+                            className="w-full px-3 py-2 pr-8 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setIsSekolahDropdownOpen(!isSekolahDropdownOpen)}
+                            className="absolute inset-y-0 right-0 flex items-center px-2.5 text-neutral-400 hover:text-[#006837] transition-colors cursor-pointer"
+                          >
+                            <ChevronDown
+                              className={cn(
+                                "w-4 h-4 transition-transform duration-200",
+                                isSekolahDropdownOpen ? "rotate-180 text-[#006837]" : ""
+                              )}
+                            />
+                          </button>
+                        </div>
 
-                  {/* CUSTOM INTERACTIVE DROPDOWN KATEGORI KENDALA (BERSIH & KOSONG DI AWAL) */}
-                  <div className="relative" ref={kategoriDropdownRef}>
-                    <label className="block font-semibold text-neutral-700 mb-1">
-                      Kategori Kendala *
-                    </label>
-                    <div
-                      onClick={() => setIsKategoriDropdownOpen(!isKategoriDropdownOpen)}
-                      className="w-full px-3 py-2 pr-8 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm flex items-center justify-between cursor-pointer select-none"
-                    >
-                      <span
-                        className={cn(
-                          "truncate font-medium",
-                          formData.kategori ? "text-neutral-800" : "text-neutral-400"
+                        {isSekolahDropdownOpen && (
+                          <div className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full">
+                            {filteredSekolah.length > 0 ? (
+                              filteredSekolah.map((sekolah, idx) => (
+                                <button
+                                  key={`sekolah-${idx}`}
+                                  type="button"
+                                  onClick={() => {
+                                    setFormData({ ...formData, asalSekolah: sekolah.nama });
+                                    setIsSekolahDropdownOpen(false);
+                                  }}
+                                  className="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-[#006837] transition-colors flex justify-between items-center cursor-pointer"
+                                >
+                                  <span className="font-medium text-neutral-800 hover:text-[#006837]">
+                                    {sekolah.nama}
+                                  </span>
+                                  <span className="text-[10px] bg-neutral-100 text-neutral-500 px-1.5 py-0.5 rounded font-mono shrink-0 ml-2">
+                                    {sekolah.jenjang}
+                                  </span>
+                                </button>
+                              ))
+                            ) : (
+                              <div className="px-3 py-2.5 text-neutral-400 italic text-center">
+                                Sekolah tidak ditemukan (Ketik manual)
+                              </div>
+                            )}
+                          </div>
                         )}
-                      >
-                        {formData.kategori || "--- Pilih Kategori Kendala ---"}
-                      </span>
-                      <ChevronDown
-                        className={cn(
-                          "w-4 h-4 text-neutral-500 transition-transform duration-200 shrink-0",
-                          isKategoriDropdownOpen ? "rotate-180 text-[#006837]" : ""
-                        )}
-                      />
+                      </div>
+
+                      <div>
+                        <label className="block font-semibold text-neutral-700 mb-1">
+                          Nomor WhatsApp Aktif *
+                        </label>
+                        <input
+                          type="tel"
+                          required
+                          value={formData.noWhatsapp}
+                          onChange={(e) =>
+                            setFormData({ ...formData, noWhatsapp: e.target.value })
+                          }
+                          placeholder="081234567890"
+                          className="w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837]"
+                        />
+                      </div>
                     </div>
 
-                    {/* POP-UP LIST CUSTOM KATEGORI KENDALA */}
-                    {isKategoriDropdownOpen && (
-                      <div className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100">
-                        {DAFTAR_KATEGORI_KENDALA.map((kat, idx) => (
-                          <button
-                            key={`kategori-${idx}`}
-                            type="button"
-                            onClick={() => {
-                              setFormData({ ...formData, kategori: kat });
-                              setIsKategoriDropdownOpen(false);
-                            }}
+                    {/* BARIS 3: GRID 2 KOLOM (LAPORAN UNTUK DATA DARI & NPSN AUTO-SINKRON) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="relative" ref={subjekDropdownRef}>
+                        <label className="block font-semibold text-neutral-700 mb-1 text-xs">
+                          Laporan untuk Data Dari *
+                        </label>
+                        <div
+                          onClick={() => setIsSubjekDropdownOpen(!isSubjekDropdownOpen)}
+                          className="relative w-full px-3 py-2 pr-10 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm cursor-pointer select-none h-10 flex items-center justify-center"
+                        >
+                          <span
                             className={cn(
-                              "w-full text-left px-3 py-2.5 hover:bg-green-50 hover:text-[#006837] transition-colors font-medium flex items-center justify-between",
-                              formData.kategori === kat
-                                ? "bg-green-50/70 text-[#006837] font-semibold"
-                                : "text-neutral-700"
+                              "truncate font-medium text-center w-full",
+                              formData.laporanUntukDataDari ? "text-neutral-800" : "text-neutral-400"
                             )}
                           >
-                            <span>{kat}</span>
-                            {formData.kategori === kat && (
-                              <Check className="w-3.5 h-3.5 text-[#006837]" />
-                            )}
-                          </button>
-                        ))}
+                            {formData.laporanUntukDataDari || "---- Pilih Menu Laporan ----"}
+                          </span>
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center">
+                            <ChevronDown
+                              className={cn(
+                                "w-4 h-4 text-neutral-500 transition-transform duration-200",
+                                isSubjekDropdownOpen ? "rotate-180 text-[#006837]" : ""
+                              )}
+                            />
+                          </div>
+                        </div>
+
+                        {isSubjekDropdownOpen && (
+                          <div className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full">
+                            {DAFTAR_SUBJEK_DATA.map((subjek, idx) => (
+                              <button
+                                key={`subjek-${idx}`}
+                                type="button"
+                                onClick={() => {
+                                  setFormData({ ...formData, laporanUntukDataDari: subjek });
+                                  setIsSubjekDropdownOpen(false);
+                                }}
+                                className={cn(
+                                  "w-full text-left px-3 py-2.5 hover:bg-green-50 hover:text-[#006837] transition-colors font-medium flex items-center justify-between cursor-pointer",
+                                  formData.laporanUntukDataDari === subjek
+                                    ? "bg-green-50/70 text-[#006837] font-semibold"
+                                    : "text-neutral-700"
+                                )}
+                              >
+                                <span>{subjek}</span>
+                                {formData.laporanUntukDataDari === subjek && (
+                                  <Check className="w-3.5 h-3.5 text-[#006837]" />
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    )}
+
+                      <div>
+                        <label className="block font-semibold text-neutral-700 mb-1 text-xs flex justify-between">
+                          <span>NPSN Sekolah *</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.npsn}
+                          onChange={(e) => handleNpsnChange(e.target.value)}
+                          placeholder="Ketik NPSN (cth: 205XXXXX)"
+                          className="w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] text-xs sm:text-sm h-10 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    {/* BARIS 4: KATEGORI KENDALA */}
+                    <div className="relative" ref={kategoriDropdownRef}>
+                      <label className="block font-semibold text-neutral-700 mb-1 text-xs">
+                        Kategori Kendala *
+                      </label>
+                      <div
+                        onClick={() => setIsKategoriDropdownOpen(!isKategoriDropdownOpen)}
+                        className="relative w-full px-3 py-2 pr-10 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm cursor-pointer select-none h-10 flex items-center justify-center"
+                      >
+                        <span
+                          className={cn(
+                            "truncate font-medium text-center w-full",
+                            formData.kategori ? "text-neutral-800" : "text-neutral-400"
+                          )}
+                        >
+                          {formData.kategori || "---- Pilih Kategori Kendala ----"}
+                        </span>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center">
+                          <ChevronDown
+                            className={cn(
+                              "w-4 h-4 text-neutral-500 transition-transform duration-200",
+                              isKategoriDropdownOpen ? "rotate-180 text-[#006837]" : ""
+                            )}
+                          />
+                        </div>
+                      </div>
+
+                      {isKategoriDropdownOpen && (
+                        <div className="absolute z-50 left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full">
+                          {DAFTAR_KATEGORI_KENDALA.map((kat, idx) => (
+                            <button
+                              key={`kategori-${idx}`}
+                              type="button"
+                              onClick={() => {
+                                setFormData({ ...formData, kategori: kat });
+                                setIsKategoriDropdownOpen(false);
+                              }}
+                              className={cn(
+                                "w-full text-left px-3 py-2.5 hover:bg-green-50 hover:text-[#006837] transition-colors font-medium flex items-center justify-between cursor-pointer",
+                                formData.kategori === kat
+                                  ? "bg-green-50/70 text-[#006837] font-semibold"
+                                  : "text-neutral-700"
+                              )}
+                            >
+                              <span>{kat}</span>
+                              {formData.kategori === kat && (
+                                <Check className="w-3.5 h-3.5 text-[#006837] shrink-0 ml-2" />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* BARIS 5: RINCIAN KELUHAN */}
+                    <div>
+                      <label className="block font-semibold text-neutral-700 mb-1 text-xs">
+                        Rincian Keluhan / Deskripsi *
+                      </label>
+                      <div className="relative rounded-xl border border-neutral-200 focus-within:border-[#006837] overflow-hidden bg-white">
+                        <textarea
+                          rows={3}
+                          required
+                          value={formData.rincian}
+                          onChange={(e) =>
+                            setFormData({ ...formData, rincian: e.target.value })
+                          }
+                          placeholder="Tuliskan rincian keluhan atau deskripsi kendala..."
+                          className="w-full px-3 py-2 text-xs border-0 focus:outline-none focus:ring-0 resize-none [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400"
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="block font-semibold text-neutral-700 mb-1">
-                      Rincian Keluhan / Deskripsi *
-                    </label>
-                    <textarea
-                      rows={3}
-                      required
-                      value={formData.rincian}
-                      onChange={(e) =>
-                        setFormData({ ...formData, rincian: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] text-xs"
-                    />
+                  <div className="pt-2 flex justify-end items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsModalOpen(false)}
+                      className="rounded-full border-neutral-300 px-4 py-2 text-xs cursor-pointer"
+                    >
+                      Batal
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="bg-[#006837] hover:bg-[#00522c] text-white rounded-full px-5 py-2 text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
+                    >
+                      {isSubmitting ? (
+                        "Memproses..."
+                      ) : (
+                        <>
+                          <Send className="w-3.5 h-3.5" />
+                          Kirim Pengaduan Official
+                        </>
+                      )}
+                    </Button>
                   </div>
-                </div>
+                </form>
+              ) : (
+                /* ✅ MODAL STRUK/KONFIRMASI UNTUK PELAPOR (SISI PUBLIK DENGAN SLA DAN TAMPILAN BERSIH) */
+                <div id="transkrip-pdf" className="space-y-4 text-neutral-800">
+                  <div className="text-center border-b border-neutral-200 pb-3 pr-8">
+                    <div className="w-10 h-10 bg-green-100 text-green-700 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <CheckCircle2 className="w-6 h-6 text-[#006837]" />
+                    </div>
+                    <h3 className="font-bold text-base text-[#006837]">
+                      Pengaduan Berhasil Diteruskan ke Server Dinas!
+                    </h3>
+                    
+                    {/* INFORMASI WAKTU TUNGGU SLA 5 HARI */}
+                    <div className="mt-2.5 p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-center justify-center gap-2 font-medium">
+                      <Clock className="w-4 h-4 text-amber-700 shrink-0" />
+                      <span>
+                        Batas Waktu Penanganan SLA Admin Dinas: <strong>Maksimal 5 Hari Kerja</strong>.
+                      </span>
+                    </div>
+                  </div>
 
-                <div className="pt-2 flex justify-end gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsModalOpen(false)}
-                    className="rounded-xl text-xs"
-                  >
-                    Batal
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="bg-[#006837] hover:bg-[#00522c] text-white rounded-xl text-xs flex items-center gap-1.5"
-                  >
-                    {isSubmitting ? (
-                      "Memproses..."
-                    ) : (
-                      <>
-                        <Send className="w-3.5 h-3.5" />
-                        Kirim Pengaduan Official
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </form>
-            ) : (
-              /* TAMPILAN TRANSKRIP BUKTI PENGADUAN & CETAK PDF */
-              <div className="space-y-4 text-neutral-800">
-                <div className="text-center border-b border-neutral-200 pb-3">
-                  <div className="w-10 h-10 bg-green-100 text-green-700 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Check className="w-6 h-6" />
+                  {/* TABEL REKAPITULASI BERSAMA KOLOM SUBJEK DATA & WA */}
+                  <div className="overflow-x-auto rounded-2xl border border-neutral-200 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead className="bg-[#006837] text-white font-semibold">
+                        <tr>
+                          <th className="p-2.5 whitespace-nowrap">No Tiket</th>
+                          <th className="p-2.5 whitespace-nowrap">Tanggal</th>
+                          <th className="p-2.5 whitespace-nowrap">Pelapor</th>
+                          <th className="p-2.5 whitespace-nowrap">Subjek Data</th>
+                          <th className="p-2.5 whitespace-nowrap">Sekolah / NPSN</th>
+                          <th className="p-2.5 whitespace-nowrap">No. WA</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-neutral-100 bg-white">
+                        <tr className="hover:bg-neutral-50">
+                          <td className="p-2.5 font-bold text-neutral-700 whitespace-nowrap">#1</td>
+                          <td className="p-2.5 whitespace-nowrap">{new Date().toLocaleDateString("id-ID")}</td>
+                          <td className="p-2.5 whitespace-nowrap font-bold text-neutral-800">
+                            {formData.namaPelapor || "-"}
+                          </td>
+                          <td className="p-2.5 font-semibold text-emerald-800 whitespace-nowrap">
+                            {formData.laporanUntukDataDari || "Operator Sekolah (OPS)"}
+                          </td>
+                          <td className="p-2.5 whitespace-nowrap">
+                            <div className="font-semibold text-neutral-800">{formData.asalSekolah || "-"}</div>
+                            <div className="text-[10px] text-neutral-500 font-mono">NPSN: {formData.npsn || "-"}</div>
+                          </td>
+                          <td className="p-2.5 font-mono whitespace-nowrap">{formData.noWhatsapp || "-"}</td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
-                  <h3 className="font-bold text-base text-[#006837]">
-                    Pengaduan Berhasil Terkirim!
-                  </h3>
-                  <p className="text-xs text-neutral-500">
-                    SIPA-NGAWI Disdikbud Kabupaten Ngawi
-                  </p>
-                </div>
 
-                <div id="transkrip-pdf" className="bg-neutral-50 p-4 rounded-2xl border border-neutral-200 text-xs space-y-2">
-                  <div className="font-bold border-b pb-1 text-[#006837] flex justify-between">
-                    <span>TRANSKRIP BUKTI PENGADUAN</span>
-                    <span className="text-neutral-400 font-normal">
-                      {new Date().toLocaleDateString("id-ID")}
-                    </span>
-                  </div>
-                  <div><strong>Nama Pelapor:</strong> {formData.namaPelapor}</div>
-                  <div><strong>Sekolah / NPSN:</strong> {formData.asalSekolah} ({formData.npsn})</div>
-                  <div><strong>WhatsApp:</strong> {formData.noWhatsapp}</div>
-                  <div><strong>Kategori:</strong> {formData.kategori}</div>
-                  <div className="pt-1 border-t">
-                    <strong>Detail Rincian Keluhan:</strong>
-                    <p className="text-neutral-600 mt-0.5 leading-relaxed">{formData.rincian}</p>
-                  </div>
-                  <div className="pt-2 text-[10px] text-neutral-400 italic">
-                    * Laporan tersimpan di database server Dinas &amp; direkapitulasi berkala.
-                  </div>
-                </div>
+                  {/* TOMBOL-TOMBOL AKSI STRUK PELAPOR */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t">
+                    <div className="flex items-center gap-1.5 text-xs text-emerald-800 font-medium">
+                      <Mail className="w-4 h-4 text-[#006837]" />
+                      <span className="truncate max-w-[200px] sm:max-w-xs">Terkirim ke: avidusfathcorp@gmail.com</span>
+                    </div>
 
-                <div className="flex items-center gap-2 pt-2">
-                  <Button
-                    type="button"
-                    onClick={handlePrintPDF}
-                    className="flex-1 bg-[#006837] hover:bg-[#00522c] text-white rounded-xl text-xs flex items-center justify-center gap-1.5"
-                  >
-                    <Printer className="w-4 h-4" />
-                    Cetak Transkrip PDF
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsModalOpen(false)}
-                    className="rounded-xl text-xs"
-                  >
-                    Tutup
-                  </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handlePrintPDF}
+                        className="rounded-full text-xs flex items-center gap-1.5 border-neutral-300 cursor-pointer"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        Unduh PDF
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={handlePrintPDF}
+                        className="bg-[#006837] hover:bg-[#00522c] text-white rounded-full text-xs flex items-center gap-1.5 cursor-pointer shadow-xs"
+                      >
+                        <Printer className="w-3.5 h-3.5" />
+                        Cetak PDF
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setIsModalOpen(false)}
+                        className="rounded-full text-xs px-5 cursor-pointer"
+                      >
+                        Tutup
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}

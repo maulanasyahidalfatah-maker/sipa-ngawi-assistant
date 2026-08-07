@@ -4,8 +4,10 @@ import { createChatResponse } from "@/lib/rag/service";
 import { serializeError } from "@/lib/rag/config";
 import type { ChatRequestBody } from "@/lib/rag/types";
 import { sendBatchReportEmail, TicketItem } from "@/lib/email-service";
+import { writeFile, mkdir } from "fs/promises";
+import path from "path";
 
-// Jalur import diperbaiki langsung merujuk ke lib/rag/prompt.ts
+// Jalur import merujuk ke lib/rag/prompt.ts
 import { SYSTEM_PROMPT, buildUserPrompt } from "@/lib/rag/prompt";
 
 export const runtime = "nodejs";
@@ -24,46 +26,52 @@ const deepseek = new OpenAI({
 let ticketMemoryBatch: TicketItem[] = [];
 let globalTicketCounter = 0;
 
-export interface TicketDataPayload {
-  namaPelapor: string;
-  asalSekolah: string;
-  npsn: string;
-  noWhatsapp: string;
-  kategoriKendala?: string;
-  kategori?: string;
-  rincianKeluhan?: string;
-  rincian?: string;
-}
-
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as ChatRequestBody & {
-      action?: string;
-      ticketData?: TicketDataPayload;
-      targetEmail?: string;
-      dataRekap?: any[];
-      history?: any[];
-    };
+    const rawBody = await request.json();
 
-    const { message, image, action, ticketData, targetEmail, dataRekap, history = [] } = body;
+    // Type assertion dengan fallback aman
+    const body = (rawBody || {}) as any;
+
+    const {
+      message,
+      image,
+      action,
+      ticketData,
+      targetEmail,
+      dataRekap,
+      history = [],
+      noWhatsapp,
+      namaPelapor,
+      asalSekolah,
+      npsn,
+      urlBukti,
+      // File payload khusus untuk aksi upload bukti
+      fileBase64,
+      fileName,
+    } = body;
 
     // =========================================================================
-    // FITUR 1: HANDLER EMAIL MANUAL UNTUK DUNDUH / KIRIM TRANSKRIP REKAPITULASI
+    // FITUR 1: HANDLER EMAIL MANUAL UNTUK UNDUH / KIRIM TRANSKRIP REKAPITULASI
     // =========================================================================
     if (action === "send_email_transcript") {
-      const emailTarget = targetEmail || process.env.EMAIL_REKAP_TARGET || "avidusfathcorp@gmail.com";
-      const recordsToSend: TicketItem[] = (dataRekap && dataRekap.length > 0)
-        ? dataRekap.map((item: any, idx: number) => ({
-            timestamp: new Date().toISOString(),
-            namaPelapor: item.namaPelapor || "-",
-            asalSekolah: item.asalSekolah || "-",
-            npsn: item.npsn || "-",
-            noWhatsapp: item.noWhatsapp || "-",
-            kategoriKendala: item.kategori || item.kategoriKendala || "-",
-            rincianKeluhan: item.rincian || item.rincianKeluhan || "-",
-            ticketNumber: (idx + 1).toString(),
-          }))
-        : ticketMemoryBatch;
+      const emailTarget =
+        targetEmail ||
+        process.env.EMAIL_REKAP_TARGET ||
+        "avidusfathcorp@gmail.com";
+      const recordsToSend: TicketItem[] =
+        dataRekap && dataRekap.length > 0
+          ? dataRekap.map((item: any, idx: number) => ({
+              timestamp: new Date().toISOString(),
+              namaPelapor: item.namaPelapor || "-",
+              asalSekolah: item.asalSekolah || "-",
+              npsn: item.npsn || "-",
+              noWhatsapp: item.noWhatsapp || "-",
+              kategoriKendala: item.kategori || item.kategoriKendala || "-",
+              rincianKeluhan: item.rincian || item.rincianKeluhan || "-",
+              ticketNumber: (idx + 1).toString(),
+            }))
+          : ticketMemoryBatch;
 
       if (recordsToSend.length === 0) {
         return NextResponse.json(
@@ -73,7 +81,10 @@ export async function POST(request: NextRequest) {
       }
 
       try {
-        await sendBatchReportEmail(recordsToSend, globalTicketCounter || recordsToSend.length);
+        await sendBatchReportEmail(
+          recordsToSend,
+          globalTicketCounter || recordsToSend.length
+        );
         return NextResponse.json({
           success: true,
           message: `Rekapitulasi ${recordsToSend.length} pengaduan berhasil dikirim ke ${emailTarget}`,
@@ -116,7 +127,6 @@ export async function POST(request: NextRequest) {
       };
 
       ticketMemoryBatch.unshift(newTicket);
-      // Batasi memori server maksimal 30 tiket paling baru
       if (ticketMemoryBatch.length > 30) {
         ticketMemoryBatch = ticketMemoryBatch.slice(0, 30);
       }
@@ -147,12 +157,15 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Email Rekap Otomatis via Email Service (Pemicu saat mencapai kelipatan 30 Tiket)
+      // Email Rekap Otomatis via Email Service
       let emailStatus = "Pengaduan baru berhasil dicatat";
 
       if (ticketMemoryBatch.length >= 30) {
         try {
-          await sendBatchReportEmail([...ticketMemoryBatch], globalTicketCounter);
+          await sendBatchReportEmail(
+            [...ticketMemoryBatch],
+            globalTicketCounter
+          );
           emailStatus = `Rekap PDF 30 pengaduan berhasil dikirim ke ${
             process.env.EMAIL_REKAP_TARGET || "avidusfathcorp@gmail.com"
           }`;
@@ -171,6 +184,137 @@ export async function POST(request: NextRequest) {
         batchCount: ticketMemoryBatch.length,
         sheetStatus,
         emailStatus,
+      });
+    }
+
+    // =========================================================================
+    // FITUR 4: HANDLER UNGGOHAN BUKTI PEMBETULAN ADMIN (SAVE KE PUBLIC/UPLOADS)
+    // =========================================================================
+    if (action === "upload_proof") {
+      if (!fileBase64) {
+        return NextResponse.json(
+          { error: "File dokumen bukti (fileBase64) wajib diunggah." },
+          { status: 400 }
+        );
+      }
+
+      try {
+        // Ekstrak data base64
+        const matches = fileBase64.match(/^data:(.+);base64,(.+)$/);
+        const base64Data = matches ? matches[2] : fileBase64;
+        const buffer = Buffer.from(base64Data, "base64");
+
+        // Tentukan nama file unik
+        const cleanFileName = (fileName || "bukti-pembetulan.png").replace(
+          /\s+/g,
+          "_"
+        );
+        const uniqueFileName = `${Date.now()}-${cleanFileName}`;
+
+        // Path folder penyimpan: public/uploads
+        const uploadDir = path.join(process.cwd(), "public", "uploads");
+        await mkdir(uploadDir, { recursive: true });
+
+        const filePath = path.join(uploadDir, uniqueFileName);
+        await writeFile(filePath, buffer);
+
+        // URL domain asal untuk link utuh di WhatsApp
+        const origin =
+          request.headers.get("origin") ||
+          process.env.NEXT_PUBLIC_APP_URL ||
+          "http://localhost:3000";
+        const generatedProofUrl = `${origin}/uploads/${uniqueFileName}`;
+
+        return NextResponse.json({
+          success: true,
+          message: "Berkas bukti pembetulan berhasil diunggah ke server.",
+          urlBukti: generatedProofUrl,
+        });
+      } catch (uploadErr) {
+        console.error("❌ Error menyimpan berkas bukti:", uploadErr);
+        return NextResponse.json(
+          { error: "Gagal menyimpan berkas bukti di server lokal." },
+          { status: 500 }
+        );
+      }
+    }
+
+    // =========================================================================
+    // FITUR 5: HANDLER WHATSAPP BOT AUTOMATION
+    // =========================================================================
+    if (action === "send_wa_notification") {
+      const targetPhone = noWhatsapp || ticketData?.noWhatsapp;
+      const targetName = namaPelapor || ticketData?.namaPelapor || "Pelapor";
+      const targetSchool = asalSekolah || ticketData?.asalSekolah || "Sekolah";
+      const targetNpsn = npsn || ticketData?.npsn || "NPSN";
+      const proofUrl = urlBukti || ticketData?.urlBukti || "";
+
+      if (!targetPhone) {
+        return NextResponse.json(
+          { error: "Nomor WhatsApp Pelapor tidak boleh kosong." },
+          { status: 400 }
+        );
+      }
+
+      // Format standar internasional untuk WhatsApp (628xxx)
+      let cleanPhone = String(targetPhone).replace(/\D/g, "");
+      if (cleanPhone.startsWith("0")) {
+        cleanPhone = "62" + cleanPhone.slice(1);
+      }
+
+      const waMessageText =
+        `*-[ PENGADUAN SIPA-NGAWI SELESAI ]-*\n\n` +
+        `Yth. Bapak/Ibu *${targetName}*,\n\n` +
+        `Laporan pengaduan Dapodik untuk sekolah *${targetSchool} (${targetNpsn})* telah *SELESAI DITINDAKLANJUTI* oleh Admin Dinas Pendidikan & Kebudayaan Kab. Ngawi.\n\n` +
+        `📌 *Status:* Terverifikasi dengan Bukti Perubahan Data Backend.\n` +
+        (proofUrl ? `🔗 *Dokumen Bukti:* ${proofUrl}\n\n` : `\n`) +
+        `Terima kasih telah menggunakan layanan Asisten Virtual SIPA-NGAWI.`;
+
+      let waStatus = "Tergirim via WhatsApp Protocol";
+
+      // Integrasi Fonnte Gateway
+      const fonnteToken = process.env.FONNTE_API_TOKEN;
+      if (fonnteToken) {
+        try {
+          await fetch("https://api.fonnte.com/send", {
+            method: "POST",
+            headers: {
+              Authorization: fonnteToken,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              target: cleanPhone,
+              message: waMessageText,
+            }),
+          });
+          waStatus = "Tersampaikan via Fonnte Gateway";
+        } catch (fonnteErr) {
+          console.error("❌ Error Fonnte WA Bot:", fonnteErr);
+          waStatus = "Gagal via Fonnte Gateway";
+        }
+      }
+
+      // Integrasi Baileys Local Gateway
+      const baileysServerUrl =
+        process.env.BAILEYS_BOT_URL || "http://localhost:5000/send-message";
+      try {
+        await fetch(baileysServerUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            number: cleanPhone,
+            message: waMessageText,
+          }),
+        });
+      } catch (baileysErr) {
+        // Abaikan log jika server lokal baileys belum dinyalakan
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: `Notifikasi WhatsApp Bot berhasil diproses untuk nomor ${cleanPhone}`,
+        waStatus,
+        phone: cleanPhone,
       });
     }
 
@@ -199,7 +343,10 @@ export async function POST(request: NextRequest) {
     if (groqApiKeys.length > 0) {
       try {
         console.log("🚀 [SIPA-NGAWI] Memproses pesan via Groq RAG Service...");
-        const chatResponse = await createChatResponse(rawGroqKeys, body);
+        const chatResponse = await createChatResponse(
+          rawGroqKeys,
+          body as ChatRequestBody
+        );
         console.log("✅ [SIPA-NGAWI] Berhasil mendapat respons dari Groq API!");
         return NextResponse.json(chatResponse);
       } catch (groqError: unknown) {
@@ -213,7 +360,9 @@ export async function POST(request: NextRequest) {
 
     // OPSI B: FALLBACK KE DEEPSEEK API
     try {
-      console.log("⚡ [SIPA-NGAWI] Memproses pesan via DeepSeek API (deepseek-chat)...");
+      console.log(
+        "⚡ [SIPA-NGAWI] Memproses pesan via DeepSeek API (deepseek-chat)..."
+      );
 
       const formattedUserPrompt = buildUserPrompt({
         userMessage: message || "",
