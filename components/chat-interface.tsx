@@ -862,8 +862,8 @@ export function ChatInterface({
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 text-center">
               <div className="h-16 sm:h-24 w-auto relative flex-shrink-0 flex items-center justify-center">
                 <img
-                  src="/Asisten-Virtual-LOGO-SIPA-NGAWI.png"
-                  alt="LOGO SIPA-NGAWI"
+                  src="/Asisten-Virtual-Logo-SIPA-NGAWI.png"
+                  alt="Logo SIPA-NGAWI"
                   className="h-full w-auto object-contain drop-shadow-md"
                 />
               </div>
