@@ -863,7 +863,7 @@ export function ChatInterface({
               <div className="h-16 sm:h-24 w-auto relative flex-shrink-0 flex items-center justify-center">
                 <img
                   src="/Asisten-Virtual-LOGO-SIPA-NGAWI.png"
-                  alt="Logo SIPA-NGAWI"
+                  alt="LOGO SIPA-NGAWI"
                   className="h-full w-auto object-contain drop-shadow-md"
                 />
               </div>
