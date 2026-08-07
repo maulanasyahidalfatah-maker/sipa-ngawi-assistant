@@ -7,18 +7,10 @@ import { sendBatchReportEmail, TicketItem } from "@/lib/email-service";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 
-// Jalur import merujuk ke lib/rag/prompt.ts
+// Import prompt RAG
 import { SYSTEM_PROMPT, buildUserPrompt } from "@/lib/rag/prompt";
 
 export const runtime = "nodejs";
-
-/**
- * Inisialisasi SDK OpenAI untuk Endpoint DeepSeek
- */
-const deepseek = new OpenAI({
-  baseURL: "https://api.deepseek.com",
-  apiKey: process.env.DEEPSEEK_API_KEY || "",
-});
 
 /**
  * Penampung memori sementara di server untuk melacak batch 30 pengaduan
@@ -188,7 +180,7 @@ export async function POST(request: NextRequest) {
     }
 
     // =========================================================================
-    // FITUR 4: HANDLER UNGGOHAN BUKTI PEMBETULAN ADMIN (SAVE KE PUBLIC/UPLOADS)
+    // FITUR 4: HANDLER UNGGUHAN BUKTI PEMBETULAN ADMIN
     // =========================================================================
     if (action === "upload_proof") {
       if (!fileBase64) {
@@ -211,29 +203,34 @@ export async function POST(request: NextRequest) {
         );
         const uniqueFileName = `${Date.now()}-${cleanFileName}`;
 
-        // Path folder penyimpan: public/uploads
-        const uploadDir = path.join(process.cwd(), "public", "uploads");
-        await mkdir(uploadDir, { recursive: true });
+        // Path folder penyimpan: public/uploads (Fallback aman untuk Vercel)
+        let generatedProofUrl = fileBase64; // Fallback jika Vercel Serverless filesystem read-only
 
-        const filePath = path.join(uploadDir, uniqueFileName);
-        await writeFile(filePath, buffer);
+        try {
+          const uploadDir = path.join(process.cwd(), "public", "uploads");
+          await mkdir(uploadDir, { recursive: true });
 
-        // URL domain asal untuk link utuh di WhatsApp
-        const origin =
-          request.headers.get("origin") ||
-          process.env.NEXT_PUBLIC_APP_URL ||
-          "http://localhost:3000";
-        const generatedProofUrl = `${origin}/uploads/${uniqueFileName}`;
+          const filePath = path.join(uploadDir, uniqueFileName);
+          await writeFile(filePath, buffer);
+
+          const origin =
+            request.headers.get("origin") ||
+            process.env.NEXT_PUBLIC_APP_URL ||
+            "http://localhost:3000";
+          generatedProofUrl = `${origin}/uploads/${uniqueFileName}`;
+        } catch (fsErr) {
+          console.warn("⚠️ Cannot write to filesystem (Serverless Vercel). Using Base64 fallback.", fsErr);
+        }
 
         return NextResponse.json({
           success: true,
-          message: "Berkas bukti pembetulan berhasil diunggah ke server.",
+          message: "Berkas bukti pembetulan berhasil diunggah.",
           urlBukti: generatedProofUrl,
         });
       } catch (uploadErr) {
         console.error("❌ Error menyimpan berkas bukti:", uploadErr);
         return NextResponse.json(
-          { error: "Gagal menyimpan berkas bukti di server lokal." },
+          { error: "Gagal menyimpan berkas bukti di server." },
           { status: 500 }
         );
       }
@@ -331,6 +328,7 @@ export async function POST(request: NextRequest) {
     const rawGroqKeys =
       process.env.GROQ_API_KEYS ||
       process.env.GROQ_API_KEY ||
+      process.env.OPENAI_API_KEY ||
       process.env.GOOGLE_GENAI_API_KEYS ||
       "";
 
@@ -358,11 +356,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // OPSI B: FALLBACK KE DEEPSEEK API
+    // OPSI B: FALLBACK KE DEEPSEEK API (INISIALISASI AMAN UNTUK VERCEL)
     try {
       console.log(
         "⚡ [SIPA-NGAWI] Memproses pesan via DeepSeek API (deepseek-chat)..."
       );
+
+      // Inisialisasi aman di dalam handler dengan fallback string agar Vercel build tidak crash
+      const deepseekKey = process.env.DEEPSEEK_API_KEY || process.env.GROQ_API_KEY || "dummy-key-for-build";
+      const deepseek = new OpenAI({
+        baseURL: "https://api.deepseek.com",
+        apiKey: deepseekKey,
+      });
 
       const formattedUserPrompt = buildUserPrompt({
         userMessage: message || "",
