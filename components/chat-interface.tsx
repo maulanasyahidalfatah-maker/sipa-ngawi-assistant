@@ -105,6 +105,7 @@ interface ChatInterfaceProps {
   isModalOpen: boolean;
   setIsModalOpen: (open: boolean) => void;
   onPengaduanSubmitted?: (data: PengaduanData) => void;
+  isAdminServer?: boolean; // ✅ MENCEGAH TYPESCRIPT BUILD ERROR DI VERCEL
 }
 
 // MAPPING LOGIKA SINKRONISASI NPSN KE ASAL SEKOLAH
