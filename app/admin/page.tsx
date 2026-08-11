@@ -31,11 +31,14 @@ export default function AdminDashboard() {
   // State Modal Lihat Bukti
   const [viewProofUrl, setViewProofUrl] = useState<string | null>(null);
 
-  // 1. CEK AUTENTIKASI ADMIN & SINKRONISASI DATA DARI LOCALSTORAGE
+  // 1. MEMBACA & MENSINKRONKAN DATA PENGADUAN DARI LOCALSTORAGE
   const loadTickets = () => {
     setIsLoading(true);
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("sipa_rekap_pengaduan");
+      // Ambil data dari sipa_rekap_pengaduan atau fallback ke sipa_ngawi_tickets
+      const savedRekap = localStorage.getItem("sipa_rekap_pengaduan");
+      const savedTickets = localStorage.getItem("sipa_ngawi_tickets");
+      const saved = savedRekap || savedTickets;
 
       if (saved) {
         try {
@@ -54,7 +57,7 @@ export default function AdminDashboard() {
                 npsn: item.npsn || "-",
                 kategori: item.kategori || item.kategoriKendala || "-",
                 rincian: item.rincian || item.rincianKeluhan || "-",
-                status: item.status || "PENDING",
+                status: item.status === "SELESAI" ? "RESOLVED" : (item.status || "PENDING"),
                 buktiPerbaikan: item.buktiPerbaikan || undefined,
                 createdAt: item.createdAt || new Date().toLocaleDateString("id-ID"),
               };
@@ -69,7 +72,6 @@ export default function AdminDashboard() {
           setTickets([]);
         }
       } else {
-        // Jika belum ada inputan pengaduan, buat array KOSONG
         setTickets([]);
       }
     }
@@ -77,18 +79,32 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    // Validasi Akses Login Admin Dinas
+    // 2. VALIDASI AKSES LOGIN ADMIN + AUTO BYPASS KHUSUS MODE DEVELOPMENT / DEVELOPER
     if (typeof window !== "undefined") {
-      const sessionRaw = localStorage.getItem("sipa_user_session");
+      const isDev = process.env.NODE_ENV === "development";
+      let sessionRaw = localStorage.getItem("sipa_user_session");
+
+      // Jika kamu membuka di localhost dan belum login, sistem otomatis menganggap kamu Developer/Admin
+      if (!sessionRaw && isDev) {
+        const devSession = { role: "ADMIN", nama: "Developer Utama", email: "dev@sipa.ngawi" };
+        localStorage.setItem("sipa_user_session", JSON.stringify(devSession));
+        sessionRaw = JSON.stringify(devSession);
+      }
+
       if (!sessionRaw) {
         alert("Akses ditolak! Silakan login sebagai Admin Dinas terlebih dahulu.");
         router.push("/login");
         return;
       }
 
-      const session = JSON.parse(sessionRaw);
-      if (session.role !== "ADMIN") {
-        alert("Akses ditolak! Akun Anda bukan merupakan Admin Disdikbud Ngawi.");
+      try {
+        const session = JSON.parse(sessionRaw);
+        if (session.role !== "ADMIN") {
+          alert("Akses ditolak! Akun Anda bukan merupakan Admin Disdikbud Ngawi.");
+          router.push("/login");
+          return;
+        }
+      } catch {
         router.push("/login");
         return;
       }
@@ -98,7 +114,7 @@ export default function AdminDashboard() {
 
     // Listener otomatis jika ada pengaduan baru masuk di tab publik browser yang sama
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "sipa_rekap_pengaduan") {
+      if (e.key === "sipa_rekap_pengaduan" || e.key === "sipa_ngawi_tickets") {
         loadTickets();
       }
     };
@@ -107,7 +123,7 @@ export default function AdminDashboard() {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  // 2. PROSES UNGGAH BUKTI PERBAIKAN & MENGUBAH STATUS TIKET PERMANEN
+  // 3. PROSES UNGGAH BUKTI PERBAIKAN & MENGUBAH STATUS TIKET PERMANEN
   const handleAdminVerify = (fileBase64: string) => {
     if (!selectedTicket) return;
 
@@ -130,7 +146,8 @@ export default function AdminDashboard() {
       if (typeof window !== "undefined") {
         try {
           localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(updatedTickets));
-        } catch (e) {
+          localStorage.setItem("sipa_ngawi_tickets", JSON.stringify(updatedTickets));
+        } catch {
           alert("Ukuran file terlalu besar untuk disimpan di localStorage! Gunakan berkas gambar < 1MB.");
         }
       }
@@ -309,7 +326,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* MODAL POP-UP UNGGAH BUKTI BISA DIISI ADMIN DINAS */}
+      {/* MODAL UNGGAH BUKTI UNTUK VERIFIKASI TIKET */}
       {selectedTicket && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white rounded-3xl shadow-xl max-w-md w-full p-6 relative border border-slate-100">
