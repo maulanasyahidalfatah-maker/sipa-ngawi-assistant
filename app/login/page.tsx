@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck, User, Lock, Mail, ArrowRight, Building2 } from "lucide-react";
 
@@ -21,6 +21,25 @@ export default function LoginPage() {
   const [namaLengkap, setNamaLengkap] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
+  // Auto Check: Jika sudah login, langsung arahkan ke halaman utama/admin
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedSession = localStorage.getItem("sipa_user_session");
+      if (savedSession) {
+        try {
+          const parsed = JSON.parse(savedSession);
+          if (parsed.role === "ADMIN") {
+            router.push("/admin");
+          } else if (parsed.role === "PUBLIC") {
+            router.push("/");
+          }
+        } catch {
+          // Abaikan jika data corrupt
+        }
+      }
+    }
+  }, [router]);
+
   const handleAuthSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
@@ -32,20 +51,38 @@ export default function LoginPage() {
       );
 
       if (matchedAdmin) {
-        localStorage.setItem(
-          "sipa_user_session",
-          JSON.stringify({ role: "ADMIN", nama: matchedAdmin.nama, email: matchedAdmin.email })
-        );
+        const sessionData = {
+          role: "ADMIN",
+          nama: matchedAdmin.nama,
+          email: matchedAdmin.email,
+        };
+        const sessionString = JSON.stringify(sessionData);
+
+        // 1. Simpan ke LocalStorage
+        localStorage.setItem("sipa_user_session", sessionString);
+
+        // 2. Simpan ke Cookie agar bisa dibaca oleh Middleware Next.js
+        document.cookie = `sipa_user_session=${encodeURIComponent(sessionString)}; path=/; max-age=86400; SameSite=Lax`;
+
         router.push("/admin");
       } else {
         setErrorMsg("NIP / Email Dinas atau Password Admin salah! Kontak TI Disdikbud jika ada kendala.");
       }
     } else {
       // LOGIN / REGISTER PUBLIC OPERATOR/GURU
-      localStorage.setItem(
-        "sipa_user_session",
-        JSON.stringify({ role: "PUBLIC", nama: namaLengkap || "Operator / Guru", email: emailOrNip })
-      );
+      const sessionData = {
+        role: "PUBLIC",
+        nama: namaLengkap || "Operator / Guru",
+        email: emailOrNip,
+      };
+      const sessionString = JSON.stringify(sessionData);
+
+      // 1. Simpan ke LocalStorage
+      localStorage.setItem("sipa_user_session", sessionString);
+
+      // 2. Simpan ke Cookie agar bisa dibaca oleh Middleware Next.js
+      document.cookie = `sipa_user_session=${encodeURIComponent(sessionString)}; path=/; max-age=86400; SameSite=Lax`;
+
       router.push("/");
     }
   };
