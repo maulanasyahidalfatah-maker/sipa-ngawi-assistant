@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Clock, Upload, FileText, X, Eye, RefreshCw, Inbox } from "lucide-react";
+import { CheckCircle2, Clock, Upload, FileText, X, Eye, RefreshCw, Inbox, Trash2 } from "lucide-react";
 
 interface AdminTicket {
   id: string;
@@ -22,7 +22,7 @@ export default function AdminDashboard() {
   const [tickets, setTickets] = useState<AdminTicket[]>([]);
   const [filterStatus, setFilterStatus] = useState<"semua" | "pending" | "resolved">("semua");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // State Modal Verifikasi Admin
   const [selectedTicket, setSelectedTicket] = useState<AdminTicket | null>(null);
   const [proofFile, setAdminProofFile] = useState<string | null>(null);
@@ -89,7 +89,6 @@ export default function AdminDashboard() {
     // Gabungkan dengan data server
     serverTickets.forEach((t) => {
       const existing = ticketMap.get(t.id);
-      // Jika belum ada di lokal, atau data server sudah RESOLVED, utamakan data server
       if (!existing || (existing.status === "PENDING" && t.status === "RESOLVED")) {
         ticketMap.set(t.id, t);
       }
@@ -235,6 +234,35 @@ export default function AdminDashboard() {
     setAdminProofFile(null);
   };
 
+  // 4. FUNGSI UNTUK MENGOSONGKAN SELURUH DATA PENGADUAN UJI COBA
+  const handleResetData = async () => {
+    const confirmReset = window.confirm(
+      "Apakah Anda yakin ingin menghapus SEMUA data pengaduan uji coba? Tindakan ini tidak dapat dibatalkan!"
+    );
+
+    if (!confirmReset) return;
+
+    setIsLoading(true);
+
+    // A. Hapus dari LocalStorage / Cache Browser
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("sipa_rekap_pengaduan_backup");
+      localStorage.removeItem("sipa_rekap_pengaduan");
+      localStorage.removeItem("sipa_ngawi_tickets");
+    }
+
+    // B. Hapus dari Server API Backend
+    try {
+      await fetch("/api/tickets", { method: "DELETE" });
+    } catch (e) {
+      console.error("Gagal reset data server:", e);
+    }
+
+    setTickets([]);
+    setIsLoading(false);
+    alert("Seluruh data uji coba berhasil dibersihkan! Sistem siap digunakan.");
+  };
+
   const filteredTickets = tickets.filter((item) => {
     if (filterStatus === "pending") return item.status === "PENDING";
     if (filterStatus === "resolved") return item.status === "RESOLVED";
@@ -256,6 +284,7 @@ export default function AdminDashboard() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            {/* TOMBOL REFRESH / SYNC */}
             <button
               type="button"
               onClick={loadTickets}
@@ -265,6 +294,19 @@ export default function AdminDashboard() {
               <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? "animate-spin text-[#006837]" : ""}`} />
               <span>Sync Server</span>
             </button>
+
+            {/* TOMBOL RESET DATA UJI COBA */}
+            <button
+              type="button"
+              onClick={handleResetData}
+              className="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-xl border border-red-200 text-xs font-semibold transition-colors cursor-pointer"
+              title="Bersihkan seluruh data pengaduan uji coba"
+            >
+              <Trash2 className="w-3.5 h-3.5 text-red-600" />
+              <span>Reset Data Uji Coba</span>
+            </button>
+
+            {/* STATUS INDIKATOR DATABASE */}
             <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-200 text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>Database Connected</span>

@@ -104,3 +104,12 @@ export async function PUT(request: Request) {
     );
   }
 }
+// DELETE: Dipanggil oleh Admin untuk menghapus seluruh data pengaduan uji coba
+export async function DELETE() {
+  globalTickets = []; // Kosongkan memory server
+  return NextResponse.json({
+    success: true,
+    message: "Seluruh data pengaduan berhasil dibersihkan dari server!",
+    data: [],
+  });
+}
