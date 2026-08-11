@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { CheckCircle2, Clock, Upload, FileText, X, Eye, RefreshCw } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { CheckCircle2, Clock, Upload, FileText, X, Eye, RefreshCw, Inbox } from "lucide-react";
 
 interface AdminTicket {
   id: string;
@@ -17,6 +18,7 @@ interface AdminTicket {
 }
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [tickets, setTickets] = useState<AdminTicket[]>([]);
   const [filterStatus, setFilterStatus] = useState<"semua" | "pending" | "resolved">("semua");
   const [isLoading, setIsLoading] = useState(false);
@@ -29,33 +31,7 @@ export default function AdminDashboard() {
   // State Modal Lihat Bukti
   const [viewProofUrl, setViewProofUrl] = useState<string | null>(null);
 
-  // 1. DUMMY DATA DEFAULT
-  const defaultMockData: AdminTicket[] = [
-    {
-      id: "TK-001",
-      namaPelapor: "Ahmad Jalaluddin",
-      noWhatsapp: "08123456789",
-      asalSekolah: "SDN 1 Ngawi",
-      npsn: "20500001",
-      kategori: "Kendala Data PTK-Guru",
-      rincian: "Perubahan NUPTK guru honorer belum tervalidasi di sistem pusat.",
-      status: "PENDING",
-      createdAt: new Date().toLocaleDateString("id-ID"),
-    },
-    {
-      id: "TK-002",
-      namaPelapor: "Siti Rahmawati",
-      noWhatsapp: "08987654321",
-      asalSekolah: "SMPN 2 Geneng",
-      npsn: "20500002",
-      kategori: "Penginputan Siswa Baru",
-      rincian: "Siswa mutasi masuk belum terdaftar di rombel kelas 8.",
-      status: "PENDING",
-      createdAt: new Date().toLocaleDateString("id-ID"),
-    },
-  ];
-
-  // 2. SINKRONISASI DATA DARI LOCALSTORAGE & EVENT PUBLIK
+  // 1. CEK AUTENTIKASI ADMIN & SINKRONISASI DATA DARI LOCALSTORAGE
   const loadTickets = () => {
     setIsLoading(true);
     if (typeof window !== "undefined") {
@@ -71,10 +47,10 @@ export default function AdminDashboard() {
               const defaultId = `TK-0${num < 10 ? `0${num}` : num}`;
 
               return {
-                id: item.id || item.ticketNumber ? (item.id || `TK-${item.ticketNumber}`) : defaultId,
-                namaPelapor: item.namaPelapor || "-",
-                noWhatsapp: item.noWhatsapp || "-",
-                asalSekolah: item.asalSekolah || "-",
+                id: item.id || (item.ticketNumber ? `TK-${item.ticketNumber}` : defaultId),
+                namaPelapor: item.namaPelapor || item.nama || "-",
+                noWhatsapp: item.noWhatsapp || item.wa || "-",
+                asalSekolah: item.asalSekolah || item.sekolah || "-",
                 npsn: item.npsn || "-",
                 kategori: item.kategori || item.kategoriKendala || "-",
                 rincian: item.rincian || item.rincianKeluhan || "-",
@@ -84,30 +60,40 @@ export default function AdminDashboard() {
               };
             });
 
-            // Gabungkan data pengaduan baru dengan dummy jika dummy belum ada
-            const merged = [...formattedTickets];
-            defaultMockData.forEach((mock) => {
-              if (!merged.some((t) => t.id === mock.id)) {
-                merged.push(mock);
-              }
-            });
-
-            setTickets(merged);
+            setTickets(formattedTickets);
           } else {
-            setTickets(defaultMockData);
+            setTickets([]);
           }
         } catch (e) {
           console.error("Gagal membaca cache pengaduan admin:", e);
-          setTickets(defaultMockData);
+          setTickets([]);
         }
       } else {
-        setTickets(defaultMockData);
+        // Jika belum ada inputan pengaduan, buat array KOSONG
+        setTickets([]);
       }
     }
     setIsLoading(false);
   };
 
   useEffect(() => {
+    // Validasi Akses Login Admin Dinas
+    if (typeof window !== "undefined") {
+      const sessionRaw = localStorage.getItem("sipa_user_session");
+      if (!sessionRaw) {
+        alert("Akses ditolak! Silakan login sebagai Admin Dinas terlebih dahulu.");
+        router.push("/login");
+        return;
+      }
+
+      const session = JSON.parse(sessionRaw);
+      if (session.role !== "ADMIN") {
+        alert("Akses ditolak! Akun Anda bukan merupakan Admin Disdikbud Ngawi.");
+        router.push("/login");
+        return;
+      }
+    }
+
     loadTickets();
 
     // Listener otomatis jika ada pengaduan baru masuk di tab publik browser yang sama
@@ -121,7 +107,7 @@ export default function AdminDashboard() {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  // 3. PROSES UNGGAH BUKTI PERBAIKAN & MENGUBAH STATUS TIKET
+  // 2. PROSES UNGGAH BUKTI PERBAIKAN & MENGUBAH STATUS TIKET PERMANEN
   const handleAdminVerify = (fileBase64: string) => {
     if (!selectedTicket) return;
 
@@ -190,7 +176,7 @@ export default function AdminDashboard() {
               className="flex items-center gap-1.5 bg-white hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
               title="Refresh Data Pengaduan"
             >
-              <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? "animate-spin text-[#006837]" : ""}`} />
               <span>Refresh</span>
             </button>
             <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-200 text-xs font-semibold">
@@ -207,7 +193,7 @@ export default function AdminDashboard() {
             onClick={() => setFilterStatus("semua")}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               filterStatus === "semua"
-                ? "bg-blue-600 text-white shadow-sm"
+                ? "bg-[#006837] text-white shadow-sm"
                 : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
             }`}
           >
@@ -218,7 +204,7 @@ export default function AdminDashboard() {
             onClick={() => setFilterStatus("pending")}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               filterStatus === "pending"
-                ? "bg-blue-600 text-white shadow-sm"
+                ? "bg-amber-500 text-white shadow-sm"
                 : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
             }`}
           >
@@ -229,7 +215,7 @@ export default function AdminDashboard() {
             onClick={() => setFilterStatus("resolved")}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               filterStatus === "resolved"
-                ? "bg-blue-600 text-white shadow-sm"
+                ? "bg-emerald-600 text-white shadow-sm"
                 : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
             }`}
           >
@@ -248,14 +234,20 @@ export default function AdminDashboard() {
                   <th className="p-3.5 whitespace-nowrap">SEKOLAH / NPSN</th>
                   <th className="p-3.5 whitespace-nowrap">KATEGORI &amp; RINCIAN</th>
                   <th className="p-3.5 whitespace-nowrap">STATUS</th>
-                  <th className="p-3.5 whitespace-nowrap">AKSI ADMIN</th>
+                  <th className="p-3.5 whitespace-nowrap text-center">AKSI ADMIN</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
                 {filteredTickets.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="p-8 text-center text-slate-400 italic">
-                      Tidak ada tiket pengaduan di kategori ini.
+                    <td colSpan={6} className="p-12 text-center">
+                      <div className="flex flex-col items-center justify-center text-slate-400">
+                        <Inbox className="w-12 h-12 stroke-[1.5] mb-2 text-slate-300" />
+                        <p className="font-bold text-slate-600 text-sm">Belum Ada Pengaduan Masuk</p>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          Form pengaduan yang dikirimkan oleh pengguna publik/operator akan otomatis muncul di sini.
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -272,7 +264,7 @@ export default function AdminDashboard() {
                       </td>
                       
                       <td className="p-3.5 min-w-[280px]">
-                        <div className="font-semibold text-blue-600 mb-0.5">{ticket.kategori}</div>
+                        <div className="font-semibold text-[#006837] mb-0.5">{ticket.kategori}</div>
                         <div className="text-slate-600 whitespace-pre-wrap leading-relaxed text-[11px]">
                           {ticket.rincian}
                         </div>
@@ -289,12 +281,12 @@ export default function AdminDashboard() {
                           </span>
                         )}
                       </td>
-                      <td className="p-3.5 whitespace-nowrap">
+                      <td className="p-3.5 whitespace-nowrap text-center">
                         {ticket.status === "PENDING" ? (
                           <button
                             type="button"
                             onClick={() => setSelectedTicket(ticket)}
-                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1 shadow-xs transition-colors cursor-pointer"
+                            className="px-3 py-1.5 bg-[#006837] hover:bg-[#00522c] text-white rounded-xl text-xs font-semibold flex items-center gap-1 shadow-xs transition-colors cursor-pointer mx-auto"
                           >
                             <span>Verifikasi &amp; Selesaikan</span>
                           </button>
@@ -302,7 +294,7 @@ export default function AdminDashboard() {
                           <button
                             type="button"
                             onClick={() => setViewProofUrl(ticket.buktiPerbaikan || null)}
-                            className="text-emerald-700 hover:text-emerald-800 font-semibold text-xs flex items-center gap-1 hover:underline cursor-pointer"
+                            className="text-[#006837] hover:text-emerald-800 font-semibold text-xs flex items-center gap-1 hover:underline cursor-pointer mx-auto"
                           >
                             <FileText className="w-3.5 h-3.5" /> Lihat Bukti
                           </button>
@@ -373,7 +365,7 @@ export default function AdminDashboard() {
                   type="button"
                   disabled={!proofFile || isSubmittingProof}
                   onClick={() => proofFile && handleAdminVerify(proofFile)}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white rounded-xl font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  className="px-4 py-2 bg-[#006837] hover:bg-[#00522c] disabled:opacity-40 text-white rounded-xl font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
                 >
                   <Upload className="w-3.5 h-3.5" />
                   <span>{isSubmittingProof ? "Memproses..." : "Selesaikan Tiket"}</span>
