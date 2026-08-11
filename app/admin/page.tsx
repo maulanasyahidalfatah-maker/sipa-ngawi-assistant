@@ -31,6 +31,27 @@ export default function AdminDashboard() {
   // State Modal Lihat Bukti
   const [viewProofUrl, setViewProofUrl] = useState<string | null>(null);
 
+  // FUNGSI MEMPERBAIKI URUTAN NOMOR TIKET (TK-001, TK-002, TK-003, DST.)
+  const sanitizeAndSortTickets = (rawTickets: any[]): AdminTicket[] => {
+    return rawTickets.map((item, idx) => {
+      const num = idx + 1;
+      const formattedId = `TK-${num < 10 ? `00${num}` : num < 100 ? `0${num}` : num}`;
+
+      return {
+        id: item.id && item.id.startsWith("TK-") && !item.id.includes("TK-04") ? item.id : formattedId,
+        namaPelapor: item.namaPelapor || item.nama || "-",
+        noWhatsapp: item.noWhatsapp || item.wa || "-",
+        asalSekolah: item.asalSekolah || item.sekolah || "-",
+        npsn: item.npsn || "-",
+        kategori: item.kategori || item.kategoriKendala || "-",
+        rincian: item.rincian || item.rincianKeluhan || "-",
+        status: item.status === "SELESAI" ? "RESOLVED" : (item.status || "PENDING"),
+        buktiPerbaikan: item.buktiPerbaikan || undefined,
+        createdAt: item.createdAt || new Date().toLocaleDateString("id-ID"),
+      };
+    });
+  };
+
   // 1. SINKRONISASI DUA ARAH (SERVER BACKEND + BACKUP LOKAL PERMANEN)
   const loadTickets = async () => {
     setIsLoading(true);
@@ -46,19 +67,8 @@ export default function AdminDashboard() {
       if (raw) {
         try {
           const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) {
-            localBackup = parsed.map((item: any, idx: number) => ({
-              id: item.id || `TK-00${idx + 1}`,
-              namaPelapor: item.namaPelapor || item.nama || "-",
-              noWhatsapp: item.noWhatsapp || item.wa || "-",
-              asalSekolah: item.asalSekolah || item.sekolah || "-",
-              npsn: item.npsn || "-",
-              kategori: item.kategori || item.kategoriKendala || "-",
-              rincian: item.rincian || item.rincianKeluhan || "-",
-              status: item.status === "SELESAI" ? "RESOLVED" : (item.status || "PENDING"),
-              buktiPerbaikan: item.buktiPerbaikan || undefined,
-              createdAt: item.createdAt || new Date().toLocaleDateString("id-ID"),
-            }));
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            localBackup = sanitizeAndSortTickets(parsed);
           }
         } catch (e) {
           console.error("Gagal membaca backup lokal:", e);
@@ -72,21 +82,19 @@ export default function AdminDashboard() {
       const res = await fetch("/api/tickets", { cache: "no-store" });
       if (res.ok) {
         const result = await res.json();
-        if (result.success && Array.isArray(result.data)) {
-          serverTickets = result.data;
+        if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+          serverTickets = sanitizeAndSortTickets(result.data);
         }
       }
     } catch (e) {
       console.warn("Gagal terhubung ke API backend:", e);
     }
 
-    // Step C: Gabungkan data Server dan Backup Lokal tanpa duplikasi ID
+    // Step C: Gabungkan data Server dan Backup Lokal tanpa duplikasi
     const ticketMap = new Map<string, AdminTicket>();
 
-    // Prioritas awal dari backup lokal
     localBackup.forEach((t) => ticketMap.set(t.id, t));
 
-    // Gabungkan dengan data server
     serverTickets.forEach((t) => {
       const existing = ticketMap.get(t.id);
       if (!existing || (existing.status === "PENDING" && t.status === "RESOLVED")) {
@@ -98,7 +106,7 @@ export default function AdminDashboard() {
 
     setTickets(mergedTickets);
 
-    // Simpan hasil penggabungan ke Backup Lokal Permanen
+    // Simpan hasil rapi ke LocalStorage
     if (typeof window !== "undefined" && mergedTickets.length > 0) {
       try {
         localStorage.setItem("sipa_rekap_pengaduan_backup", JSON.stringify(mergedTickets));
@@ -106,21 +114,6 @@ export default function AdminDashboard() {
       } catch {
         console.warn("Storage browser penuh.");
       }
-    }
-
-    // Restore balik ke server jika server sempat kosong karena restart Vercel
-    if (serverTickets.length < mergedTickets.length) {
-      mergedTickets.forEach(async (ticket) => {
-        try {
-          await fetch("/api/tickets", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(ticket),
-          });
-        } catch {
-          // Abaikan
-        }
-      });
     }
 
     setIsLoading(false);
@@ -196,7 +189,6 @@ export default function AdminDashboard() {
 
     setTickets(updatedTickets);
 
-    // Simpan ke backup lokal
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem("sipa_rekap_pengaduan_backup", JSON.stringify(updatedTickets));
@@ -206,7 +198,6 @@ export default function AdminDashboard() {
       }
     }
 
-    // Update ke Server API Backend
     try {
       await fetch("/api/tickets", {
         method: "PUT",
@@ -221,7 +212,6 @@ export default function AdminDashboard() {
       console.error("Gagal sinkronisasi update ke server:", e);
     }
 
-    // Kirim Notifikasi WA Bot ke Pelapor
     const waMsg = encodeURIComponent(
       `Halo Bapak/Ibu ${selectedTicket.namaPelapor},\n\n` +
       `Pengaduan Anda untuk sekolah *${selectedTicket.asalSekolah} (${selectedTicket.npsn})* telah *SELESAI DITINDAKLANJUTI* oleh Admin Disdikbud Kab. Ngawi.\n\n` +
@@ -234,33 +224,36 @@ export default function AdminDashboard() {
     setAdminProofFile(null);
   };
 
-  // 4. FUNGSI UNTUK MENGOSONGKAN SELURUH DATA PENGADUAN UJI COBA
+  // 4. FUNGSI RESET TOTAL PERMANEN (HAPUS SERVER + SEMUA KEY LOCALSTORAGE)
   const handleResetData = async () => {
     const confirmReset = window.confirm(
-      "Apakah Anda yakin ingin menghapus SEMUA data pengaduan uji coba? Tindakan ini tidak dapat dibatalkan!"
+      "Apakah Anda yakin ingin menghapus SEMUA data pengaduan? Tindakan ini akan membersihkan seluruh laporan secara permanen!"
     );
 
     if (!confirmReset) return;
 
     setIsLoading(true);
 
-    // A. Hapus dari LocalStorage / Cache Browser
+    // A. Hapus SEMUA Kunci Penyimpanan di Browser
     if (typeof window !== "undefined") {
       localStorage.removeItem("sipa_rekap_pengaduan_backup");
       localStorage.removeItem("sipa_rekap_pengaduan");
       localStorage.removeItem("sipa_ngawi_tickets");
+      localStorage.removeItem("sipa_pengaduan_list");
     }
 
-    // B. Hapus dari Server API Backend
+    // B. Panggil Endpoint DELETE API Server
     try {
       await fetch("/api/tickets", { method: "DELETE" });
     } catch (e) {
       console.error("Gagal reset data server:", e);
     }
 
+    // C. Kosongkan State UI
     setTickets([]);
     setIsLoading(false);
-    alert("Seluruh data uji coba berhasil dibersihkan! Sistem siap digunakan.");
+
+    alert("Seluruh data keluhan berhasil dibersihkan secara permanen! Sistem siap digunakan.");
   };
 
   const filteredTickets = tickets.filter((item) => {
@@ -295,15 +288,15 @@ export default function AdminDashboard() {
               <span>Sync Server</span>
             </button>
 
-            {/* TOMBOL RESET DATA UJI COBA */}
+            {/* TOMBOL RESET DATA KELUHAN */}
             <button
               type="button"
               onClick={handleResetData}
               className="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-xl border border-red-200 text-xs font-semibold transition-colors cursor-pointer"
-              title="Bersihkan seluruh data pengaduan uji coba"
+              title="Bersihkan seluruh data keluhan"
             >
               <Trash2 className="w-3.5 h-3.5 text-red-600" />
-              <span>Reset Data Uji Coba</span>
+              <span>Reset Data Keluhan</span>
             </button>
 
             {/* STATUS INDIKATOR DATABASE */}
@@ -504,7 +497,7 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* MODAL POP-UP PREVIEW LIHAT BUKTI GAMBAR / PDF */}
+      {/* MODAL PREVIEW BUKTI */}
       {viewProofUrl && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 relative border border-slate-100 flex flex-col items-center">
@@ -522,11 +515,7 @@ export default function AdminDashboard() {
 
             <div className="w-full max-h-[70vh] overflow-y-auto flex justify-center bg-slate-100 p-3 rounded-2xl border border-slate-200">
               {viewProofUrl.startsWith("data:application/pdf") ? (
-                <iframe
-                  src={viewProofUrl}
-                  className="w-full h-[500px] rounded-xl"
-                  title="Bukti PDF"
-                />
+                <iframe src={viewProofUrl} className="w-full h-[500px] rounded-xl" title="Bukti PDF" />
               ) : (
                 <img
                   src={viewProofUrl}

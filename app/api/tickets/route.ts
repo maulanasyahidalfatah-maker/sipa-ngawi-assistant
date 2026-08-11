@@ -13,7 +13,7 @@ export interface TicketData {
   createdAt?: string;
 }
 
-// Global Memory Store Terpusat di Server
+// Memory Storage Terpusat di Server
 let globalTickets: TicketData[] = [];
 
 // GET: Dipanggil oleh Dashboard Admin untuk mengambil semua tiket pengaduan
@@ -31,13 +31,17 @@ export async function GET() {
   );
 }
 
-// POST: Dipanggil oleh Form Publik untuk mengirim pengaduan baru atau mengembalikan backup
+// POST: Dipanggil saat ada pengaduan baru (Nomor Tiket Urut Otomatis)
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
+    // Penomoran Urut Otomatis: TK-001, TK-002, TK-003, dst.
+    const nextNum = globalTickets.length + 1;
+    const autoId = `TK-${nextNum < 10 ? `00${nextNum}` : nextNum < 100 ? `0${nextNum}` : nextNum}`;
+
     const newTicket: TicketData = {
-      id: body.id || `TK-${Date.now().toString().slice(-5)}`,
+      id: body.id && body.id.startsWith("TK-") ? body.id : autoId,
       namaPelapor: body.namaPelapor || body.nama || "-",
       noWhatsapp: body.noWhatsapp || body.wa || "-",
       asalSekolah: body.asalSekolah || body.sekolah || "-",
@@ -49,22 +53,19 @@ export async function POST(request: Request) {
       createdAt: body.createdAt || new Date().toLocaleDateString("id-ID"),
     };
 
-    // Cegah duplikasi ID yang sama
     const existingIndex = globalTickets.findIndex((t) => t.id === newTicket.id);
     if (existingIndex !== -1) {
-      // Jika tiket sudah ada, update datanya
       globalTickets[existingIndex] = {
         ...globalTickets[existingIndex],
         ...newTicket,
       };
     } else {
-      // Jika tiket baru, tambahkan ke urutan paling atas
       globalTickets.unshift(newTicket);
     }
 
     return NextResponse.json({
       success: true,
-      message: "Pengaduan berhasil tersimpan permanen di server!",
+      message: "Pengaduan berhasil tersimpan permanen!",
       data: newTicket,
     });
   } catch (error) {
@@ -75,7 +76,7 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT: Dipanggil oleh Admin Dinas saat menyelesaikan tiket & mengunggah bukti perbaikan
+// PUT: Dipanggil saat Admin mengunggah bukti perbaikan
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
@@ -104,9 +105,10 @@ export async function PUT(request: Request) {
     );
   }
 }
-// DELETE: Dipanggil oleh Admin untuk menghapus seluruh data pengaduan uji coba
+
+// DELETE: Dipanggil oleh Admin untuk RESET TOTAL SELURUH DATA
 export async function DELETE() {
-  globalTickets = []; // Kosongkan memory server
+  globalTickets = []; // KOSONGKAN TOTAL MEMORI SERVER
   return NextResponse.json({
     success: true,
     message: "Seluruh data pengaduan berhasil dibersihkan dari server!",
