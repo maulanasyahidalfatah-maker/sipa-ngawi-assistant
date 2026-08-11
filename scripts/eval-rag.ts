@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "fs";
 import path from "path";
 
+// Load environment variables dari .env.local secara otomatis
 loadLocalEnv();
 
 type EvalCase = {
@@ -12,71 +13,55 @@ type EvalCase = {
   history?: { role: string; content: string }[];
 };
 
+// DAFTAR TEST CASE EVALUASI RAG KUSUS SISTEM SIPA-NGAWI
 const cases: EvalCase[] = [
   {
-    name: "SKCK baru",
-    message: "Syarat membuat SKCK?",
-    expectedSection: "LAYANAN SKCK",
-    mustInclude: ["Fotokopi KTP", "Rp 30.000"],
+    name: "Solusi Data Inval Dapodik",
+    message: "Bagaimana cara mengatasi data inval jam mengajar guru di Dapodik?",
+    expectedSection: "DAPODIK",
+    mustInclude: ["inval", "pembelajaran", "jam mengajar"],
+    minBodySections: 1,
+  },
+  {
+    name: "Residu VervalPD Siswa",
+    message: "Kenapa data siswa masuk residu VervalPD dan bagaimana solusinya?",
+    expectedSection: "VERVALPD",
+    mustInclude: ["NIK", "Dukcapil", "residu"],
+    minBodySections: 1,
+  },
+  {
+    name: "Mutasi Siswa Lintas Sekolah",
+    message: "Bagaimana alur mutasi siswa masuk dari luar kabupaten Ngawi?",
+    expectedSection: "MUTASI",
+    mustInclude: ["surat rekomendasi", "Dinas", "surat pindah"],
     minBodySections: 2,
   },
   {
-    name: "Kehilangan dokumen dan uang",
-    message: "Dokumen penting dan uang saya hilang, harus gimana?",
-    expectedSection: "LAYANAN SKTLK",
-    mustInclude: ["SPKT", "KTP", "GRATIS"],
-    minBodySections: 2,
-  },
-  {
-    name: "Lokasi baru",
-    message: "Polsek Rembang sekarang di mana?",
-    expectedSection: "LOKASI",
-    mustInclude: ["belakang kantor Satlantas Polres Rembang"],
-  },
-  {
-    name: "SIM di Polsek",
-    message: "Bisa buat SIM di Polsek?",
-    expectedSection: "FAQ",
-    mustInclude: ["tidak", "Satpas"],
-  },
-  {
-    name: "Penipuan online",
-    message: "Cara lapor penipuan online?",
-    expectedSection: "PENIPUAN ONLINE",
-    mustInclude: ["Bukti Transfer", "Screenshot percakapan"],
-    minBodySections: 2,
-  },
-  {
-    name: "Kebisingan warga",
-    message: "gmn cara lapor kebisingan di depan rumah kku ada sound horeng aku sangat terganggu",
+    name: "Form Pengaduan Resmi Disdikbud",
+    message: "Saya mau buat pengaduan masalah NUPTK guru honorer",
     expectedSection: "PENGADUAN",
-    mustInclude: ["SPKT", "bukti", "RT/RW", "Bhabinkamtibmas"],
-    minBodySections: 3,
+    mustInclude: ["Form Pengaduan", "NPSN", "Operator"],
+    minBodySections: 1,
   },
   {
-    name: "Menyerahkan diri",
-    message: "Saya mau menyerahkan diri",
-    mustInclude: ["SPKT", "Ikuti arahan petugas"],
+    name: "Overview Layanan Virtual SIPA-NGAWI",
+    message: "SIPA NGAWI bisa bantu apa saja?",
+    mustInclude: ["Dapodik", "VervalPD", "VervalPTK", "Pengaduan"],
   },
   {
-    name: "Overview layanan",
-    message: "Kamu bisa bantu apa?",
-    mustInclude: ["SKCK", "Laporan kehilangan"],
-  },
-  {
-    name: "Follow-up biaya SKCK",
-    message: "berapa biayanya?",
-    expectedSection: "LAYANAN SKCK",
-    mustInclude: ["Rp 30.000"],
+    name: "Follow-up Mutasi PTK Guru",
+    message: "apa saja syarat berkasnya?",
+    expectedSection: "VERVALPTK",
+    mustInclude: ["SK", "surat tugas"],
     history: [
-      { role: "user", content: "Syarat membuat SKCK?" },
-      { role: "assistant", content: "Untuk SKCK, Polsek melayani SKCK untuk keperluan tingkat kecamatan atau swasta." },
+      { role: "user", content: "Bagaimana alur mutasi PTK atau Guru?" },
+      { role: "assistant", content: "Prosedur mutasi PTK dilakukan melalui persetujuan admin dinas di aplikasi VervalPTK." },
     ],
   },
 ];
 
 main().catch((error) => {
-  console.error(error);
+  console.error("Fatal Error pada Evaluasi RAG:", error);
   process.exit(1);
 });
 
@@ -91,27 +76,30 @@ async function main() {
   const apiKey = apiKeys[0];
 
   if (!apiKey) {
-    console.error("Tidak ada Gemini API key. Isi GOOGLE_GENAI_API_KEY, GOOGLE_GENAI_API_KEYS, atau GOOGLE_API_KEY di .env.local.");
+    console.error("❌ ERROR: Tidak ada Gemini API key. Pastikan GOOGLE_GENAI_API_KEY terisi di .env.local.");
     process.exit(1);
   }
 
   let failures = 0;
 
   for (const testCase of cases) {
-    console.log(`\n=== ${testCase.name} ===`);
+    console.log(`\n========================================`);
+    console.log(`🧪 EVAL CASE: ${testCase.name}`);
+    console.log(`========================================`);
+
     const retrievalQuery = buildRetrievalQuery(testCase.message, testCase.history);
     const retrieved = await retrieveRelevantDocuments(apiKey, retrievalQuery);
 
-    console.log("Retrieved:");
+    console.log("\n📄 Dokumen Terambil (Top 3):");
     retrieved.slice(0, 3).forEach((result, index) => {
-      console.log(`${index + 1}. ${result.document.metadata.sectionTitle} [${result.score.toFixed(3)}]`);
+      console.log(`  ${index + 1}. ${result.document.metadata.sectionTitle} [Score: ${result.score.toFixed(3)}]`);
     });
 
     const expectedSection = testCase.expectedSection;
 
-    if (expectedSection && !retrieved.some((result) => result.document.metadata.sectionTitle.includes(expectedSection))) {
+    if (expectedSection && !retrieved.some((result) => result.document.metadata.sectionTitle.toLowerCase().includes(expectedSection.toLowerCase()))) {
       failures += 1;
-      console.error(`FAIL: retrieval tidak memuat section "${expectedSection}"`);
+      console.error(`❌ FAIL: Retrieval tidak memuat section "${expectedSection}"`);
     }
 
     const response = await createResponseWithFallback({
@@ -122,40 +110,41 @@ async function main() {
       history: testCase.history,
     });
 
-    if (!response.formatted.sections.length) {
+    if (!response.formatted || !response.formatted.sections || !response.formatted.sections.length) {
       failures += 1;
-      console.error("FAIL: formatted.sections kosong");
+      console.error("❌ FAIL: response.formatted.sections kosong");
     }
 
-    if (response.response.includes("belum bisa disusun")) {
+    if (response.response.includes("belum bisa disusun") || response.response.includes("maaf, terjadi kendala")) {
       failures += 1;
-      console.error("FAIL: jawaban jatuh ke fallback format");
+      console.error("❌ FAIL: Jawaban jatuh ke fallback format / error message");
     }
 
-    const bodySectionCount = response.formatted.sections.filter((section) => section.body?.trim()).length;
+    const bodySectionCount = response.formatted?.sections?.filter((section) => section.body?.trim()).length || 0;
 
     if (testCase.minBodySections !== undefined && bodySectionCount < testCase.minBodySections) {
       failures += 1;
-      console.error(`FAIL: jawaban hanya punya ${bodySectionCount} section body, minimal ${testCase.minBodySections}`);
+      console.error(`❌ FAIL: Jawaban hanya punya ${bodySectionCount} section body (minimal ${testCase.minBodySections})`);
     }
 
     testCase.mustInclude?.forEach((needle) => {
       if (!response.response.toLowerCase().includes(needle.toLowerCase())) {
         failures += 1;
-        console.error(`FAIL: jawaban tidak memuat "${needle}"`);
+        console.error(`❌ FAIL: Jawaban tidak memuat kata kunci "${needle}"`);
       }
     });
 
-    console.log("Answer:");
+    console.log("\n💬 Jawaban Asisten Virtual:");
     console.log(response.response);
   }
 
+  console.log(`\n========================================`);
   if (failures > 0) {
-    console.error(`\nEval selesai dengan ${failures} kegagalan.`);
+    console.error(`❌ EVAL SELESAI: Ditemukan ${failures} kegagalan.`);
     process.exit(1);
   }
 
-  console.log("\nEval selesai tanpa kegagalan schema dasar.");
+  console.log("✅ EVAL SELESAI: Semua skenario RAG SIPA-NGAWI lulus validasi 100%!");
 }
 
 async function createResponseWithFallback(params: {
@@ -177,7 +166,7 @@ async function createResponseWithFallback(params: {
       lastError = error;
 
       if (index < params.apiKeys.length - 1 && params.shouldFallbackToNextModelOrKey(error)) {
-        console.warn(`API key ${index + 1} gagal sementara, mencoba key berikutnya.`);
+        console.warn(`⚠️ API key ke-${index + 1} gagal sementara, mencoba key berikutnya...`);
         continue;
       }
 

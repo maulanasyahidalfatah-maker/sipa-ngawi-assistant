@@ -13,8 +13,13 @@ import {
 import { loadSopDocuments, loadSopText, normalizeText } from "./sop";
 import type { RetrievedSopDocument, SopDocument, SopMetadata } from "./types";
 
-const SOP_INDEX_CACHE_PATH = process.env.SOP_INDEX_CACHE_PATH
-  ?? path.join(process.env.VERCEL ? "/tmp" : process.cwd(), ".cache", "sop-langchain-embeddings.json");
+const SOP_INDEX_CACHE_PATH =
+  process.env.SOP_INDEX_CACHE_PATH ??
+  path.join(
+    process.env.VERCEL ? "/tmp" : process.cwd(),
+    ".cache",
+    "sop-langchain-embeddings.json"
+  );
 
 type CachedSopDocument = {
   id?: string;
@@ -36,13 +41,23 @@ type VectorStoreBundle = {
 
 const vectorStorePromises = new Map<string, Promise<VectorStoreBundle>>();
 
-export async function retrieveRelevantDocuments(apiKey: string, query: string): Promise<RetrievedSopDocument[]> {
+export async function retrieveRelevantDocuments(
+  apiKey: string,
+  query: string
+): Promise<RetrievedSopDocument[]> {
   const { vectorStore, documents } = await getVectorStore(apiKey);
-  const vectorResults = await vectorStore.similaritySearchWithScore(query, TOP_K_CANDIDATES);
+  const vectorResults = await vectorStore.similaritySearchWithScore(
+    query,
+    TOP_K_CANDIDATES
+  );
   const candidates = new Map<string, RetrievedSopDocument>();
 
   vectorResults.forEach(([document, semanticScore]) => {
-    const result = buildRetrievedResult(query, document as SopDocument, semanticScore);
+    const result = buildRetrievedResult(
+      query,
+      document as SopDocument,
+      semanticScore
+    );
     candidates.set(result.document.metadata.chunkId, result);
   });
 
@@ -54,7 +69,12 @@ export async function retrieveRelevantDocuments(apiKey: string, query: string): 
     }
 
     const existing = candidates.get(document.metadata.chunkId);
-    const result = buildRetrievedResult(query, document, existing?.semanticScore ?? 0, intentBoost);
+    const result = buildRetrievedResult(
+      query,
+      document,
+      existing?.semanticScore ?? 0,
+      intentBoost
+    );
     candidates.set(document.metadata.chunkId, result);
   });
 
@@ -64,14 +84,20 @@ export async function retrieveRelevantDocuments(apiKey: string, query: string): 
     .slice(0, TOP_K_CHUNKS);
 }
 
-export function buildRetrievalQuery(userMessage: string, history: { role: string; content: string }[] | undefined) {
-  const recentUserMessages = history
-    ?.filter((message) => message.role === "user")
-    .slice(-2)
-    .map((message) => message.content)
-    .join("\n") ?? "";
+export function buildRetrievalQuery(
+  userMessage: string,
+  history: { role: string; content: string }[] | undefined
+) {
+  const recentUserMessages =
+    history
+      ?.filter((message) => message.role === "user")
+      .slice(-2)
+      .map((message) => message.content)
+      .join("\n") ?? "";
 
-  return expandRetrievalQuery(normalizeText(`${recentUserMessages}\n${userMessage}`));
+  return expandRetrievalQuery(
+    normalizeText(`${recentUserMessages}\n${userMessage}`)
+  );
 }
 
 async function getVectorStore(apiKey: string) {
@@ -103,43 +129,56 @@ async function buildVectorStore(apiKey: string): Promise<VectorStoreBundle> {
       metadata: document.metadata,
     }));
 
-    await vectorStore.addVectors(
-      cachedIndex.embeddings,
-      documents
-    );
+    await vectorStore.addVectors(cachedIndex.embeddings, documents);
     return { vectorStore, documents };
   }
 
   const documents = await loadSopDocuments();
-  const vectors = await embeddings.embedDocuments(documents.map((document) => document.pageContent));
+  const vectors = await embeddings.embedDocuments(
+    documents.map((document) => document.pageContent)
+  );
   await vectorStore.addVectors(vectors, documents);
   await writeCachedSopIndex(documents, vectors);
 
   return { vectorStore, documents };
 }
 
+// ✅ DIPERBAIKI: Panggilan GoogleGenerativeAI embedContent disesuaikan dengan SDK resmi
 function createSopEmbeddings(apiKey: string) {
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+  const model = genAI.getGenerativeModel({
+    model: EMBEDDING_MODEL || "text-embedding-004",
+  });
 
   return {
     embedDocuments: async (documents: string[]) => {
       const results: number[][] = [];
       for (const text of documents) {
-        const res = await model.embedContent({
-          content: { role: "user", parts: [{ text }] },
-          taskType: TaskType.RETRIEVAL_DOCUMENT,
-        });
-        results.push(res.embedding.values);
+        try {
+          const res = await model.embedContent({
+            content: { role: "user", parts: [{ text }] },
+            taskType: TaskType.RETRIEVAL_DOCUMENT,
+          });
+          results.push(res.embedding.values);
+        } catch (err) {
+          // Fallback sederhana jika taskType RETRIEVAL_DOCUMENT gagal/not supported
+          const res = await model.embedContent(text);
+          results.push(res.embedding.values);
+        }
       }
       return results;
     },
     embedQuery: async (text: string) => {
-      const res = await model.embedContent({
-        content: { role: "user", parts: [{ text }] },
-        taskType: TaskType.RETRIEVAL_QUERY,
-      });
-      return res.embedding.values;
+      try {
+        const res = await model.embedContent({
+          content: { role: "user", parts: [{ text }] },
+          taskType: TaskType.RETRIEVAL_QUERY,
+        });
+        return res.embedding.values;
+      } catch (err) {
+        const res = await model.embedContent(text);
+        return res.embedding.values;
+      }
     },
   };
 }
@@ -168,7 +207,12 @@ async function readCachedSopIndex() {
       Array.isArray(cache.documents) &&
       Array.isArray(cache.embeddings) &&
       cache.documents.length === cache.embeddings.length &&
-      cache.embeddings.every((embedding) => Array.isArray(embedding) && embedding.length > 0 && embedding.some(val => val !== 0))
+      cache.embeddings.every(
+        (embedding) =>
+          Array.isArray(embedding) &&
+          embedding.length > 0 &&
+          embedding.some((val) => val !== 0)
+      )
     ) {
       return cache;
     }
@@ -179,7 +223,10 @@ async function readCachedSopIndex() {
   return null;
 }
 
-async function writeCachedSopIndex(documents: SopDocument[], embeddings: number[][]) {
+async function writeCachedSopIndex(
+  documents: SopDocument[],
+  embeddings: number[][]
+) {
   try {
     const sourceHash = await getSourceHash();
     const cache: SopIndexCache = {
@@ -218,8 +265,16 @@ function keywordOverlapScore(query: string, text: string) {
   return matches / queryTokens.size;
 }
 
-function buildRetrievedResult(query: string, document: SopDocument, semanticScore: number, intentBoost = 0): RetrievedSopDocument {
-  const lexicalScore = keywordOverlapScore(query, `${document.metadata.sectionTitle}\n${document.pageContent}`);
+function buildRetrievedResult(
+  query: string,
+  document: SopDocument,
+  semanticScore: number,
+  intentBoost = 0
+): RetrievedSopDocument {
+  const lexicalScore = keywordOverlapScore(
+    query,
+    `${document.metadata.sectionTitle}\n${document.pageContent}`
+  );
   const score = semanticScore + lexicalScore * 0.15 + intentBoost;
 
   return {
@@ -233,11 +288,17 @@ function buildRetrievedResult(query: string, document: SopDocument, semanticScor
 function intentSectionBoost(query: string, document: SopDocument) {
   const title = document.metadata.sectionTitle.toLowerCase();
 
-  if (isDapodikInvalQuery(query) && /(inval|sinkron|validasi|dapodik)/i.test(title)) {
+  if (
+    isDapodikInvalQuery(query) &&
+    /(inval|sinkron|validasi|dapodik)/i.test(title)
+  ) {
     return 1;
   }
 
-  if (isPtkResiduQuery(query) && /(ptk|verval|nuptk|residu|siswa|pd)/i.test(title)) {
+  if (
+    isPtkResiduQuery(query) &&
+    /(ptk|verval|nuptk|residu|siswa|pd)/i.test(title)
+  ) {
     return 0.35;
   }
 
@@ -248,11 +309,15 @@ function expandRetrievalQuery(query: string) {
   const additions: string[] = [];
 
   if (isDapodikInvalQuery(query)) {
-    additions.push("dapodik data inval gagal sinkronisasi validasi rombel sarpas ptk siswa kurikulum jenjang");
+    additions.push(
+      "dapodik data inval gagal sinkronisasi validasi rombel sarpas ptk siswa kurikulum jenjang"
+    );
   }
 
   if (isPtkResiduQuery(query)) {
-    additions.push("vervalpd vervalptk residu nik nuptk nisn mutasi siswa penarikan ptk dinas pendidikan ngawi");
+    additions.push(
+      "vervalpd vervalptk residu nik nuptk nisn mutasi siswa penarikan ptk dinas pendidikan ngawi"
+    );
   }
 
   if (!additions.length) {
@@ -292,8 +357,10 @@ function isPtkResiduQuery(query: string) {
 }
 
 function tokenize(text: string) {
-  return text
-    .toLowerCase()
-    .match(/[a-z0-9]+/g)
-    ?.filter((token) => token.length > 2) ?? [];
+  return (
+    text
+      .toLowerCase()
+      .match(/[a-z0-9]+/g)
+      ?.filter((token) => token.length > 2) ?? []
+  );
 }

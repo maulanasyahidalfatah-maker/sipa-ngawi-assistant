@@ -12,6 +12,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf .next node_modules",
+    "eval": "tsx eval-rag.ts",
     "eval:rag": "tsx scripts/eval-rag.ts"
   },
   "dependencies": {
