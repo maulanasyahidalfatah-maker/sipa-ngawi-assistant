@@ -116,6 +116,7 @@ const DATABASE_SEKOLAH_NGAWI: { [npsn: string]: { nama: string; jenjang: string 
   "20539345": { nama: "SDN MARGOMULYO 1 NGAWI", jenjang: "SD/MI" },
   "20539350": { nama: "SMAN 1 NGAWI", jenjang: "SMA/SMK/MA" },
   "20539352": { nama: "SMAN 2 NGAWI", jenjang: "SMA/SMK/MA" },
+  "20508641": { nama: "SD Negeri Tempuran 5", jenjang: "SD/MI" },
 };
 
 // DAFTAR SEKOLAH LENGKAP UTUH KABUPATEN NGAWI
@@ -143,6 +144,11 @@ const DAFTAR_SEKOLAH_NGAWI = [
   { nama: "SDN Ngrambe 1", jenjang: "SD/MI" },
   { nama: "SDIT Al-Qalam Ngawi", jenjang: "SD/MI" },
   { nama: "MI Negeri 1 Ngawi", jenjang: "SD/MI" },
+  { nama: "SD Negeri Tempuran 1", jenjang: "SD/MI" },
+  { nama: "SD Negeri Tempuran 2", jenjang: "SD/MI" },
+  { nama: "SD Negeri Tempuran 3", jenjang: "SD/MI" },
+  { nama: "SD Negeri Tempuran 4", jenjang: "SD/MI" },
+  { nama: "SD Negeri Tempuran 5", jenjang: "SD/MI" },
 
   // --- SMP / MTs ---
   { nama: "SMPN 1 Ngawi", jenjang: "SMP/MTs" },
