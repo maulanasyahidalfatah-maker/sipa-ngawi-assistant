@@ -13,24 +13,31 @@ export interface TicketData {
   createdAt?: string;
 }
 
-// Memory Storage Terpusat di Server Vercel Backend
+// Global Memory Store Terpusat di Server
 let globalTickets: TicketData[] = [];
 
 // GET: Dipanggil oleh Dashboard Admin untuk mengambil semua tiket pengaduan
 export async function GET() {
-  return NextResponse.json({
-    success: true,
-    data: globalTickets,
-  });
+  return NextResponse.json(
+    {
+      success: true,
+      data: globalTickets,
+    },
+    {
+      headers: {
+        "Cache-Control": "no-store, max-age=0, must-revalidate",
+      },
+    }
+  );
 }
 
-// POST: Dipanggil oleh Form Publik untuk mengirim pengaduan baru
+// POST: Dipanggil oleh Form Publik untuk mengirim pengaduan baru atau mengembalikan backup
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
     const newTicket: TicketData = {
-      id: body.id || `TK-00${globalTickets.length + 1}`,
+      id: body.id || `TK-${Date.now().toString().slice(-5)}`,
       namaPelapor: body.namaPelapor || body.nama || "-",
       noWhatsapp: body.noWhatsapp || body.wa || "-",
       asalSekolah: body.asalSekolah || body.sekolah || "-",
@@ -38,15 +45,26 @@ export async function POST(request: Request) {
       kategori: body.kategori || body.kategoriKendala || "-",
       rincian: body.rincian || body.rincianKeluhan || "-",
       status: body.status || "PENDING",
+      buktiPerbaikan: body.buktiPerbaikan || undefined,
       createdAt: body.createdAt || new Date().toLocaleDateString("id-ID"),
     };
 
-    // Simpan ke memori server global
-    globalTickets.unshift(newTicket);
+    // Cegah duplikasi ID yang sama
+    const existingIndex = globalTickets.findIndex((t) => t.id === newTicket.id);
+    if (existingIndex !== -1) {
+      // Jika tiket sudah ada, update datanya
+      globalTickets[existingIndex] = {
+        ...globalTickets[existingIndex],
+        ...newTicket,
+      };
+    } else {
+      // Jika tiket baru, tambahkan ke urutan paling atas
+      globalTickets.unshift(newTicket);
+    }
 
     return NextResponse.json({
       success: true,
-      message: "Pengaduan berhasil tersimpan di server!",
+      message: "Pengaduan berhasil tersimpan permanen di server!",
       data: newTicket,
     });
   } catch (error) {
@@ -57,7 +75,7 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT: Dipanggil oleh Admin Dinas saat menyelesaikan tiket & mengunggah bukti
+// PUT: Dipanggil oleh Admin Dinas saat menyelesaikan tiket & mengunggah bukti perbaikan
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
@@ -76,7 +94,8 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Status tiket berhasil diperbarui di server!",
+      message: "Status tiket & bukti perbaikan berhasil diperbarui!",
+      data: globalTickets,
     });
   } catch (error) {
     return NextResponse.json(

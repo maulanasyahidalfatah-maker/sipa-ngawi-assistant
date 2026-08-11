@@ -31,22 +31,24 @@ export default function AdminDashboard() {
   // State Modal Lihat Bukti
   const [viewProofUrl, setViewProofUrl] = useState<string | null>(null);
 
-  // 1. MEMBACA & MENSINKRONKAN DATA PENGADUAN DARI SERVER API & LOCALSTORAGE
+  // 1. SINKRONISASI DUA ARAH (SERVER BACKEND + BACKUP LOKAL PERMANEN)
   const loadTickets = async () => {
     setIsLoading(true);
-    let serverTickets: AdminTicket[] = [];
 
-    // Prioritas 1: Ambil data dari Server Cloud Backend via API Route
-    try {
-      const res = await fetch("/api/tickets", { cache: "no-store" });
-      if (res.ok) {
-        const result = await res.json();
-        if (result.success && Array.isArray(result.data)) {
-          serverTickets = result.data.map((item: any, idx: number) => {
-            const num = idx + 1;
-            const defaultId = `TK-0${num < 10 ? `0${num}` : num}`;
-            return {
-              id: item.id || (item.ticketNumber ? `TK-${item.ticketNumber}` : defaultId),
+    // Step A: Ambil backup dari LocalStorage browser
+    let localBackup: AdminTicket[] = [];
+    if (typeof window !== "undefined") {
+      const savedBackup = localStorage.getItem("sipa_rekap_pengaduan_backup");
+      const savedRekap = localStorage.getItem("sipa_rekap_pengaduan");
+      const savedTickets = localStorage.getItem("sipa_ngawi_tickets");
+      const raw = savedBackup || savedRekap || savedTickets;
+
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            localBackup = parsed.map((item: any, idx: number) => ({
+              id: item.id || `TK-00${idx + 1}`,
               namaPelapor: item.namaPelapor || item.nama || "-",
               noWhatsapp: item.noWhatsapp || item.wa || "-",
               asalSekolah: item.asalSekolah || item.sekolah || "-",
@@ -56,67 +58,81 @@ export default function AdminDashboard() {
               status: item.status === "SELESAI" ? "RESOLVED" : (item.status || "PENDING"),
               buktiPerbaikan: item.buktiPerbaikan || undefined,
               createdAt: item.createdAt || new Date().toLocaleDateString("id-ID"),
-            };
-          });
+            }));
+          }
+        } catch (e) {
+          console.error("Gagal membaca backup lokal:", e);
+        }
+      }
+    }
+
+    // Step B: Ambil data dari Server Cloud Backend
+    let serverTickets: AdminTicket[] = [];
+    try {
+      const res = await fetch("/api/tickets", { cache: "no-store" });
+      if (res.ok) {
+        const result = await res.json();
+        if (result.success && Array.isArray(result.data)) {
+          serverTickets = result.data;
         }
       }
     } catch (e) {
-      console.warn("Gagal terhubung ke API backend, menggunakan data lokal:", e);
+      console.warn("Gagal terhubung ke API backend:", e);
     }
 
-    // Prioritas 2: Baca data dari LocalStorage jika ada inputan browser lokal
-    let localTickets: AdminTicket[] = [];
-    if (typeof window !== "undefined") {
-      const savedRekap = localStorage.getItem("sipa_rekap_pengaduan");
-      const savedTickets = localStorage.getItem("sipa_ngawi_tickets");
-      const saved = savedRekap || savedTickets;
+    // Step C: Gabungkan data Server dan Backup Lokal tanpa duplikasi ID
+    const ticketMap = new Map<string, AdminTicket>();
 
-      if (saved) {
-        try {
-          const parsedData = JSON.parse(saved);
-          if (Array.isArray(parsedData)) {
-            localTickets = parsedData.map((item: any, idx: number) => {
-              const num = idx + 1;
-              const defaultId = `TK-0${num < 10 ? `0${num}` : num}`;
-              return {
-                id: item.id || (item.ticketNumber ? `TK-${item.ticketNumber}` : defaultId),
-                namaPelapor: item.namaPelapor || item.nama || "-",
-                noWhatsapp: item.noWhatsapp || item.wa || "-",
-                asalSekolah: item.asalSekolah || item.sekolah || "-",
-                npsn: item.npsn || "-",
-                kategori: item.kategori || item.kategoriKendala || "-",
-                rincian: item.rincian || item.rincianKeluhan || "-",
-                status: item.status === "SELESAI" ? "RESOLVED" : (item.status || "PENDING"),
-                buktiPerbaikan: item.buktiPerbaikan || undefined,
-                createdAt: item.createdAt || new Date().toLocaleDateString("id-ID"),
-              };
-            });
-          }
-        } catch (e) {
-          console.error("Gagal membaca cache pengaduan admin:", e);
-        }
-      }
-    }
+    // Prioritas awal dari backup lokal
+    localBackup.forEach((t) => ticketMap.set(t.id, t));
 
-    // Gabungkan data dari server & local storage tanpa duplikasi ID
-    const merged = [...serverTickets];
-    localTickets.forEach((loc) => {
-      if (!merged.some((srv) => srv.id === loc.id)) {
-        merged.push(loc);
+    // Gabungkan dengan data server
+    serverTickets.forEach((t) => {
+      const existing = ticketMap.get(t.id);
+      // Jika belum ada di lokal, atau data server sudah RESOLVED, utamakan data server
+      if (!existing || (existing.status === "PENDING" && t.status === "RESOLVED")) {
+        ticketMap.set(t.id, t);
       }
     });
 
-    setTickets(merged);
+    const mergedTickets = Array.from(ticketMap.values());
+
+    setTickets(mergedTickets);
+
+    // Simpan hasil penggabungan ke Backup Lokal Permanen
+    if (typeof window !== "undefined" && mergedTickets.length > 0) {
+      try {
+        localStorage.setItem("sipa_rekap_pengaduan_backup", JSON.stringify(mergedTickets));
+        localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(mergedTickets));
+      } catch {
+        console.warn("Storage browser penuh.");
+      }
+    }
+
+    // Restore balik ke server jika server sempat kosong karena restart Vercel
+    if (serverTickets.length < mergedTickets.length) {
+      mergedTickets.forEach(async (ticket) => {
+        try {
+          await fetch("/api/tickets", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(ticket),
+          });
+        } catch {
+          // Abaikan
+        }
+      });
+    }
+
     setIsLoading(false);
   };
 
   useEffect(() => {
-    // 2. VALIDASI AKSES LOGIN ADMIN + AUTO BYPASS KHUSUS MODE DEVELOPMENT / DEVELOPER
+    // 2. VALIDASI AKSES LOGIN ADMIN
     if (typeof window !== "undefined") {
       const isDev = process.env.NODE_ENV === "development";
       let sessionRaw = localStorage.getItem("sipa_user_session");
 
-      // Auto-set sesi admin khusus developer saat coding di localhost
       if (!sessionRaw && isDev) {
         const devSession = { role: "ADMIN", nama: "Developer Utama", email: "dev@sipa.ngawi" };
         localStorage.setItem("sipa_user_session", JSON.stringify(devSession));
@@ -144,14 +160,13 @@ export default function AdminDashboard() {
 
     loadTickets();
 
-    // Auto-polling tiap 8 detik agar data pengaduan baru dari HP/browser lain otomatis masuk
+    // Auto-polling refresh setiap 5 detik
     const interval = setInterval(() => {
       loadTickets();
-    }, 8000);
+    }, 5000);
 
-    // Listener otomatis jika ada pengaduan baru masuk di tab browser yang sama
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "sipa_rekap_pengaduan" || e.key === "sipa_ngawi_tickets") {
+      if (e.key === "sipa_rekap_pengaduan" || e.key === "sipa_rekap_pengaduan_backup") {
         loadTickets();
       }
     };
@@ -163,7 +178,7 @@ export default function AdminDashboard() {
     };
   }, []);
 
-  // 3. PROSES UNGGAH BUKTI PERBAIKAN & MENGUBAH STATUS TIKET PERMANEN
+  // 3. UNGGAH BUKTI PERBAIKAN & UBAH STATUS MENJADI SUDAH DIBENAHI
   const handleAdminVerify = async (fileBase64: string) => {
     if (!selectedTicket) return;
 
@@ -182,13 +197,13 @@ export default function AdminDashboard() {
 
     setTickets(updatedTickets);
 
-    // Update ke LocalStorage
+    // Simpan ke backup lokal
     if (typeof window !== "undefined") {
       try {
+        localStorage.setItem("sipa_rekap_pengaduan_backup", JSON.stringify(updatedTickets));
         localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(updatedTickets));
-        localStorage.setItem("sipa_ngawi_tickets", JSON.stringify(updatedTickets));
       } catch {
-        console.warn("LocalStorage penuh, menyimpan ke server API.");
+        console.warn("Storage penuh.");
       }
     }
 
@@ -204,7 +219,7 @@ export default function AdminDashboard() {
         }),
       });
     } catch (e) {
-      console.error("Gagal sinkronisasi update ke server API:", e);
+      console.error("Gagal sinkronisasi update ke server:", e);
     }
 
     // Kirim Notifikasi WA Bot ke Pelapor
@@ -248,11 +263,11 @@ export default function AdminDashboard() {
               title="Refresh Data Pengaduan"
             >
               <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? "animate-spin text-[#006837]" : ""}`} />
-              <span>Refresh</span>
+              <span>Sync Server</span>
             </button>
             <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-200 text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>System Online</span>
+              <span>Database Connected</span>
             </div>
           </div>
         </div>
@@ -279,7 +294,7 @@ export default function AdminDashboard() {
                 : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
             }`}
           >
-            Menunggu ({pendingCount})
+            Belum Dibenahi ({pendingCount})
           </button>
           <button
             type="button"
@@ -290,7 +305,7 @@ export default function AdminDashboard() {
                 : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
             }`}
           >
-            Selesai ({resolvedCount})
+            Sudah Dibenahi ({resolvedCount})
           </button>
         </div>
 
@@ -316,7 +331,7 @@ export default function AdminDashboard() {
                         <Inbox className="w-12 h-12 stroke-[1.5] mb-2 text-slate-300" />
                         <p className="font-bold text-slate-600 text-sm">Belum Ada Pengaduan Masuk</p>
                         <p className="text-xs text-slate-400 mt-0.5">
-                          Form pengaduan yang dikirimkan oleh pengguna publik/operator akan otomatis muncul di sini.
+                          Setiap keluhan yang masuk akan tersimpan permanen di sini sampai Admin mengunggah bukti perbaikan.
                         </p>
                       </div>
                     </td>
@@ -344,11 +359,11 @@ export default function AdminDashboard() {
                       <td className="p-3.5 whitespace-nowrap">
                         {ticket.status === "RESOLVED" ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> SELESAI
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> SUDAH DIBENAHI
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px]">
-                            <Clock className="w-3.5 h-3.5 text-amber-600" /> PENDING
+                            <Clock className="w-3.5 h-3.5 text-amber-600" /> BELUM DIBENAHI
                           </span>
                         )}
                       </td>
@@ -359,7 +374,7 @@ export default function AdminDashboard() {
                             onClick={() => setSelectedTicket(ticket)}
                             className="px-3 py-1.5 bg-[#006837] hover:bg-[#00522c] text-white rounded-xl text-xs font-semibold flex items-center gap-1 shadow-xs transition-colors cursor-pointer mx-auto"
                           >
-                            <span>Verifikasi &amp; Selesaikan</span>
+                            <span>Unggah Bukti &amp; Selesaikan</span>
                           </button>
                         ) : (
                           <button
@@ -380,7 +395,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* MODAL UNGGAH BUKTI UNTUK VERIFIKASI TIKET */}
+      {/* MODAL UNGGAH BUKTI PERBAIKAN */}
       {selectedTicket && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white rounded-3xl shadow-xl max-w-md w-full p-6 relative border border-slate-100">
@@ -393,10 +408,10 @@ export default function AdminDashboard() {
             </button>
 
             <h3 className="text-lg font-bold text-slate-900 mb-1">
-              Verifikasi Tiket {selectedTicket.id}
+              Verifikasi &amp; Beri Bukti Tiket {selectedTicket.id}
             </h3>
             <p className="text-xs text-slate-500 mb-4">
-              Unggah screenshot / dokumen bukti perbaikan dari server backend untuk menyelesaikan tiket <strong>{selectedTicket.asalSekolah}</strong>.
+              Unggah screenshot / berkas bukti perbaikan dari Dinas untuk menyelesaikan pengaduan <strong>{selectedTicket.asalSekolah}</strong>.
             </p>
 
             <div className="space-y-4 text-xs">
@@ -407,7 +422,7 @@ export default function AdminDashboard() {
 
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">
-                  Pilih Berkas Bukti Perbaikan (Gambar/PDF) *
+                  Unggah Berkas Bukti Perbaikan Dinas (Gambar/PDF) *
                 </label>
                 <input
                   type="file"
@@ -439,7 +454,7 @@ export default function AdminDashboard() {
                   className="px-4 py-2 bg-[#006837] hover:bg-[#00522c] disabled:opacity-40 text-white rounded-xl font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
                 >
                   <Upload className="w-3.5 h-3.5" />
-                  <span>{isSubmittingProof ? "Memproses..." : "Selesaikan Tiket"}</span>
+                  <span>{isSubmittingProof ? "Memproses..." : "Simpan & Selesaikan"}</span>
                 </button>
               </div>
             </div>
@@ -460,7 +475,7 @@ export default function AdminDashboard() {
             </button>
 
             <h3 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <Eye className="w-5 h-5 text-emerald-600" /> Bukti Perbaikan Admin
+              <Eye className="w-5 h-5 text-emerald-600" /> Bukti Hasil Pembetulan Dinas
             </h3>
 
             <div className="w-full max-h-[70vh] overflow-y-auto flex justify-center bg-slate-100 p-3 rounded-2xl border border-slate-200">
@@ -473,7 +488,7 @@ export default function AdminDashboard() {
               ) : (
                 <img
                   src={viewProofUrl}
-                  alt="Bukti Perbaikan Admin"
+                  alt="Bukti Hasil Pembetulan Dinas"
                   className="max-w-full max-h-[60vh] object-contain rounded-xl shadow-xs"
                 />
               )}
