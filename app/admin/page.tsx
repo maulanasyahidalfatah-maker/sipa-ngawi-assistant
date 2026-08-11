@@ -31,11 +31,42 @@ export default function AdminDashboard() {
   // State Modal Lihat Bukti
   const [viewProofUrl, setViewProofUrl] = useState<string | null>(null);
 
-  // 1. MEMBACA & MENSINKRONKAN DATA PENGADUAN DARI LOCALSTORAGE
-  const loadTickets = () => {
+  // 1. MEMBACA & MENSINKRONKAN DATA PENGADUAN DARI SERVER API & LOCALSTORAGE
+  const loadTickets = async () => {
     setIsLoading(true);
+    let serverTickets: AdminTicket[] = [];
+
+    // Prioritas 1: Ambil data dari Server Cloud Backend via API Route
+    try {
+      const res = await fetch("/api/tickets", { cache: "no-store" });
+      if (res.ok) {
+        const result = await res.json();
+        if (result.success && Array.isArray(result.data)) {
+          serverTickets = result.data.map((item: any, idx: number) => {
+            const num = idx + 1;
+            const defaultId = `TK-0${num < 10 ? `0${num}` : num}`;
+            return {
+              id: item.id || (item.ticketNumber ? `TK-${item.ticketNumber}` : defaultId),
+              namaPelapor: item.namaPelapor || item.nama || "-",
+              noWhatsapp: item.noWhatsapp || item.wa || "-",
+              asalSekolah: item.asalSekolah || item.sekolah || "-",
+              npsn: item.npsn || "-",
+              kategori: item.kategori || item.kategoriKendala || "-",
+              rincian: item.rincian || item.rincianKeluhan || "-",
+              status: item.status === "SELESAI" ? "RESOLVED" : (item.status || "PENDING"),
+              buktiPerbaikan: item.buktiPerbaikan || undefined,
+              createdAt: item.createdAt || new Date().toLocaleDateString("id-ID"),
+            };
+          });
+        }
+      }
+    } catch (e) {
+      console.warn("Gagal terhubung ke API backend, menggunakan data lokal:", e);
+    }
+
+    // Prioritas 2: Baca data dari LocalStorage jika ada inputan browser lokal
+    let localTickets: AdminTicket[] = [];
     if (typeof window !== "undefined") {
-      // Ambil data dari sipa_rekap_pengaduan atau fallback ke sipa_ngawi_tickets
       const savedRekap = localStorage.getItem("sipa_rekap_pengaduan");
       const savedTickets = localStorage.getItem("sipa_ngawi_tickets");
       const saved = savedRekap || savedTickets;
@@ -43,12 +74,10 @@ export default function AdminDashboard() {
       if (saved) {
         try {
           const parsedData = JSON.parse(saved);
-          
-          if (Array.isArray(parsedData) && parsedData.length > 0) {
-            const formattedTickets: AdminTicket[] = parsedData.map((item: any, idx: number) => {
+          if (Array.isArray(parsedData)) {
+            localTickets = parsedData.map((item: any, idx: number) => {
               const num = idx + 1;
               const defaultId = `TK-0${num < 10 ? `0${num}` : num}`;
-
               return {
                 id: item.id || (item.ticketNumber ? `TK-${item.ticketNumber}` : defaultId),
                 namaPelapor: item.namaPelapor || item.nama || "-",
@@ -62,19 +91,22 @@ export default function AdminDashboard() {
                 createdAt: item.createdAt || new Date().toLocaleDateString("id-ID"),
               };
             });
-
-            setTickets(formattedTickets);
-          } else {
-            setTickets([]);
           }
         } catch (e) {
           console.error("Gagal membaca cache pengaduan admin:", e);
-          setTickets([]);
         }
-      } else {
-        setTickets([]);
       }
     }
+
+    // Gabungkan data dari server & local storage tanpa duplikasi ID
+    const merged = [...serverTickets];
+    localTickets.forEach((loc) => {
+      if (!merged.some((srv) => srv.id === loc.id)) {
+        merged.push(loc);
+      }
+    });
+
+    setTickets(merged);
     setIsLoading(false);
   };
 
@@ -84,7 +116,7 @@ export default function AdminDashboard() {
       const isDev = process.env.NODE_ENV === "development";
       let sessionRaw = localStorage.getItem("sipa_user_session");
 
-      // Jika kamu membuka di localhost dan belum login, sistem otomatis menganggap kamu Developer/Admin
+      // Auto-set sesi admin khusus developer saat coding di localhost
       if (!sessionRaw && isDev) {
         const devSession = { role: "ADMIN", nama: "Developer Utama", email: "dev@sipa.ngawi" };
         localStorage.setItem("sipa_user_session", JSON.stringify(devSession));
@@ -112,7 +144,12 @@ export default function AdminDashboard() {
 
     loadTickets();
 
-    // Listener otomatis jika ada pengaduan baru masuk di tab publik browser yang sama
+    // Auto-polling tiap 8 detik agar data pengaduan baru dari HP/browser lain otomatis masuk
+    const interval = setInterval(() => {
+      loadTickets();
+    }, 8000);
+
+    // Listener otomatis jika ada pengaduan baru masuk di tab browser yang sama
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "sipa_rekap_pengaduan" || e.key === "sipa_ngawi_tickets") {
         loadTickets();
@@ -120,50 +157,67 @@ export default function AdminDashboard() {
     };
 
     window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   // 3. PROSES UNGGAH BUKTI PERBAIKAN & MENGUBAH STATUS TIKET PERMANEN
-  const handleAdminVerify = (fileBase64: string) => {
+  const handleAdminVerify = async (fileBase64: string) => {
     if (!selectedTicket) return;
 
     setIsSubmittingProof(true);
 
-    setTimeout(() => {
-      const updatedTickets = tickets.map((ticket) => {
-        if (ticket.id === selectedTicket.id) {
-          return {
-            ...ticket,
-            status: "RESOLVED" as const,
-            buktiPerbaikan: fileBase64,
-          };
-        }
-        return ticket;
-      });
-
-      setTickets(updatedTickets);
-
-      if (typeof window !== "undefined") {
-        try {
-          localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(updatedTickets));
-          localStorage.setItem("sipa_ngawi_tickets", JSON.stringify(updatedTickets));
-        } catch {
-          alert("Ukuran file terlalu besar untuk disimpan di localStorage! Gunakan berkas gambar < 1MB.");
-        }
+    const updatedTickets = tickets.map((ticket) => {
+      if (ticket.id === selectedTicket.id) {
+        return {
+          ...ticket,
+          status: "RESOLVED" as const,
+          buktiPerbaikan: fileBase64,
+        };
       }
+      return ticket;
+    });
 
-      // Kirim Notifikasi WA Bot ke Pelapor
-      const waMsg = encodeURIComponent(
-        `Halo Bapak/Ibu ${selectedTicket.namaPelapor},\n\n` +
-        `Pengaduan Anda untuk sekolah *${selectedTicket.asalSekolah} (${selectedTicket.npsn})* telah *SELESAI DITINDAKLANJUTI* oleh Admin Disdikbud Kab. Ngawi.\n\n` +
-        `Terima kasih telah menggunakan layanan Asisten Virtual SIPA-NGAWI.`
-      );
-      window.open(`https://wa.me/${selectedTicket.noWhatsapp}?text=${waMsg}`, "_blank");
+    setTickets(updatedTickets);
 
-      setIsSubmittingProof(false);
-      setSelectedTicket(null);
-      setAdminProofFile(null);
-    }, 800);
+    // Update ke LocalStorage
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(updatedTickets));
+        localStorage.setItem("sipa_ngawi_tickets", JSON.stringify(updatedTickets));
+      } catch {
+        console.warn("LocalStorage penuh, menyimpan ke server API.");
+      }
+    }
+
+    // Update ke Server API Backend
+    try {
+      await fetch("/api/tickets", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedTicket.id,
+          status: "RESOLVED",
+          buktiPerbaikan: fileBase64,
+        }),
+      });
+    } catch (e) {
+      console.error("Gagal sinkronisasi update ke server API:", e);
+    }
+
+    // Kirim Notifikasi WA Bot ke Pelapor
+    const waMsg = encodeURIComponent(
+      `Halo Bapak/Ibu ${selectedTicket.namaPelapor},\n\n` +
+      `Pengaduan Anda untuk sekolah *${selectedTicket.asalSekolah} (${selectedTicket.npsn})* telah *SELESAI DITINDAKLANJUTI* oleh Admin Disdikbud Kab. Ngawi.\n\n` +
+      `Terima kasih telah menggunakan layanan Asisten Virtual SIPA-NGAWI.`
+    );
+    window.open(`https://wa.me/${selectedTicket.noWhatsapp}?text=${waMsg}`, "_blank");
+
+    setIsSubmittingProof(false);
+    setSelectedTicket(null);
+    setAdminProofFile(null);
   };
 
   const filteredTickets = tickets.filter((item) => {

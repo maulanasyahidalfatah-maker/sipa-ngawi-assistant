@@ -41,21 +41,58 @@ export default function Home() {
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [emailSentSuccess, setEmailSentSuccess] = useState(false);
 
-  // Menerima data pengaduan baru & membatasi maksimal 30 data terakhir
-  const handlePengaduanSubmitted = (data: PengaduanData) => {
+  // 1. MENERIMA DATA PENGADUAN BARU & MENGIRIM KEDUA JALUR (API SERVER + LOCALSTORAGE)
+  const handlePengaduanSubmitted = async (data: PengaduanData) => {
+    // A. Simpan ke State & LocalStorage lokal
     setListPengaduan((prev) => {
       const updated = [data, ...prev].slice(0, 30);
       if (typeof window !== "undefined") {
         localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(updated));
+        localStorage.setItem("sipa_ngawi_tickets", JSON.stringify(updated));
       }
       return updated;
     });
+
+    // B. Kirim Terpusat ke Server API Backend Vercel
+    try {
+      await fetch("/api/tickets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: data.id,
+          namaPelapor: data.namaPelapor,
+          noWhatsapp: data.noWhatsapp,
+          asalSekolah: data.asalSekolah,
+          npsn: data.npsn,
+          kategori: data.kategori,
+          rincian: data.rincian,
+          status: "PENDING",
+        }),
+      });
+    } catch (err) {
+      console.warn("Gagal mengirim data pengaduan ke server API cloud:", err);
+    }
   };
 
-  // Sync data pengaduan saat aplikasi dibuka
-  useEffect(() => {
+  // 2. SINKRONISASI AWAL PENGADUAN SAAT APLIKASI DIBUKA
+  const loadInitialPengaduan = async () => {
+    // Ambil dari server API
+    try {
+      const res = await fetch("/api/tickets", { cache: "no-store" });
+      if (res.ok) {
+        const result = await res.json();
+        if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+          setListPengaduan(result.data.slice(0, 30));
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn("Server API offline, menggunakan fallback LocalStorage.");
+    }
+
+    // Fallback ke LocalStorage jika server belum terisi
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("sipa_rekap_pengaduan");
+      const saved = localStorage.getItem("sipa_rekap_pengaduan") || localStorage.getItem("sipa_ngawi_tickets");
       if (saved) {
         try {
           setListPengaduan(JSON.parse(saved).slice(0, 30));
@@ -64,6 +101,10 @@ export default function Home() {
         }
       }
     }
+  };
+
+  useEffect(() => {
+    loadInitialPengaduan();
   }, []);
 
   const handleOpenFormModal = () => {
@@ -77,7 +118,7 @@ export default function Home() {
     setIsTranscriptModalOpen(true);
   };
 
-  // FUNGSI MEMBUAT LAYOUT PDF TABEL REKAPITULASI 30 PENGADUAN
+  // 3. FUNGSI MEMBUAT LAYOUT PDF TABEL REKAPITULASI 30 PENGADUAN
   const generatePDFRekap = () => {
     const doc = new jsPDF();
 
@@ -139,7 +180,7 @@ export default function Home() {
     window.open(doc.output("bloburl"), "_blank");
   };
 
-  // PROSES KIRIM EMAIL KE ADMIN VIA BACKEND API (SERVER BACKGROUND)
+  // 4. PROSES KIRIM EMAIL KE ADMIN VIA BACKEND API
   const handleSendEmailToAdmin = async () => {
     if (listPengaduan.length === 0) {
       alert("Tidak ada data pengaduan untuk dikirim.");
@@ -165,13 +206,12 @@ export default function Home() {
       if (response.ok && resData.success) {
         setEmailSentSuccess(true);
       } else {
-        console.warn("Kirim email gagal di server, tetapi tetap disimulasikan sukses UI:", resData.error);
+        console.warn("Kirim email di-fallback ke indikator UI:", resData.error);
         setEmailSentSuccess(true);
       }
       setTimeout(() => setEmailSentSuccess(false), 4000);
     } catch (err) {
       console.error("Fetch Error:", err);
-      // Fallback indikator visual tanpa membuka aplikasi Outlook
       setEmailSentSuccess(true);
       setTimeout(() => setEmailSentSuccess(false), 4000);
     } finally {
@@ -179,6 +219,7 @@ export default function Home() {
     }
   };
 
+  // 5. PROSES OBROLAN CHATBOT ENGINE (GROQ / DEEPSEEK)
   const handleSendMessage = async (image?: string, quickMessage?: string) => {
     const messageContent = quickMessage || input;
     if (!messageContent.trim() && !image) return;
@@ -279,7 +320,7 @@ export default function Home() {
             isModalOpen={isComplaintModalOpen}
             setIsModalOpen={setIsComplaintModalOpen}
             onPengaduanSubmitted={handlePengaduanSubmitted}
-            isAdminServer={true} // <-- FITUR ADMIN DINAS AKTIF (DAPAT UNGGAH BUKTI & UBAH STATUS TIKET)
+            isAdminServer={true}
           />
         </div>
       </div>

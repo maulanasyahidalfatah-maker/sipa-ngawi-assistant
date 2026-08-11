@@ -49,6 +49,7 @@ export interface FormattedAnswerSection {
 }
 
 export interface PengaduanData {
+  id?: string; // <-- Tambahkan baris ini
   namaPelapor: string;
   laporanUntukDataDari: string;
   asalSekolah: string;
