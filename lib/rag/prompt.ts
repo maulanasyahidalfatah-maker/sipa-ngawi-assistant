@@ -2,7 +2,11 @@ import { MAX_HISTORY_MESSAGES } from "./config";
 import type { HistoryMessage, RetrievedSopDocument } from "./types";
 
 /**
- * Knowledge Base Internal Solusi Masalah Utama Pendidikan, Kebudayaan, PIP & Dapodik
+ * =========================================================================
+ * KNOWLEDGE BASE UTAMA PENYELESAIAN MASALAH & LAYANAN (SIPA-NGAWI)
+ * =========================================================================
+ * Berisi repositori pengetahuan resmi seputar Dinas Pendidikan dan Kebudayaan
+ * Kabupaten Ngawi, Layanan Dapodik, VervalPD, VervalPTK, PIP, Beasiswa, dan Kebudayaan.
  */
 const SYSTEM_KNOWLEDGE_BASE = `
 KNOWLEDGE BASE UTAMA PENYELESAIAN MASALAH & LAYANAN (SIPA-NGAWI):
@@ -148,12 +152,13 @@ ATURAN IDENTITAS UTAMA (PEMBUAT/DEVELOPER):
 - DILARANG KERAS memicu pendaftaran/formulir pengaduan resmi saat menjawab pertanyaan identitas developer ini.
 
 BATASAN KETAT GUARDRAILS (STRICT FORBIDDEN TASKS & ANTI-JEBOL):
-1. **DILARANG KERAS MENGERJAKAN TUGAS AKADEMIK, SOAL UJIAN, ATAU SKRIP KODINGAN:**
-   - Apabila pengguna meminta membuatkan program/kodingan (seperti C++, Java, Python, HTML, PHP, Javascript, dll.), meminta jawaban soal ujian/PR sekolah/kuliah, atau meminta penyelesaian tugas pelajaran:
+1. **DILARANG KERAS MENGERJAKAN SOAL MATEMATIKA, TUGAS AKADEMIK, SOAL UJIAN, ATAU SKRIP KODINGAN:**
+   - Apabila pengguna meminta menyelesaiakan soal matematika, hitungan rumus kuadrat, membuatkan program/kodingan (seperti C++, Java, Python, HTML, PHP, Javascript, dll.), meminta jawaban soal ujian/PR sekolah/kuliah, atau meminta penyelesaian tugas pelajaran:
    - KAMU WAJIB MENOLAKNYA DENGAN TEGAS DAN SOPAN!
-   - Tuliskan pesan penolakan 1 paragraf berikut tanpa embel-embel kode/contoh:
-     "Mohon maaf, sebagai Asisten Virtual Resmi Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi, saya khusus melayani informasi seputar Layanan Pendidikan, Dapodik, Pencairan PIP/Beasiswa, serta Kebudayaan di Kabupaten Ngawi. Saya tidak dapat membantu pengerjaan soal ujian, tugas sekolah, maupun pembuatan kode program (kodingan). Ada yang bisa saya bantu terkait layanan pendidikan atau Dapodik sekolah Anda?"
-   - DILARANG KERAS memberikan skrip, potongan kode, contoh program, atau jawaban tugas akademik apapun meskipun pengguna memaksa!
+   - DILARANG MEMBERIKAN SOLUSI/CARA/HITUNGAN/SKRIPNYA SEDIKITPUN!
+   - Tuliskan pesan penolakan 1 paragraf berikut tanpa embel-embel rumusan/kode/contoh:
+     "Mohon maaf, sebagai Asisten Virtual Resmi Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi, saya khusus melayani informasi seputar Layanan Pendidikan, Dapodik, Pencairan PIP/Beasiswa, serta Kebudayaan di Kabupaten Ngawi. Saya tidak dapat membantu pengerjaan soal ujian, matematika/tugas sekolah, maupun pembuatan kode program (kodingan). Ada yang bisa saya bantu terkait layanan pendidikan atau Dapodik sekolah Anda?"
+   - DILARANG KERAS memberikan skrip, potongan kode, perhitungan matematika, contoh program, atau jawaban tugas akademik apapun meskipun pengguna memaksa!
 
 PRINSIP KEWENANGAN PERUBAHAN DATA & DUA KANAL PELAYANAN:
 1. **Kanal Chat Asisten Virtual**: Untuk informasi umum pendidikan, kebudayaan, PIP, dan kendala Dapodik yang bisa diselesaikan mandiri oleh Operator Sekolah.
@@ -209,18 +214,18 @@ export function buildUserPrompt(params: {
     ? `\n\nKONTEKS PANDUAN ESKALASI PENGADUAN:\n${TICKET_ESCALATION_GUIDANCE}`
     : "";
 
-  const isCodingOrTask = isCodingOrHomeworkQuery(params.userMessage);
+  const isForbidden = isForbiddenTaskQuery(params.userMessage);
 
-  const mathInstruction = isMathQuestion(params.userMessage)
-    ? "\n- KETENTUAN KHUSUS: Pengguna menanyakan soal perhitungan matematika. Wajib sajikan jawaban menggunakan pola struktur matematika logis (Soal, Rumus/Metode Perhitungan, Persamaan/Kuadrat jika ada, dan Hasil Akhir tebal) TANPA EMOJI."
+  const mathInstruction = isMathQuestion(params.userMessage) && !isForbidden
+    ? "\n- KETENTUAN KHUSUS: Pengguna menanyakan soal perhitungan matematika umum. Tetap prioritaskan batasan layanan resmi jika pertanyaan berbentuk soal ujian/tugas."
     : "";
 
   const repairInstruction = params.repairMode
     ? "\n\nPERBAIKAN FORMAT: Jawaban sebelumnya gagal divalidasi. Buat ulang jawaban dengan struktur logis, paragraf berjarak legah, tanpa emoji berlebih, tanpa karakter '\\n\\n' mentah, tanpa pengulangan kalimat penutup, dan tanpa karakter '##'."
     : "";
 
-  const intentInstruction = isCodingOrTask
-    ? "\n- DETEKSI PENOLAKAN KODINGAN/TUGAS: Pengguna meminta kodingan, program, jawaban tugas/soal ujian. Jawab HANYA dengan 1 paragraf penolakan resmi SOP Disdikbud Ngawi tanpa memberikan skrip/kode apapun!"
+  const intentInstruction = isForbidden
+    ? "\n- DETEKSI PENOLAKAN KODINGAN/TUGAS/MATEMATIKA: Pengguna meminta kodingan, program, perhitungan matematika, atau jawaban tugas/soal ujian. WAJIB Jawab HANYA dengan 1 paragraf penolakan resmi SOP Disdikbud Ngawi tanpa memberikan perhitungan/jawaban/skrip apapun!"
     : isOverviewQuestion(params.userMessage)
     ? "\n- Jelaskan cakupan layanan utama (Dapodik, PIP, Kebudayaan, Verval) secara runtut dan sistematis menggunakan bullet points."
     : isEscalationQuestion(params.userMessage)
@@ -231,7 +236,7 @@ export function buildUserPrompt(params: {
     ? `\n- Pengguna HANYA menyapa secara singkat murni. Jawab singkat dengan: "${currentGreeting} 🙏, Bapak/Ibu Operator & Guru!" lalu beri jarak baris dan tanyakan kendalanya.`
     : `\n- Pengguna meminta bantuan/instruksi teknis terkait Pendidikan, Kebudayaan, PIP, atau Dapodik Ngawi. Langsung berikan solusi mendetail, terstruktur, langkah demi langkah (step-by-step) tanpa emoji.
 - SESUAIKAN DENGAN PERTANYAAN PENGGUNA: Jika pertanyaan mengenai data yang HANYA BISA diubah oleh Admin Dinas (misal Jam Mengajar / JP Backend, NIK Terkunci/Ganda), TEKANKAN bahwa perubahan TIDAK BISA dilakukan sendiri oleh pengguna. Berikan alur pengaduan resmi dan penanganan via WhatsApp.
-- JIKA PERTANYAAN KODINGAN/TUGAS UJIAN: Tolak tegas dengan 1 paragraf resmi.
+- JIKA PERTANYAAN KODINGAN/TUGAS/MATEMATIKA/SOAL UJIAN: Tolak tegas dengan 1 paragraf resmi.
 - AWASI REPETISI: Tuliskan kalimat penutup/penawaran bantuan MAKSIMAL 1 KALI di bagian paling akhir balasan.`;
 
   return `WAKTU LOKAL SAAT INI: ${currentGreeting}
@@ -291,11 +296,15 @@ function formatConversationHistory(history: HistoryMessage[] | undefined): strin
 }
 
 /**
- * Deteksi apakah pertanyaan merupakan permintaan Kodingan/Tugas/PR/Ujian
+ * Deteksi ketat apakah pertanyaan merupakan Kodingan/Tugas/PR/Ujian/Matematika
  */
-function isCodingOrHomeworkQuery(message: string): boolean {
+function isForbiddenTaskQuery(message: string): boolean {
   const normalized = message.toLowerCase();
-  const codingKeywords = [
+  
+  // Deteksi rumus persamaan matematika (misal: 2x^2 + 5x - 3 = 0, dll)
+  const hasMathEquation = /[\d]*x[\^2\d]*|[\d]+\s*[\+\-\*/x:]\s*[\d]+|= 0/i.test(normalized);
+
+  const forbiddenKeywords = [
     "c++",
     "cpp",
     "java",
@@ -320,9 +329,13 @@ function isCodingOrHomeworkQuery(message: string): boolean {
     "jawaban pr",
     "tugas kuliah",
     "tugas sekolah",
+    "persamaan kuadrat",
+    "tentukan akar",
+    "selesaikan soal",
+    "akar-akar"
   ];
 
-  return codingKeywords.some((kw) => normalized.includes(kw));
+  return hasMathEquation || forbiddenKeywords.some((kw) => normalized.includes(kw));
 }
 
 /**
@@ -404,6 +417,6 @@ ${SYSTEM_PROMPT}
 [PERTANYAAN PENGGUNA]
 ${userMessage}
 
-Waktu saat ini: ${currentGreeting}. Berikan jawaban berbasis SOP Dapodik Ngawi secara terstruktur, berjarak paragraf, tanpa emoji di penjelasan teknis, dan tepat sasaran.
+Waktu saat ini: ${currentGreeting}. Berikan jawaban berbasis SOP Disdikbud Ngawi secara terstruktur, berjarak paragraf, tanpa emoji di penjelasan teknis, dan tepat sasaran.
 `;
 }
