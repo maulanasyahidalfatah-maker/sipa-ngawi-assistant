@@ -33,30 +33,53 @@ export async function GET() {
   );
 }
 
-// POST: Dipanggil saat ada pengaduan baru (Nomor Tiket Urut Otomatis TK-001, TK-002, dst.)
+// POST: Dipanggil saat ada pengaduan baru (Dengan Proteksi Anti-Tiket Ganda)
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const nextNum = globalTickets.length + 1;
-    const autoId = `TK-${nextNum < 10 ? `00${nextNum}` : nextNum < 100 ? `0${nextNum}` : nextNum}`;
+    const inputNama = body.namaPelapor || body.nama || "-";
+    const inputWa = body.noWhatsapp || body.wa || "-";
+    const inputRincian = body.rincian || body.rincianKeluhan || "-";
+    const inputSekolah = body.asalSekolah || body.sekolah || "-";
+
+    // 1. CEK DE-DUPLIKASI KONTEN (Pencegahan Double-Trigger dari Client/Server)
+    // Jika ada tiket dengan Nama + No WA + Sekolah + Rincian yang persis sama, pakai ID tiket tersebut!
+    const duplicateTicket = globalTickets.find(
+      (t) =>
+        t.namaPelapor.toLowerCase().trim() === inputNama.toLowerCase().trim() &&
+        t.noWhatsapp.trim() === inputWa.trim() &&
+        t.asalSekolah.toLowerCase().trim() === inputSekolah.toLowerCase().trim() &&
+        t.rincian.trim() === inputRincian.trim()
+    );
+
+    let finalId = body.id;
+
+    if (duplicateTicket) {
+      finalId = duplicateTicket.id; // Gunakan ID lama agar tidak membuat TK-002
+    } else if (!finalId || !finalId.startsWith("TK-")) {
+      const nextNum = globalTickets.length + 1;
+      finalId = `TK-${nextNum < 10 ? `00${nextNum}` : nextNum < 100 ? `0${nextNum}` : nextNum}`;
+    }
 
     const newTicket: TicketData = {
-      id: body.id && body.id.startsWith("TK-") ? body.id : autoId,
-      namaPelapor: body.namaPelapor || body.nama || "-",
-      nikPelapor: body.nikPelapor || body.nik || "-",
-      noWhatsapp: body.noWhatsapp || body.wa || "-",
-      asalSekolah: body.asalSekolah || body.sekolah || "-",
-      npsn: body.npsn || "-",
-      kategori: body.kategori || body.kategoriKendala || "-",
-      rincian: body.rincian || body.rincianKeluhan || "-",
-      fotoKeluhan: body.fotoKeluhan || body.lampiran || undefined,
-      status: body.status || "PENDING",
-      buktiPerbaikan: body.buktiPerbaikan || undefined,
-      createdAt: body.createdAt || new Date().toLocaleDateString("id-ID"),
+      id: finalId,
+      namaPelapor: inputNama,
+      nikPelapor: body.nikPelapor || body.nik || duplicateTicket?.nikPelapor || "-",
+      noWhatsapp: inputWa,
+      asalSekolah: inputSekolah,
+      npsn: body.npsn || duplicateTicket?.npsn || "-",
+      kategori: body.kategori || body.kategoriKendala || duplicateTicket?.kategori || "-",
+      rincian: inputRincian,
+      fotoKeluhan: body.fotoKeluhan || body.lampiran || duplicateTicket?.fotoKeluhan || undefined,
+      status: body.status || duplicateTicket?.status || "PENDING",
+      buktiPerbaikan: body.buktiPerbaikan || duplicateTicket?.buktiPerbaikan || undefined,
+      createdAt: body.createdAt || duplicateTicket?.createdAt || new Date().toLocaleDateString("id-ID"),
     };
 
+    // 2. SIMPAN / UPDATE DENGAN DEDUPLIKASI ID TIKET
     const existingIndex = globalTickets.findIndex((t) => t.id === newTicket.id);
+
     if (existingIndex !== -1) {
       globalTickets[existingIndex] = {
         ...globalTickets[existingIndex],
@@ -72,6 +95,7 @@ export async function POST(request: Request) {
       data: newTicket,
     });
   } catch (error) {
+    console.error("❌ Error POST /api/tickets:", error);
     return NextResponse.json(
       { success: false, message: "Gagal menyimpan pengaduan ke server." },
       { status: 500 }
