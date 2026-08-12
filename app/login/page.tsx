@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldCheck, User, Lock, Mail, ArrowRight, Building2 } from "lucide-react";
+import { ShieldCheck, User, Lock, Mail, ArrowRight, Building2, UserPlus, LogIn, AlertCircle, KeyRound } from "lucide-react";
 
 // WHITELIST DATA PEKERJA / ADMIN DINAS TERDAFTAR (UNTUK VALIDASI KEAMANAN)
 const ADMIN_DINAS_WHITELIST = [
@@ -40,50 +40,119 @@ export default function LoginPage() {
     }
   }, [router]);
 
+  const saveSessionAndRedirect = (sessionData: any, targetPath: string) => {
+    const sessionString = JSON.stringify(sessionData);
+
+    // 1. Simpan ke LocalStorage
+    localStorage.setItem("sipa_user_session", sessionString);
+
+    // 2. Simpan ke Cookie agar bisa dibaca oleh Middleware Next.js
+    document.cookie = `sipa_user_session=${encodeURIComponent(sessionString)}; path=/; max-age=86400; SameSite=Lax`;
+
+    router.push(targetPath);
+  };
+
   const handleAuthSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
 
+    const inputUser = emailOrNip.trim();
+    const inputPass = password.trim();
+
+    if (!inputUser || !inputPass) {
+      setErrorMsg("Mohon isi Email/NIP dan Password terlebih dahulu.");
+      return;
+    }
+
+    // 1. CEK AKUN MASTER DEVELOPER MAULANA SYAHID AL FATAH
+    if (inputUser.toUpperCase() === "MAULANA-DEV@SIPA.COM" && inputPass === "Alhakim5758") {
+      const devSession = {
+        role: "ADMIN",
+        nama: "Maulana Syahid Al Fatah (Developer)",
+        email: "MAULANA-DEV@SIPA.COM",
+      };
+      saveSessionAndRedirect(devSession, "/admin");
+      return;
+    }
+
+    // 2. CEK LOGIN ADMIN DINAS
     if (role === "ADMIN") {
-      // VALIDASI LOGIN ADMIN DINAS BERDASARKAN WHITELIST DATA PEKERJA
       const matchedAdmin = ADMIN_DINAS_WHITELIST.find(
-        (a) => (a.nip === emailOrNip || a.email === emailOrNip) && a.pass === password
+        (a) => (a.nip === inputUser || a.email.toLowerCase() === inputUser.toLowerCase()) && a.pass === inputPass
       );
 
       if (matchedAdmin) {
-        const sessionData = {
+        const adminSession = {
           role: "ADMIN",
           nama: matchedAdmin.nama,
           email: matchedAdmin.email,
         };
-        const sessionString = JSON.stringify(sessionData);
-
-        // 1. Simpan ke LocalStorage
-        localStorage.setItem("sipa_user_session", sessionString);
-
-        // 2. Simpan ke Cookie agar bisa dibaca oleh Middleware Next.js
-        document.cookie = `sipa_user_session=${encodeURIComponent(sessionString)}; path=/; max-age=86400; SameSite=Lax`;
-
-        router.push("/admin");
+        saveSessionAndRedirect(adminSession, "/admin");
       } else {
         setErrorMsg("NIP / Email Dinas atau Password Admin salah! Kontak TI Disdikbud jika ada kendala.");
       }
-    } else {
-      // LOGIN / REGISTER PUBLIC OPERATOR/GURU
-      const sessionData = {
-        role: "PUBLIC",
-        nama: namaLengkap || "Operator / Guru",
-        email: emailOrNip,
-      };
-      const sessionString = JSON.stringify(sessionData);
+      return;
+    }
 
-      // 1. Simpan ke LocalStorage
-      localStorage.setItem("sipa_user_session", sessionString);
+    // 3. PROSES REGISTRASI DAN LOGIN PENGGUNA PUBLIK (OPERATOR / GURU)
+    if (role === "PUBLIC") {
+      let registeredUsers: any[] = [];
+      if (typeof window !== "undefined") {
+        const saved = localStorage.getItem("sipa_registered_users");
+        if (saved) {
+          try {
+            registeredUsers = JSON.parse(saved);
+          } catch {
+            registeredUsers = [];
+          }
+        }
+      }
 
-      // 2. Simpan ke Cookie agar bisa dibaca oleh Middleware Next.js
-      document.cookie = `sipa_user_session=${encodeURIComponent(sessionString)}; path=/; max-age=86400; SameSite=Lax`;
+      if (isRegister) {
+        // PROSES REGISTRASI BARU
+        if (!namaLengkap.trim()) {
+          setErrorMsg("Mohon isikan Nama Lengkap dan Gelar Anda.");
+          return;
+        }
 
-      router.push("/");
+        const isExist = registeredUsers.some(
+          (u) => u.email.toLowerCase() === inputUser.toLowerCase()
+        );
+
+        if (isExist) {
+          setErrorMsg("Email / Nomor WhatsApp sudah terdaftar. Silakan lakukan login.");
+          return;
+        }
+
+        const newUser = {
+          nama: namaLengkap.trim(),
+          email: inputUser,
+          password: inputPass,
+        };
+
+        registeredUsers.push(newUser);
+        localStorage.setItem("sipa_registered_users", JSON.stringify(registeredUsers));
+
+        alert("Pendaftaran berhasil! Silakan login dengan akun yang baru dibuat.");
+        setIsRegister(false);
+        setPassword("");
+      } else {
+        // PROSES LOGIN AKUN PUBLIK TERDAFTAR
+        const matchedUser = registeredUsers.find(
+          (u) => u.email.toLowerCase() === inputUser.toLowerCase() && u.password === inputPass
+        );
+
+        if (matchedUser) {
+          const publicSession = {
+            role: "PUBLIC",
+            nama: matchedUser.nama,
+            email: matchedUser.email,
+          };
+          saveSessionAndRedirect(publicSession, "/");
+        } else {
+          setErrorMsg("Akun belum terdaftar atau password salah! Silakan buat akun publik terlebih dahulu.");
+        }
+      }
     }
   };
 
@@ -105,6 +174,7 @@ export default function LoginPage() {
               type="button"
               onClick={() => {
                 setRole("PUBLIC");
+                setIsRegister(false);
                 setErrorMsg("");
               }}
               className={`py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
@@ -118,6 +188,7 @@ export default function LoginPage() {
               type="button"
               onClick={() => {
                 setRole("ADMIN");
+                setIsRegister(false);
                 setErrorMsg("");
               }}
               className={`py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
@@ -130,8 +201,9 @@ export default function LoginPage() {
           </div>
 
           {errorMsg && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl font-medium">
-              {errorMsg}
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl font-medium flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+              <span>{errorMsg}</span>
             </div>
           )}
 
@@ -140,7 +212,7 @@ export default function LoginPage() {
               /* FORM ADMIN DINAS */
               <div className="space-y-3">
                 <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900 text-[11px] leading-relaxed">
-                  <strong>Khusus Pegawai Disdikbud:</strong> Gunakan NIP resmi atau Email Dinas terdaftar untuk mengakses Panel Verifikasi Pengaduan.
+                  <strong>Khusus Pegawai Disdikbud &amp; Developer:</strong> Gunakan NIP resmi, Email Dinas, atau Akun Master Developer terdaftar.
                 </div>
 
                 <div>
@@ -191,7 +263,7 @@ export default function LoginPage() {
                 )}
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Email / Nomor WhatsApp *</label>
+                  <label className="block font-semibold text-slate-700 mb-1">Email / Nomor WhatsApp Terdaftar *</label>
                   <div className="relative">
                     <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
@@ -208,7 +280,7 @@ export default function LoginPage() {
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">Password *</label>
                   <div className="relative">
-                    <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <KeyRound className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
                       type="password"
                       required
@@ -226,7 +298,14 @@ export default function LoginPage() {
               type="submit"
               className="w-full mt-2 py-3 bg-[#006837] hover:bg-[#00522c] text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
             >
-              <span>{role === "ADMIN" ? "Masuk Panel Admin" : isRegister ? "Daftar Akun Publik" : "Masuk SIPA-NGAWI"}</span>
+              {isRegister ? <UserPlus className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
+              <span>
+                {role === "ADMIN"
+                  ? "Masuk Panel Admin"
+                  : isRegister
+                  ? "Daftar Akun Publik"
+                  : "Masuk SIPA-NGAWI"}
+              </span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
@@ -235,10 +314,15 @@ export default function LoginPage() {
             <div className="mt-4 text-center">
               <button
                 type="button"
-                onClick={() => setIsRegister(!isRegister)}
+                onClick={() => {
+                  setIsRegister(!isRegister);
+                  setErrorMsg("");
+                }}
                 className="text-xs text-[#006837] font-semibold hover:underline cursor-pointer"
               >
-                {isRegister ? "Sudah punya akun? Masuk di sini" : "Belum punya akun? Buat akun Pengguna Publik"}
+                {isRegister
+                  ? "Sudah punya akun? Masuk di sini"
+                  : "Belum punya akun? Buat akun Pengguna Publik"}
               </button>
             </div>
           )}

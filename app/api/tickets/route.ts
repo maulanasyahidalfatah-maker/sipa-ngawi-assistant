@@ -3,13 +3,15 @@ import { NextResponse } from "next/server";
 export interface TicketData {
   id: string;
   namaPelapor: string;
+  nikPelapor?: string;
   noWhatsapp: string;
   asalSekolah: string;
   npsn: string;
   kategori: string;
   rincian: string;
+  fotoKeluhan?: string; // Lampiran foto kendala dari pelapor
   status: "PENDING" | "RESOLVED";
-  buktiPerbaikan?: string;
+  buktiPerbaikan?: string; // Lampiran foto bukti perbaikan dari admin dinas
   createdAt?: string;
 }
 
@@ -31,23 +33,24 @@ export async function GET() {
   );
 }
 
-// POST: Dipanggil saat ada pengaduan baru (Nomor Tiket Urut Otomatis)
+// POST: Dipanggil saat ada pengaduan baru (Nomor Tiket Urut Otomatis TK-001, TK-002, dst.)
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // Penomoran Urut Otomatis: TK-001, TK-002, TK-003, dst.
     const nextNum = globalTickets.length + 1;
     const autoId = `TK-${nextNum < 10 ? `00${nextNum}` : nextNum < 100 ? `0${nextNum}` : nextNum}`;
 
     const newTicket: TicketData = {
       id: body.id && body.id.startsWith("TK-") ? body.id : autoId,
       namaPelapor: body.namaPelapor || body.nama || "-",
+      nikPelapor: body.nikPelapor || body.nik || "-",
       noWhatsapp: body.noWhatsapp || body.wa || "-",
       asalSekolah: body.asalSekolah || body.sekolah || "-",
       npsn: body.npsn || "-",
       kategori: body.kategori || body.kategoriKendala || "-",
       rincian: body.rincian || body.rincianKeluhan || "-",
+      fotoKeluhan: body.fotoKeluhan || body.lampiran || undefined,
       status: body.status || "PENDING",
       buktiPerbaikan: body.buktiPerbaikan || undefined,
       createdAt: body.createdAt || new Date().toLocaleDateString("id-ID"),

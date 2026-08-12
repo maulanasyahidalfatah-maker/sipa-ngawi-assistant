@@ -7,7 +7,8 @@ import {
   Plus,
   Download,
   FileSpreadsheet,
-  X
+  X,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,12 +29,10 @@ export function ChatSidebar({
   onClose,
   currentMode = "chat",
 }: ChatSidebarProps) {
-  // Fungsi penangan aksi menu (Mendukung aksi mobile & fallback modal)
   const runAction = (action?: () => void) => {
     if (action) {
       action();
     } else {
-      // Fallback jika onOpenForm lupa dikirim dari parent component
       const fallbackBtn = document.querySelector(
         'button[data-trigger="open-pengaduan"]'
       ) as HTMLButtonElement;
@@ -44,9 +43,17 @@ export function ChatSidebar({
     onClose();
   };
 
+  const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("sipa_user_session");
+      document.cookie = "sipa_user_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+      window.location.href = "/login";
+    }
+  };
+
   return (
     <>
-      {/* Overlay Backdrop Tampilan Mobile */}
+      {/* Overlay Mobile */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/20 z-30 lg:hidden backdrop-blur-xs transition-opacity duration-300"
@@ -61,7 +68,7 @@ export function ChatSidebar({
         )}
         style={{ borderColor: "#E5E7EB" }}
       >
-        {/* Sidebar Header: Branding Resmi Disdikbud Kab. Ngawi */}
+        {/* Header Sidebar */}
         <div className="p-4 flex items-center justify-between relative z-10 flex-shrink-0 border-b border-neutral-200/80">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 relative flex-shrink-0 flex items-center justify-center">
@@ -85,7 +92,7 @@ export function ChatSidebar({
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden h-8 w-8 text-neutral-500 hover:text-neutral-800 hover:bg-neutral-200/60 rounded-lg"
+            className="lg:hidden h-8 w-8 text-neutral-500 hover:text-neutral-800 hover:bg-neutral-200/60 rounded-lg cursor-pointer"
             onClick={onClose}
             type="button"
             title="Tutup Menu"
@@ -94,11 +101,10 @@ export function ChatSidebar({
           </Button>
         </div>
 
-        {/* Menu Navigasi Sidebar */}
+        {/* Navigation Area */}
         <ScrollArea className="flex-1 overflow-y-auto px-3">
           <div className="space-y-1 py-3">
-
-            {/* 1. Tombol Obrolan Baru */}
+            {/* 1. Obrolan Baru */}
             <button
               type="button"
               onClick={() => runAction(onNewChat)}
@@ -113,7 +119,7 @@ export function ChatSidebar({
               <span>Obrolan Baru</span>
             </button>
 
-            {/* 2. Menu Form Pengaduan / Tiket (Sudah Terhubung Sempurna) */}
+            {/* 2. Pengaduan / Tiket */}
             <button
               type="button"
               onClick={() => runAction(onOpenForm)}
@@ -128,10 +134,9 @@ export function ChatSidebar({
               <span>Pengaduan / Tiket</span>
             </button>
 
-            {/* Pembatas Line */}
             <div className="my-2 border-t border-neutral-200/80 mx-1" />
 
-            {/* 3. Unduh Transkrip Percakapan */}
+            {/* 3. Unduh Transkrip PDF */}
             <button
               type="button"
               onClick={() => runAction(onDownload)}
@@ -140,9 +145,20 @@ export function ChatSidebar({
               <Download className="w-4 h-4 text-neutral-500 shrink-0" />
               <span>Unduh Transkrip PDF</span>
             </button>
-
           </div>
         </ScrollArea>
+
+        {/* Footer Sidebar: Tombol Keluar (Logout) */}
+        <div className="p-3 border-t border-neutral-200/80 mt-auto">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer border border-red-100"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Keluar (Logout Akun)</span>
+          </button>
+        </div>
       </aside>
     </>
   );

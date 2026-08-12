@@ -2,18 +2,20 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Clock, Upload, FileText, X, Eye, RefreshCw, Inbox, Trash2 } from "lucide-react";
+import { CheckCircle2, Clock, Upload, FileText, X, Eye, RefreshCw, Inbox, Trash2, LogOut, Image as ImageIcon } from "lucide-react";
 
 interface AdminTicket {
   id: string;
   namaPelapor: string;
+  nikPelapor?: string;
   noWhatsapp: string;
   asalSekolah: string;
   npsn: string;
   kategori: string;
   rincian: string;
+  fotoKeluhan?: string; // Lampiran foto keluhan dari pelapor
   status: "PENDING" | "RESOLVED";
-  buktiPerbaikan?: string;
+  buktiPerbaikan?: string; // Bukti perbaikan dari admin dinas
   createdAt?: string;
 }
 
@@ -28,10 +30,10 @@ export default function AdminDashboard() {
   const [proofFile, setAdminProofFile] = useState<string | null>(null);
   const [isSubmittingProof, setIsSubmittingProof] = useState(false);
 
-  // State Modal Lihat Bukti
-  const [viewProofUrl, setViewProofUrl] = useState<string | null>(null);
+  // State Modal Preview Gambar (Lampiran Pelapor / Bukti Dinas)
+  const [previewImage, setPreviewImage] = useState<{ url: string; title: string } | null>(null);
 
-  // FUNGSI MEMPERBAIKI URUTAN NOMOR TIKET (TK-001, TK-002, TK-003, DST.)
+  // FUNGSI MEMPERBAIKI URUTAN NOMOR TIKET (TK-001, TK-002, DST.)
   const sanitizeAndSortTickets = (rawTickets: any[]): AdminTicket[] => {
     return rawTickets.map((item, idx) => {
       const num = idx + 1;
@@ -40,11 +42,13 @@ export default function AdminDashboard() {
       return {
         id: item.id && item.id.startsWith("TK-") && !item.id.includes("TK-04") ? item.id : formattedId,
         namaPelapor: item.namaPelapor || item.nama || "-",
+        nikPelapor: item.nikPelapor || item.nik || "-",
         noWhatsapp: item.noWhatsapp || item.wa || "-",
         asalSekolah: item.asalSekolah || item.sekolah || "-",
         npsn: item.npsn || "-",
         kategori: item.kategori || item.kategoriKendala || "-",
         rincian: item.rincian || item.rincianKeluhan || "-",
+        fotoKeluhan: item.fotoKeluhan || item.lampiran || undefined,
         status: item.status === "SELESAI" ? "RESOLVED" : (item.status || "PENDING"),
         buktiPerbaikan: item.buktiPerbaikan || undefined,
         createdAt: item.createdAt || new Date().toLocaleDateString("id-ID"),
@@ -126,7 +130,7 @@ export default function AdminDashboard() {
       let sessionRaw = localStorage.getItem("sipa_user_session");
 
       if (!sessionRaw && isDev) {
-        const devSession = { role: "ADMIN", nama: "Developer Utama", email: "dev@sipa.ngawi" };
+        const devSession = { role: "ADMIN", nama: "Developer Utama", email: "MAULANA-DEV@SIPA.COM" };
         localStorage.setItem("sipa_user_session", JSON.stringify(devSession));
         sessionRaw = JSON.stringify(devSession);
       }
@@ -168,7 +172,16 @@ export default function AdminDashboard() {
       clearInterval(interval);
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, []);
+  }, [router]);
+
+  // FUNGSI LOGOUT ADMIN
+  const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("sipa_user_session");
+      document.cookie = "sipa_user_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    }
+    router.push("/login");
+  };
 
   // 3. UNGGAH BUKTI PERBAIKAN & UBAH STATUS MENJADI SUDAH DIBENAHI
   const handleAdminVerify = async (fileBase64: string) => {
@@ -299,11 +312,15 @@ export default function AdminDashboard() {
               <span>Reset Data Keluhan</span>
             </button>
 
-            {/* STATUS INDIKATOR DATABASE */}
-            <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-200 text-xs font-semibold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Database Connected</span>
-            </div>
+            {/* TOMBOL LOGOUT */}
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold shadow-xs cursor-pointer ml-1"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Keluar</span>
+            </button>
           </div>
         </div>
 
@@ -351,9 +368,9 @@ export default function AdminDashboard() {
               <thead className="bg-slate-900 text-white font-semibold sticky top-0 z-10 shadow-xs">
                 <tr>
                   <th className="p-3.5 whitespace-nowrap">ID TIKET</th>
-                  <th className="p-3.5 whitespace-nowrap">PELAPOR &amp; WA</th>
+                  <th className="p-3.5 whitespace-nowrap">PELAPOR, NIK &amp; WA</th>
                   <th className="p-3.5 whitespace-nowrap">SEKOLAH / NPSN</th>
-                  <th className="p-3.5 whitespace-nowrap">KATEGORI &amp; RINCIAN</th>
+                  <th className="p-3.5 whitespace-nowrap">KATEGORI, RINCIAN &amp; LAMPIRAN</th>
                   <th className="p-3.5 whitespace-nowrap">STATUS</th>
                   <th className="p-3.5 whitespace-nowrap text-center">AKSI ADMIN</th>
                 </tr>
@@ -377,18 +394,31 @@ export default function AdminDashboard() {
                       <td className="p-3.5 font-bold text-slate-900 whitespace-nowrap">{ticket.id}</td>
                       <td className="p-3.5 whitespace-nowrap">
                         <div className="font-bold text-slate-900">{ticket.namaPelapor}</div>
-                        <div className="text-slate-500 font-mono text-[11px]">{ticket.noWhatsapp}</div>
+                        <div className="text-slate-500 font-mono text-[11px]">NIK: {ticket.nikPelapor || "-"}</div>
+                        <div className="text-slate-400 font-mono text-[11px]">WA: {ticket.noWhatsapp}</div>
                       </td>
                       <td className="p-3.5 whitespace-nowrap">
                         <div className="font-bold text-slate-900">{ticket.asalSekolah}</div>
                         <div className="text-slate-400 font-mono text-[11px]">NPSN: {ticket.npsn}</div>
                       </td>
                       
-                      <td className="p-3.5 min-w-[280px]">
+                      {/* RINCIAN & FOTO KELUHAN PELAPOR */}
+                      <td className="p-3.5 min-w-[300px]">
                         <div className="font-semibold text-[#006837] mb-0.5">{ticket.kategori}</div>
-                        <div className="text-slate-600 whitespace-pre-wrap leading-relaxed text-[11px]">
+                        <div className="text-slate-600 whitespace-pre-wrap leading-relaxed text-[11px] mb-2">
                           {ticket.rincian}
                         </div>
+                        {ticket.fotoKeluhan ? (
+                          <button
+                            type="button"
+                            onClick={() => setPreviewImage({ url: ticket.fotoKeluhan!, title: `Foto Kendala Pelapor (${ticket.asalSekolah})` })}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-[#006837] font-semibold text-[10px] border border-emerald-200 hover:bg-emerald-100 cursor-pointer"
+                          >
+                            <ImageIcon className="w-3 h-3" /> Lihat Foto Keluhan Pelapor
+                          </button>
+                        ) : (
+                          <span className="text-[10px] text-slate-400 italic">Tanpa lampiran foto</span>
+                        )}
                       </td>
 
                       <td className="p-3.5 whitespace-nowrap">
@@ -414,10 +444,10 @@ export default function AdminDashboard() {
                         ) : (
                           <button
                             type="button"
-                            onClick={() => setViewProofUrl(ticket.buktiPerbaikan || null)}
+                            onClick={() => setPreviewImage({ url: ticket.buktiPerbaikan || "", title: `Bukti Hasil Perbaikan Dinas (${ticket.asalSekolah})` })}
                             className="text-[#006837] hover:text-emerald-800 font-semibold text-xs flex items-center gap-1 hover:underline cursor-pointer mx-auto"
                           >
-                            <FileText className="w-3.5 h-3.5" /> Lihat Bukti
+                            <FileText className="w-3.5 h-3.5" /> Lihat Bukti Dinas
                           </button>
                         )}
                       </td>
@@ -497,29 +527,33 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* MODAL PREVIEW BUKTI */}
-      {viewProofUrl && (
+      {/* MODAL PREVIEW GAMBAR (LAMPIRAN KELUHAN PELAPOR / BUKTI PERBAIKAN DINAS) */}
+      {previewImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 relative border border-slate-100 flex flex-col items-center">
             <button
               type="button"
-              onClick={() => setViewProofUrl(null)}
+              onClick={() => setPreviewImage(null)}
               className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
             <h3 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <Eye className="w-5 h-5 text-emerald-600" /> Bukti Hasil Pembetulan Dinas
+              <Eye className="w-5 h-5 text-emerald-600" /> {previewImage.title}
             </h3>
 
             <div className="w-full max-h-[70vh] overflow-y-auto flex justify-center bg-slate-100 p-3 rounded-2xl border border-slate-200">
-              {viewProofUrl.startsWith("data:application/pdf") ? (
-                <iframe src={viewProofUrl} className="w-full h-[500px] rounded-xl" title="Bukti PDF" />
+              {previewImage.url.startsWith("data:application/pdf") ? (
+                <iframe
+                  src={previewImage.url}
+                  className="w-full h-[500px] rounded-xl"
+                  title="Lampiran PDF"
+                />
               ) : (
                 <img
-                  src={viewProofUrl}
-                  alt="Bukti Hasil Pembetulan Dinas"
+                  src={previewImage.url}
+                  alt="Lampiran Foto"
                   className="max-w-full max-h-[60vh] object-contain rounded-xl shadow-xs"
                 />
               )}
@@ -528,7 +562,7 @@ export default function AdminDashboard() {
             <div className="mt-4 flex justify-end w-full">
               <button
                 type="button"
-                onClick={() => setViewProofUrl(null)}
+                onClick={() => setPreviewImage(null)}
                 className="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold cursor-pointer"
               >
                 Tutup

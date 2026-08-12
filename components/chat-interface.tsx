@@ -23,6 +23,7 @@ import {
   Download,
   Clock,
   CheckCircle2,
+  Image as ImageIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TextShimmer } from "@/components/core/text-shimmer";
@@ -49,15 +50,16 @@ export interface FormattedAnswerSection {
 }
 
 export interface PengaduanData {
-  id?: string; // <-- Tambahkan baris ini
+  id?: string;
   namaPelapor: string;
+  nikPelapor?: string; // NIK Pelapor
   laporanUntukDataDari: string;
   asalSekolah: string;
   npsn: string;
   noWhatsapp: string;
   kategori: string;
   rincian: string;
-  buktiKeluhanPelapor?: string;
+  buktiKeluhanPelapor?: string; // Foto bukti kendala pelapor
 }
 
 type SpeechRecognitionResultEvent = {
@@ -106,10 +108,9 @@ interface ChatInterfaceProps {
   isModalOpen: boolean;
   setIsModalOpen: (open: boolean) => void;
   onPengaduanSubmitted?: (data: PengaduanData) => void;
-  isAdminServer?: boolean; // ✅ MENCEGAH TYPESCRIPT BUILD ERROR DI VERCEL
+  isAdminServer?: boolean;
 }
 
-// MAPPING LOGIKA SINKRONISASI NPSN KE ASAL SEKOLAH
 const DATABASE_SEKOLAH_NGAWI: { [npsn: string]: { nama: string; jenjang: string } } = {
   "20508506": { nama: "SMPN 2 KARANGJATI", jenjang: "SMP/MTs" },
   "205758857": { nama: "SMPN 3 NGAWI", jenjang: "SMP/MTs" },
@@ -120,17 +121,13 @@ const DATABASE_SEKOLAH_NGAWI: { [npsn: string]: { nama: string; jenjang: string 
   "20508641": { nama: "SD Negeri Tempuran 5", jenjang: "SD/MI" },
 };
 
-// DAFTAR SEKOLAH LENGKAP UTUH KABUPATEN NGAWI
 const DAFTAR_SEKOLAH_NGAWI = [
-  // --- PAUD / TK ---
   { nama: "TK Negeri Pembina Ngawi", jenjang: "TK/PAUD" },
   { nama: "TK Aisyiyah Bustanul Athfal Ngawi", jenjang: "TK/PAUD" },
   { nama: "TK Aisyiyah 1 Karangjati", jenjang: "TK/PAUD" },
   { nama: "TK Dharma Wanita Geneng", jenjang: "TK/PAUD" },
   { nama: "TK Pertiwi Padas", jenjang: "TK/PAUD" },
   { nama: "TK Bringin 1", jenjang: "TK/PAUD" },
-
-  // --- SD / MI ---
   { nama: "SDN Margomulyo 1 Ngawi", jenjang: "SD/MI" },
   { nama: "SDN Margomulyo 2 Ngawi", jenjang: "SD/MI" },
   { nama: "SDN Pelem 1 Ngawi", jenjang: "SD/MI" },
@@ -150,8 +147,6 @@ const DAFTAR_SEKOLAH_NGAWI = [
   { nama: "SD Negeri Tempuran 3", jenjang: "SD/MI" },
   { nama: "SD Negeri Tempuran 4", jenjang: "SD/MI" },
   { nama: "SD Negeri Tempuran 5", jenjang: "SD/MI" },
-
-  // --- SMP / MTs ---
   { nama: "SMPN 1 Ngawi", jenjang: "SMP/MTs" },
   { nama: "SMPN 2 Ngawi", jenjang: "SMP/MTs" },
   { nama: "SMPN 3 Ngawi", jenjang: "SMP/MTs" },
@@ -170,8 +165,6 @@ const DAFTAR_SEKOLAH_NGAWI = [
   { nama: "SMPN 1 Jogorogo", jenjang: "SMP/MTs" },
   { nama: "MTsN 1 Ngawi", jenjang: "SMP/MTs" },
   { nama: "MTsN 3 Ngawi", jenjang: "SMP/MTs" },
-
-  // --- SMA / SMK / MA ---
   { nama: "SMAN 1 Ngawi", jenjang: "SMA/SMK/MA" },
   { nama: "SMAN 2 Ngawi", jenjang: "SMA/SMK/MA" },
   { nama: "SMAN 1 Karangjati", jenjang: "SMA/SMK/MA" },
@@ -365,23 +358,22 @@ export function ChatInterface({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // State Dropdown Custom Sekolah
+  // Dropdown Custom
   const [isSekolahDropdownOpen, setIsSekolahDropdownOpen] = useState(false);
   const sekolahDropdownRef = useRef<HTMLDivElement>(null);
 
-  // State Dropdown Custom Subjek Data
   const [isSubjekDropdownOpen, setIsSubjekDropdownOpen] = useState(false);
   const subjekDropdownRef = useRef<HTMLDivElement>(null);
 
-  // State Dropdown Custom Kategori Kendala
   const [isKategoriDropdownOpen, setIsKategoriDropdownOpen] = useState(false);
   const kategoriDropdownRef = useRef<HTMLDivElement>(null);
 
-  // State Form Pengaduan Lengkap
+  // State Form Pengaduan Lengkap (Termasuk NIK & Foto Keluhan)
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pengaduanSuccess, setPengaduanSuccess] = useState(false);
   const [formData, setFormData] = useState<PengaduanData>({
     namaPelapor: "",
+    nikPelapor: "",
     laporanUntukDataDari: "",
     asalSekolah: "",
     npsn: "",
@@ -394,6 +386,7 @@ export function ChatInterface({
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const complaintFileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const scrollToBottom = () => {
@@ -414,7 +407,6 @@ export function ChatInterface({
     }
   }, [input]);
 
-  // LOGIKA SINKRONISASI NPSN -> ASAL SEKOLAH
   const handleNpsnChange = (val: string) => {
     const cleanNpsn = val.trim();
     const matchedSekolah = DATABASE_SEKOLAH_NGAWI[cleanNpsn];
@@ -508,6 +500,7 @@ export function ChatInterface({
   const handleOpenBlankComplaintModal = () => {
     setFormData({
       namaPelapor: "",
+      nikPelapor: "",
       laporanUntukDataDari: "",
       asalSekolah: "",
       npsn: "",
@@ -592,6 +585,26 @@ export function ChatInterface({
     }
   };
 
+  const handleComplaintImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Ukuran berkas gambar maksimal 5MB");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setFormData((prev) => ({
+          ...prev,
+          buktiKeluhanPelapor: base64,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const removeImage = () => {
     setSelectedImage(null);
     setImagePreview(null);
@@ -620,7 +633,7 @@ export function ChatInterface({
     }
   };
 
-  // ✅ SUBMIT PENGADUAN & TERUSKAN DATA TERMASUK SIMPAN KE LOCALSTORAGE ADMIN
+  // SUBMIT PENGADUAN KE SERVER BACKEND & LOCALSTORAGE ADMIN
   const handleSubmitPengaduan = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -639,62 +652,62 @@ export function ChatInterface({
     try {
       const payload: PengaduanData = {
         ...formData,
-        buktiKeluhanPelapor: selectedImage || formData.buktiKeluhanPelapor,
+        buktiKeluhanPelapor: formData.buktiKeluhanPelapor || selectedImage || undefined,
       };
 
-      // ✅ SIMPAN LANGSUNG KE LOCALSTORAGE AGAR DASHBOARD ADMIN BISA MEMBACA KELUHAN BARU
-      if (typeof window !== "undefined") {
-        try {
-          const existingRaw = localStorage.getItem("sipa_rekap_pengaduan");
-          const existingData = existingRaw ? JSON.parse(existingRaw) : [];
-
-          const newAdminTicket = {
-            id: `TK-0${existingData.length + 3}`,
+      // POST TERPUSAT KE BACKEND SERVER VERCEL (`/api/tickets`)
+      try {
+        await fetch("/api/tickets", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
             namaPelapor: payload.namaPelapor,
+            nikPelapor: payload.nikPelapor,
             noWhatsapp: payload.noWhatsapp,
             asalSekolah: payload.asalSekolah,
             npsn: payload.npsn,
             kategori: payload.kategori,
             rincian: payload.rincian,
+            fotoKeluhan: payload.buktiKeluhanPelapor,
+            status: "PENDING",
+          }),
+        });
+      } catch (e) {
+        console.warn("Server API offline, menyimpan secara lokal:", e);
+      }
+
+      // SIMPAN KE LOCALSTORAGE SEBAGAI BACKUP SINKRONISASI
+      if (typeof window !== "undefined") {
+        try {
+          const existingRaw = localStorage.getItem("sipa_rekap_pengaduan_backup") || localStorage.getItem("sipa_rekap_pengaduan");
+          const existingData = existingRaw ? JSON.parse(existingRaw) : [];
+
+          const newAdminTicket = {
+            id: `TK-00${existingData.length + 1}`,
+            namaPelapor: payload.namaPelapor,
+            nikPelapor: payload.nikPelapor,
+            noWhatsapp: payload.noWhatsapp,
+            asalSekolah: payload.asalSekolah,
+            npsn: payload.npsn,
+            kategori: payload.kategori,
+            rincian: payload.rincian,
+            fotoKeluhan: payload.buktiKeluhanPelapor,
             status: "PENDING",
             createdAt: new Date().toLocaleDateString("id-ID"),
           };
 
           const updatedData = [newAdminTicket, ...existingData];
+          localStorage.setItem("sipa_rekap_pengaduan_backup", JSON.stringify(updatedData));
           localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(updatedData));
-          
-          // Trigger storage event manual agar tab admin merefresh otomatis
+
           window.dispatchEvent(new Event("storage"));
         } catch (err) {
-          console.error("Gagal menyimpan pengaduan ke localStorage:", err);
+          console.error("Gagal menyimpan ke LocalStorage:", err);
         }
       }
 
       if (onPengaduanSubmitted) {
         onPengaduanSubmitted(payload);
-      }
-
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "submit_ticket",
-          ticketData: {
-            namaPelapor: payload.namaPelapor,
-            laporanUntukDataDari: payload.laporanUntukDataDari,
-            asalSekolah: payload.asalSekolah,
-            npsn: payload.npsn,
-            noWhatsapp: payload.noWhatsapp,
-            kategoriKendala: payload.kategori,
-            rincianKeluhan: payload.rincian,
-            buktiKeluhanPelapor: payload.buktiKeluhanPelapor,
-            slaDays: 5,
-          },
-        }),
-      });
-
-      if (!response.ok) {
-        console.warn("Respon server bermasalah, pengaduan diproses secara lokal.");
       }
 
       setPengaduanSuccess(true);
@@ -851,7 +864,7 @@ export function ChatInterface({
 
   return (
     <div className="flex min-w-0 flex-col w-full h-full overflow-hidden relative bg-[#FAFAFA]">
-      {/* Header Bar Utama */}
+      {/* Header Bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200 bg-white/90 backdrop-blur-md sticky top-0 z-40 shrink-0 shadow-sm border-t-4 border-t-[#006837]">
         <div className="flex items-center gap-3 min-w-0">
           <Button
@@ -915,7 +928,6 @@ export function ChatInterface({
 
             {renderInputCard(true)}
 
-            {/* BARIS SHORTCUT TOMBOL AKSI */}
             <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-center sm:px-2">
               <button
                 type="button"
@@ -1071,7 +1083,7 @@ export function ChatInterface({
         </>
       )}
 
-      {/* MODAL POP-UP FORM PENGADUAN & TRANSKRIP UNTUK PELAPOR (SISI PUBLIK) */}
+      {/* MODAL POP-UP FORM PENGADUAN DENGAN NIK & UPLOAD FOTO KELUHAN */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white rounded-3xl shadow-xl max-w-xl w-full max-h-[90vh] flex flex-col border border-neutral-100 relative overflow-hidden">
@@ -1096,24 +1108,43 @@ export function ChatInterface({
                   </div>
 
                   <div className="space-y-3 text-xs sm:text-sm">
-                    {/* BARIS 1: NAMA LENGKAP PELAPOR */}
-                    <div>
-                      <label className="block font-semibold text-neutral-700 mb-1">
-                        Nama Lengkap Pelapor / Operator *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.namaPelapor}
-                        onChange={(e) =>
-                          setFormData({ ...formData, namaPelapor: e.target.value })
-                        }
-                        placeholder="Contoh: Burhanudin"
-                        className="w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837]"
-                      />
+                    {/* BARIS 1: NAMA LENGKAP & NIK PELAPOR */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block font-semibold text-neutral-700 mb-1">
+                          Nama Lengkap Pelapor *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.namaPelapor}
+                          onChange={(e) =>
+                            setFormData({ ...formData, namaPelapor: e.target.value })
+                          }
+                          placeholder="Contoh: Burhanudin"
+                          className="w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-semibold text-neutral-700 mb-1">
+                          NIK Pelapor / Guru / Operator *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          maxLength={16}
+                          value={formData.nikPelapor || ""}
+                          onChange={(e) =>
+                            setFormData({ ...formData, nikPelapor: e.target.value })
+                          }
+                          placeholder="NIK 16 Digit (sesuai KTP)"
+                          className="w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] font-mono"
+                        />
+                      </div>
                     </div>
 
-                    {/* BARIS 2: GRID 2 KOLOM (ASAL SEKOLAH & NOMOR WHATSAPP) */}
+                    {/* BARIS 2: ASAL SEKOLAH & NOMOR WHATSAPP */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="relative" ref={sekolahDropdownRef}>
                         <label className="block font-semibold text-neutral-700 mb-1">
@@ -1147,7 +1178,7 @@ export function ChatInterface({
                         </div>
 
                         {isSekolahDropdownOpen && (
-                          <div className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full">
+                          <div className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100">
                             {filteredSekolah.length > 0 ? (
                               filteredSekolah.map((sekolah, idx) => (
                                 <button
@@ -1159,7 +1190,7 @@ export function ChatInterface({
                                   }}
                                   className="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-[#006837] transition-colors flex justify-between items-center cursor-pointer"
                                 >
-                                  <span className="font-medium text-neutral-800 hover:text-[#006837]">
+                                  <span className="font-medium text-neutral-800">
                                     {sekolah.nama}
                                   </span>
                                   <span className="text-[10px] bg-neutral-100 text-neutral-500 px-1.5 py-0.5 rounded font-mono shrink-0 ml-2">
@@ -1193,7 +1224,7 @@ export function ChatInterface({
                       </div>
                     </div>
 
-                    {/* BARIS 3: GRID 2 KOLOM (LAPORAN UNTUK DATA DARI & NPSN AUTO-SINKRON) */}
+                    {/* BARIS 3: SUBJEK DATA & NPSN */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="relative" ref={subjekDropdownRef}>
                         <label className="block font-semibold text-neutral-700 mb-1 text-xs">
@@ -1201,7 +1232,7 @@ export function ChatInterface({
                         </label>
                         <div
                           onClick={() => setIsSubjekDropdownOpen(!isSubjekDropdownOpen)}
-                          className="relative w-full px-3 py-2 pr-10 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm cursor-pointer select-none h-10 flex items-center justify-center"
+                          className="relative w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm cursor-pointer select-none h-10 flex items-center justify-center"
                         >
                           <span
                             className={cn(
@@ -1211,7 +1242,7 @@ export function ChatInterface({
                           >
                             {formData.laporanUntukDataDari || "---- Pilih Menu Laporan ----"}
                           </span>
-                          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center">
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
                             <ChevronDown
                               className={cn(
                                 "w-4 h-4 text-neutral-500 transition-transform duration-200",
@@ -1222,7 +1253,7 @@ export function ChatInterface({
                         </div>
 
                         {isSubjekDropdownOpen && (
-                          <div className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full">
+                          <div className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100">
                             {DAFTAR_SUBJEK_DATA.map((subjek, idx) => (
                               <button
                                 key={`subjek-${idx}`}
@@ -1231,12 +1262,7 @@ export function ChatInterface({
                                   setFormData({ ...formData, laporanUntukDataDari: subjek });
                                   setIsSubjekDropdownOpen(false);
                                 }}
-                                className={cn(
-                                  "w-full text-left px-3 py-2.5 hover:bg-green-50 hover:text-[#006837] transition-colors font-medium flex items-center justify-between cursor-pointer",
-                                  formData.laporanUntukDataDari === subjek
-                                    ? "bg-green-50/70 text-[#006837] font-semibold"
-                                    : "text-neutral-700"
-                                )}
+                                className="w-full text-left px-3 py-2.5 hover:bg-green-50 hover:text-[#006837] transition-colors font-medium flex items-center justify-between cursor-pointer"
                               >
                                 <span>{subjek}</span>
                                 {formData.laporanUntukDataDari === subjek && (
@@ -1249,8 +1275,8 @@ export function ChatInterface({
                       </div>
 
                       <div>
-                        <label className="block font-semibold text-neutral-700 mb-1 text-xs flex justify-between">
-                          <span>NPSN Sekolah *</span>
+                        <label className="block font-semibold text-neutral-700 mb-1 text-xs">
+                          NPSN Sekolah *
                         </label>
                         <input
                           type="text"
@@ -1270,7 +1296,7 @@ export function ChatInterface({
                       </label>
                       <div
                         onClick={() => setIsKategoriDropdownOpen(!isKategoriDropdownOpen)}
-                        className="relative w-full px-3 py-2 pr-10 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm cursor-pointer select-none h-10 flex items-center justify-center"
+                        className="relative w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm cursor-pointer select-none h-10 flex items-center justify-center"
                       >
                         <span
                           className={cn(
@@ -1280,7 +1306,7 @@ export function ChatInterface({
                         >
                           {formData.kategori || "---- Pilih Kategori Kendala ----"}
                         </span>
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center">
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
                           <ChevronDown
                             className={cn(
                               "w-4 h-4 text-neutral-500 transition-transform duration-200",
@@ -1291,7 +1317,7 @@ export function ChatInterface({
                       </div>
 
                       {isKategoriDropdownOpen && (
-                        <div className="absolute z-50 left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full">
+                        <div className="absolute z-50 left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100">
                           {DAFTAR_KATEGORI_KENDALA.map((kat, idx) => (
                             <button
                               key={`kategori-${idx}`}
@@ -1300,12 +1326,7 @@ export function ChatInterface({
                                 setFormData({ ...formData, kategori: kat });
                                 setIsKategoriDropdownOpen(false);
                               }}
-                              className={cn(
-                                "w-full text-left px-3 py-2.5 hover:bg-green-50 hover:text-[#006837] transition-colors font-medium flex items-center justify-between cursor-pointer",
-                                formData.kategori === kat
-                                  ? "bg-green-50/70 text-[#006837] font-semibold"
-                                  : "text-neutral-700"
-                              )}
+                              className="w-full text-left px-3 py-2.5 hover:bg-green-50 hover:text-[#006837] transition-colors font-medium flex items-center justify-between cursor-pointer"
                             >
                               <span>{kat}</span>
                               {formData.kategori === kat && (
@@ -1322,17 +1343,53 @@ export function ChatInterface({
                       <label className="block font-semibold text-neutral-700 mb-1 text-xs">
                         Rincian Keluhan / Deskripsi *
                       </label>
-                      <div className="relative rounded-xl border border-neutral-200 focus-within:border-[#006837] overflow-hidden bg-white">
-                        <textarea
-                          rows={3}
-                          required
-                          value={formData.rincian}
-                          onChange={(e) =>
-                            setFormData({ ...formData, rincian: e.target.value })
-                          }
-                          placeholder="Tuliskan rincian keluhan atau deskripsi kendala..."
-                          className="w-full px-3 py-2 text-xs border-0 focus:outline-none focus:ring-0 resize-none [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400"
-                        />
+                      <textarea
+                        rows={3}
+                        required
+                        value={formData.rincian}
+                        onChange={(e) =>
+                          setFormData({ ...formData, rincian: e.target.value })
+                        }
+                        placeholder="Tuliskan rincian keluhan atau deskripsi kendala..."
+                        className="w-full px-3 py-2 text-xs border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] resize-none"
+                      />
+                    </div>
+
+                    {/* BARIS 6: UNGGAH FOTO LAMPIRAN KELUHAN PELAPOR */}
+                    <div>
+                      <label className="block font-semibold text-neutral-700 mb-1 text-xs">
+                        Unggah Tangkapan Layar / Foto Bukti Kendala (Opsional)
+                      </label>
+                      <input
+                        type="file"
+                        ref={complaintFileInputRef}
+                        accept="image/*"
+                        onChange={handleComplaintImageSelect}
+                        className="hidden"
+                      />
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => complaintFileInputRef.current?.click()}
+                          className="px-3.5 py-2 border border-emerald-300 bg-emerald-50 text-[#006837] rounded-xl text-xs font-semibold hover:bg-emerald-100 flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <ImageIcon className="w-4 h-4" />
+                          <span>Pilih Foto Kendala</span>
+                        </button>
+                        {formData.buktiKeluhanPelapor && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-[11px] text-emerald-700 font-medium">
+                              Foto terlampir
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setFormData({ ...formData, buktiKeluhanPelapor: undefined })}
+                              className="text-red-500 hover:text-red-700 cursor-pointer"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1363,7 +1420,7 @@ export function ChatInterface({
                   </div>
                 </form>
               ) : (
-                /* MODAL STRUK/KONFIRMASI UNTUK PELAPOR (SISI PUBLIK DENGAN SLA DAN TAMPILAN BERSIH) */
+                /* MODAL KONFIRMASI PENGADUAN BERHASIL */
                 <div id="transkrip-pdf" className="space-y-4 text-neutral-800">
                   <div className="text-center border-b border-neutral-200 pb-3 pr-8">
                     <div className="w-10 h-10 bg-green-100 text-green-700 rounded-full flex items-center justify-center mx-auto mb-2">
@@ -1372,8 +1429,7 @@ export function ChatInterface({
                     <h3 className="font-bold text-base text-[#006837]">
                       Pengaduan Berhasil Diteruskan ke Server Dinas!
                     </h3>
-                    
-                    {/* INFORMASI WAKTU TUNGGU SLA 5 HARI */}
+
                     <div className="mt-2.5 p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-center justify-center gap-2 font-medium">
                       <Clock className="w-4 h-4 text-amber-700 shrink-0" />
                       <span>
@@ -1382,14 +1438,13 @@ export function ChatInterface({
                     </div>
                   </div>
 
-                  {/* TABEL REKAPITULASI BERSAMA KOLOM SUBJEK DATA & WA */}
-                  <div className="overflow-x-auto rounded-2xl border border-neutral-200 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full">
+                  <div className="overflow-x-auto rounded-2xl border border-neutral-200">
                     <table className="w-full text-left text-xs border-collapse">
                       <thead className="bg-[#006837] text-white font-semibold">
                         <tr>
                           <th className="p-2.5 whitespace-nowrap">No Tiket</th>
                           <th className="p-2.5 whitespace-nowrap">Tanggal</th>
-                          <th className="p-2.5 whitespace-nowrap">Pelapor</th>
+                          <th className="p-2.5 whitespace-nowrap">Pelapor &amp; NIK</th>
                           <th className="p-2.5 whitespace-nowrap">Subjek Data</th>
                           <th className="p-2.5 whitespace-nowrap">Sekolah / NPSN</th>
                           <th className="p-2.5 whitespace-nowrap">No. WA</th>
@@ -1399,8 +1454,9 @@ export function ChatInterface({
                         <tr className="hover:bg-neutral-50">
                           <td className="p-2.5 font-bold text-neutral-700 whitespace-nowrap">#1</td>
                           <td className="p-2.5 whitespace-nowrap">{new Date().toLocaleDateString("id-ID")}</td>
-                          <td className="p-2.5 whitespace-nowrap font-bold text-neutral-800">
-                            {formData.namaPelapor || "-"}
+                          <td className="p-2.5 whitespace-nowrap">
+                            <div className="font-bold text-neutral-800">{formData.namaPelapor || "-"}</div>
+                            <div className="text-[10px] text-neutral-500 font-mono">NIK: {formData.nikPelapor || "-"}</div>
                           </td>
                           <td className="p-2.5 font-semibold text-emerald-800 whitespace-nowrap">
                             {formData.laporanUntukDataDari || "Operator Sekolah (OPS)"}
@@ -1415,7 +1471,6 @@ export function ChatInterface({
                     </table>
                   </div>
 
-                  {/* TOMBOL-TOMBOL AKSI STRUK PELAPOR */}
                   <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t">
                     <div className="flex items-center gap-1.5 text-xs text-emerald-800 font-medium">
                       <Mail className="w-4 h-4 text-[#006837]" />
