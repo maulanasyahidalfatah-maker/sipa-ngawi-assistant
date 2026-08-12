@@ -17,7 +17,6 @@ import {
   Download,
   Calendar,
   BarChart3,
-  Filter,
 } from "lucide-react";
 
 interface AdminTicket {
@@ -43,7 +42,7 @@ export default function AdminDashboard() {
 
   // State Filter Rentang Tanggal
   const [startDate, setStartDate] = useState("");
-  const [endDate, setStartDateEnd] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   // State Modal Verifikasi Admin
   const [selectedTicket, setSelectedTicket] = useState<AdminTicket | null>(null);
@@ -53,6 +52,7 @@ export default function AdminDashboard() {
   // State Modal Preview Gambar
   const [previewImage, setPreviewImage] = useState<{ url: string; title: string } | null>(null);
 
+  // FUNGSI MEMPERBAIKI DAN MEMBERSIHKAN FORMAT TIKET
   const sanitizeAndSortTickets = (rawTickets: any[]): AdminTicket[] => {
     return rawTickets.map((item, idx) => {
       const num = idx + 1;
@@ -75,6 +75,7 @@ export default function AdminDashboard() {
     });
   };
 
+  // LOAD DATA DARI SERVER & LOCAL STORAGE DENGAN PENCEGAHAN DUPLIKASI (DEDUPLICATION)
   const loadTickets = async () => {
     setIsLoading(true);
 
@@ -109,9 +110,19 @@ export default function AdminDashboard() {
       console.warn("Gagal terhubung ke API backend:", e);
     }
 
+    // GABUNGKAN DATA MENGGUNAKAN MAP BERDASARKAN ID TIKET UNTUK MENCEGAH DATA BERGANDA
     const ticketMap = new Map<string, AdminTicket>();
+    
+    // Masukkan data lokal terlebih dahulu
     localBackup.forEach((t) => ticketMap.set(t.id, t));
-    serverTickets.forEach((t) => ticketMap.set(t.id, t));
+
+    // Timpa atau tambahkan dari server (Server diutamakan jika statusnya RESOLVED)
+    serverTickets.forEach((t) => {
+      const existing = ticketMap.get(t.id);
+      if (!existing || (existing.status === "PENDING" && t.status === "RESOLVED")) {
+        ticketMap.set(t.id, t);
+      }
+    });
 
     const mergedTickets = Array.from(ticketMap.values());
     setTickets(mergedTickets);
@@ -147,14 +158,26 @@ export default function AdminDashboard() {
     router.push("/login");
   };
 
-  // 1. FITUR EKSPOR DATA KE EXCEL / CSV (COMPATIBLE EXCEL)
+  // FITUR EKSPOR DATA KE EXCEL / CSV NATIVE (UTF-8 BOM COMPATIBLE WITH EXCEL)
   const handleExportExcel = () => {
     if (filteredTickets.length === 0) {
       alert("Tidak ada data pengaduan untuk diekspor!");
       return;
     }
 
-    const headers = ["ID Tiket", "Tanggal", "Nama Pelapor", "NIK Pelapor", "No WhatsApp", "Asal Sekolah", "NPSN", "Kategori", "Rincian Keluhan", "Status"];
+    const headers = [
+      "ID Tiket",
+      "Tanggal",
+      "Nama Pelapor",
+      "NIK Pelapor",
+      "No WhatsApp",
+      "Asal Sekolah",
+      "NPSN",
+      "Kategori",
+      "Rincian Keluhan",
+      "Status",
+    ];
+
     const rows = filteredTickets.map((t) => [
       `"${t.id}"`,
       `"${t.createdAt || "-"}"`,
@@ -179,26 +202,30 @@ export default function AdminDashboard() {
     document.body.removeChild(link);
   };
 
+  // FITUR RESET DATA KELUHAN PERMANEN
   const handleResetData = async () => {
-    if (!window.confirm("Apakah Anda yakin ingin menghapus SEMUA data pengaduan?")) return;
+    if (!window.confirm("Apakah Anda yakin ingin menghapus SEMUA data pengaduan? Tindakan ini tidak dapat dibatalkan!")) return;
 
     setIsLoading(true);
     if (typeof window !== "undefined") {
       localStorage.removeItem("sipa_rekap_pengaduan_backup");
       localStorage.removeItem("sipa_rekap_pengaduan");
+      localStorage.removeItem("sipa_ngawi_tickets");
+      localStorage.removeItem("sipa_pengaduan_list");
     }
 
     try {
       await fetch("/api/tickets", { method: "DELETE" });
     } catch (e) {
-      console.error(e);
+      console.error("Gagal menghapus data dari server:", e);
     }
 
     setTickets([]);
     setIsLoading(false);
-    alert("Seluruh data keluhan berhasil dibersihkan!");
+    alert("Seluruh data keluhan berhasil dibersihkan secara permanen!");
   };
 
+  // VERIFIKASI & SELESAIKAN TIKET OLEH ADMIN
   const handleAdminVerify = async (fileBase64: string) => {
     if (!selectedTicket) return;
     setIsSubmittingProof(true);
@@ -221,7 +248,9 @@ export default function AdminDashboard() {
       console.error(e);
     }
 
-    const waMsg = encodeURIComponent(`Halo Bapak/Ibu ${selectedTicket.namaPelapor},\n\nPengaduan Anda untuk *${selectedTicket.asalSekolah}* telah *SELESAI DITINDAKLANJUTI* oleh Admin Disdikbud Ngawi.`);
+    const waMsg = encodeURIComponent(
+      `Halo Bapak/Ibu ${selectedTicket.namaPelapor},\n\nPengaduan Anda untuk *${selectedTicket.asalSekolah} (${selectedTicket.npsn})* telah *SELESAI DITINDAKLANJUTI* oleh Admin Disdikbud Ngawi.`
+    );
     window.open(`https://wa.me/${selectedTicket.noWhatsapp}?text=${waMsg}`, "_blank");
 
     setIsSubmittingProof(false);
@@ -229,7 +258,7 @@ export default function AdminDashboard() {
     setAdminProofFile(null);
   };
 
-  // LOGIKA FILTERING TIKET (STATUS + RENTANG TANGGAL)
+  // LOGIKA FILTERING TIKET (STATUS & RENTANG TANGGAL)
   const filteredTickets = tickets.filter((item) => {
     // Filter Status
     if (filterStatus === "pending" && item.status !== "PENDING") return false;
@@ -238,16 +267,24 @@ export default function AdminDashboard() {
     // Filter Rentang Tanggal
     if (startDate || endDate) {
       if (!item.createdAt) return false;
-      const [day, month, year] = item.createdAt.split("/").map(Number);
-      const ticketDate = new Date(year, month - 1, day);
+
+      // Parsing format tanggal DD/MM/YYYY atau YYYY-MM-DD
+      let ticketDate: Date;
+      if (item.createdAt.includes("/")) {
+        const [day, month, year] = item.createdAt.split("/").map(Number);
+        ticketDate = new Date(year, month - 1, day);
+      } else {
+        ticketDate = new Date(item.createdAt);
+      }
 
       if (startDate) {
         const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
         if (ticketDate < start) return false;
       }
       if (endDate) {
         const end = new Date(endDate);
-        end.setHours(23, 59, 59);
+        end.setHours(23, 59, 59, 999);
         if (ticketDate > end) return false;
       }
     }
@@ -259,12 +296,6 @@ export default function AdminDashboard() {
   const totalTickets = tickets.length;
   const pendingCount = tickets.filter((t) => t.status === "PENDING").length;
   const resolvedCount = tickets.filter((t) => t.status === "RESOLVED").length;
-
-  // Hitung Kategori Terbanyak
-  const categoryCounts: { [key: string]: number } = {};
-  tickets.forEach((t) => {
-    categoryCounts[t.kategori] = (categoryCounts[t.kategori] || 0) + 1;
-  });
 
   return (
     <div className="w-full h-screen overflow-y-auto bg-slate-50 p-4 sm:p-8 font-sans">
@@ -278,6 +309,7 @@ export default function AdminDashboard() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            {/* TOMBOL EKSPOR EXCEL (.CSV) */}
             <button
               type="button"
               onClick={handleExportExcel}
@@ -288,6 +320,7 @@ export default function AdminDashboard() {
               <span>Ekspor Excel (.csv)</span>
             </button>
 
+            {/* TOMBOL REFRESH / SYNC */}
             <button
               type="button"
               onClick={loadTickets}
@@ -297,6 +330,7 @@ export default function AdminDashboard() {
               <span>Sync</span>
             </button>
 
+            {/* TOMBOL RESET DATA KELUHAN */}
             <button
               type="button"
               onClick={handleResetData}
@@ -306,6 +340,7 @@ export default function AdminDashboard() {
               <span>Reset</span>
             </button>
 
+            {/* TOMBOL LOGOUT */}
             <button
               type="button"
               onClick={handleLogout}
@@ -317,7 +352,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* WIDGET STATISTIK RINGKAS (CARDS & VISUAL) */}
+        {/* WIDGET STATISTIK RINGKAS */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
             <div>
@@ -350,7 +385,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* BARIS FILTER: STATUS & RENTANG TANGGAL */}
+        {/* BARIS FILTER: TAB STATUS & RENTANG TANGGAL */}
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs mb-6 flex flex-wrap items-center justify-between gap-4">
           {/* TAB FILTER STATUS */}
           <div className="flex items-center gap-2">
@@ -397,7 +432,7 @@ export default function AdminDashboard() {
             <input
               type="date"
               value={endDate}
-              onChange={(e) => setStartDateEnd(e.target.value)}
+              onChange={(e) => setEndDate(e.target.value)}
               className="px-2.5 py-1 rounded-xl border border-slate-200 text-slate-700 text-xs focus:outline-none focus:border-[#006837]"
             />
             {(startDate || endDate) && (
@@ -405,7 +440,7 @@ export default function AdminDashboard() {
                 type="button"
                 onClick={() => {
                   setStartDate("");
-                  setStartDateEnd("");
+                  setEndDate("");
                 }}
                 className="text-xs text-red-600 hover:underline font-semibold ml-1 cursor-pointer"
               >
@@ -433,7 +468,10 @@ export default function AdminDashboard() {
                 {filteredTickets.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="p-12 text-center text-slate-400 font-bold">
-                      Belum Ada Data Pengaduan Masuk / Sesuai Filter
+                      <div className="flex flex-col items-center justify-center text-slate-400">
+                        <Inbox className="w-12 h-12 stroke-[1.5] mb-2 text-slate-300" />
+                        <p className="font-bold text-slate-600 text-sm">Belum Ada Data Pengaduan Masuk</p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -521,7 +559,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* MODAL VERIFIKASI ADMIN */}
+      {/* MODAL UNGGAH BUKTI PERBAIKAN ADMIN */}
       {selectedTicket && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white rounded-3xl p-6 max-w-md w-full relative border border-slate-100 shadow-xl">
@@ -546,8 +584,12 @@ export default function AdminDashboard() {
                 className="w-full text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:bg-emerald-50 file:text-emerald-700 cursor-pointer"
               />
               <div className="flex justify-end gap-2 pt-2">
-                <button onClick={() => setSelectedTicket(null)} className="px-4 py-2 border rounded-xl">Batal</button>
-                <button disabled={!proofFile || isSubmittingProof} onClick={() => proofFile && handleAdminVerify(proofFile)} className="px-4 py-2 bg-[#006837] text-white rounded-xl font-semibold disabled:opacity-40">
+                <button onClick={() => setSelectedTicket(null)} className="px-4 py-2 border rounded-xl cursor-pointer">Batal</button>
+                <button
+                  disabled={!proofFile || isSubmittingProof}
+                  onClick={() => proofFile && handleAdminVerify(proofFile)}
+                  className="px-4 py-2 bg-[#006837] text-white rounded-xl font-semibold disabled:opacity-40 cursor-pointer"
+                >
                   <Upload className="w-3.5 h-3.5 inline mr-1" /> Simpan &amp; Selesaikan
                 </button>
               </div>
@@ -556,7 +598,7 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* MODAL PREVIEW GAMBAR */}
+      {/* MODAL PREVIEW GAMBAR / PDF */}
       {previewImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-white rounded-3xl p-6 max-w-2xl w-full relative flex flex-col items-center">
@@ -567,7 +609,11 @@ export default function AdminDashboard() {
               <Eye className="w-5 h-5 text-emerald-600" /> {previewImage.title}
             </h3>
             <div className="w-full max-h-[70vh] overflow-y-auto flex justify-center bg-slate-100 p-3 rounded-2xl">
-              <img src={previewImage.url} alt="Preview" className="max-w-full max-h-[60vh] object-contain rounded-xl" />
+              {previewImage.url.startsWith("data:application/pdf") ? (
+                <iframe src={previewImage.url} className="w-full h-[500px] rounded-xl" title="Lampiran PDF" />
+              ) : (
+                <img src={previewImage.url} alt="Preview Bukti" className="max-w-full max-h-[60vh] object-contain rounded-xl" />
+              )}
             </div>
             <button onClick={() => setPreviewImage(null)} className="mt-4 px-5 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold cursor-pointer">
               Tutup
