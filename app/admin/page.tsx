@@ -2,7 +2,23 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Clock, Upload, FileText, X, Eye, RefreshCw, Inbox, Trash2, LogOut, Image as ImageIcon } from "lucide-react";
+import {
+  CheckCircle2,
+  Clock,
+  Upload,
+  FileText,
+  X,
+  Eye,
+  RefreshCw,
+  Inbox,
+  Trash2,
+  LogOut,
+  Image as ImageIcon,
+  Download,
+  Calendar,
+  BarChart3,
+  Filter,
+} from "lucide-react";
 
 interface AdminTicket {
   id: string;
@@ -13,10 +29,10 @@ interface AdminTicket {
   npsn: string;
   kategori: string;
   rincian: string;
-  fotoKeluhan?: string; // Lampiran foto keluhan dari pelapor
+  fotoKeluhan?: string;
   status: "PENDING" | "RESOLVED";
-  buktiPerbaikan?: string; // Bukti perbaikan dari admin dinas
-  createdAt?: string;
+  buktiPerbaikan?: string;
+  createdAt?: string; // Format DD/MM/YYYY
 }
 
 export default function AdminDashboard() {
@@ -25,22 +41,25 @@ export default function AdminDashboard() {
   const [filterStatus, setFilterStatus] = useState<"semua" | "pending" | "resolved">("semua");
   const [isLoading, setIsLoading] = useState(false);
 
+  // State Filter Rentang Tanggal
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setStartDateEnd] = useState("");
+
   // State Modal Verifikasi Admin
   const [selectedTicket, setSelectedTicket] = useState<AdminTicket | null>(null);
   const [proofFile, setAdminProofFile] = useState<string | null>(null);
   const [isSubmittingProof, setIsSubmittingProof] = useState(false);
 
-  // State Modal Preview Gambar (Lampiran Pelapor / Bukti Dinas)
+  // State Modal Preview Gambar
   const [previewImage, setPreviewImage] = useState<{ url: string; title: string } | null>(null);
 
-  // FUNGSI MEMPERBAIKI URUTAN NOMOR TIKET (TK-001, TK-002, DST.)
   const sanitizeAndSortTickets = (rawTickets: any[]): AdminTicket[] => {
     return rawTickets.map((item, idx) => {
       const num = idx + 1;
       const formattedId = `TK-${num < 10 ? `00${num}` : num < 100 ? `0${num}` : num}`;
 
       return {
-        id: item.id && item.id.startsWith("TK-") && !item.id.includes("TK-04") ? item.id : formattedId,
+        id: item.id && item.id.startsWith("TK-") ? item.id : formattedId,
         namaPelapor: item.namaPelapor || item.nama || "-",
         nikPelapor: item.nikPelapor || item.nik || "-",
         noWhatsapp: item.noWhatsapp || item.wa || "-",
@@ -49,24 +68,21 @@ export default function AdminDashboard() {
         kategori: item.kategori || item.kategoriKendala || "-",
         rincian: item.rincian || item.rincianKeluhan || "-",
         fotoKeluhan: item.fotoKeluhan || item.lampiran || undefined,
-        status: item.status === "SELESAI" ? "RESOLVED" : (item.status || "PENDING"),
+        status: item.status === "SELESAI" ? "RESOLVED" : item.status || "PENDING",
         buktiPerbaikan: item.buktiPerbaikan || undefined,
         createdAt: item.createdAt || new Date().toLocaleDateString("id-ID"),
       };
     });
   };
 
-  // 1. SINKRONISASI DUA ARAH (SERVER BACKEND + BACKUP LOKAL PERMANEN)
   const loadTickets = async () => {
     setIsLoading(true);
 
-    // Step A: Ambil backup dari LocalStorage browser
     let localBackup: AdminTicket[] = [];
     if (typeof window !== "undefined") {
       const savedBackup = localStorage.getItem("sipa_rekap_pengaduan_backup");
       const savedRekap = localStorage.getItem("sipa_rekap_pengaduan");
-      const savedTickets = localStorage.getItem("sipa_ngawi_tickets");
-      const raw = savedBackup || savedRekap || savedTickets;
+      const raw = savedBackup || savedRekap;
 
       if (raw) {
         try {
@@ -80,7 +96,6 @@ export default function AdminDashboard() {
       }
     }
 
-    // Step B: Ambil data dari Server Cloud Backend
     let serverTickets: AdminTicket[] = [];
     try {
       const res = await fetch("/api/tickets", { cache: "no-store" });
@@ -94,37 +109,17 @@ export default function AdminDashboard() {
       console.warn("Gagal terhubung ke API backend:", e);
     }
 
-    // Step C: Gabungkan data Server dan Backup Lokal tanpa duplikasi
     const ticketMap = new Map<string, AdminTicket>();
-
     localBackup.forEach((t) => ticketMap.set(t.id, t));
-
-    serverTickets.forEach((t) => {
-      const existing = ticketMap.get(t.id);
-      if (!existing || (existing.status === "PENDING" && t.status === "RESOLVED")) {
-        ticketMap.set(t.id, t);
-      }
-    });
+    serverTickets.forEach((t) => ticketMap.set(t.id, t));
 
     const mergedTickets = Array.from(ticketMap.values());
-
     setTickets(mergedTickets);
-
-    // Simpan hasil rapi ke LocalStorage
-    if (typeof window !== "undefined" && mergedTickets.length > 0) {
-      try {
-        localStorage.setItem("sipa_rekap_pengaduan_backup", JSON.stringify(mergedTickets));
-        localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(mergedTickets));
-      } catch {
-        console.warn("Storage browser penuh.");
-      }
-    }
 
     setIsLoading(false);
   };
 
   useEffect(() => {
-    // 2. VALIDASI AKSES LOGIN ADMIN
     if (typeof window !== "undefined") {
       const isDev = process.env.NODE_ENV === "development";
       let sessionRaw = localStorage.getItem("sipa_user_session");
@@ -136,45 +131,14 @@ export default function AdminDashboard() {
       }
 
       if (!sessionRaw) {
-        alert("Akses ditolak! Silakan login sebagai Admin Dinas terlebih dahulu.");
-        router.push("/login");
-        return;
-      }
-
-      try {
-        const session = JSON.parse(sessionRaw);
-        if (session.role !== "ADMIN") {
-          alert("Akses ditolak! Akun Anda bukan merupakan Admin Disdikbud Ngawi.");
-          router.push("/login");
-          return;
-        }
-      } catch {
         router.push("/login");
         return;
       }
     }
 
     loadTickets();
-
-    // Auto-polling refresh setiap 5 detik
-    const interval = setInterval(() => {
-      loadTickets();
-    }, 5000);
-
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "sipa_rekap_pengaduan" || e.key === "sipa_rekap_pengaduan_backup") {
-        loadTickets();
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener("storage", handleStorageChange);
-    };
   }, [router]);
 
-  // FUNGSI LOGOUT ADMIN
   const handleLogout = () => {
     if (typeof window !== "undefined") {
       localStorage.removeItem("sipa_user_session");
@@ -183,53 +147,81 @@ export default function AdminDashboard() {
     router.push("/login");
   };
 
-  // 3. UNGGAH BUKTI PERBAIKAN & UBAH STATUS MENJADI SUDAH DIBENAHI
+  // 1. FITUR EKSPOR DATA KE EXCEL / CSV (COMPATIBLE EXCEL)
+  const handleExportExcel = () => {
+    if (filteredTickets.length === 0) {
+      alert("Tidak ada data pengaduan untuk diekspor!");
+      return;
+    }
+
+    const headers = ["ID Tiket", "Tanggal", "Nama Pelapor", "NIK Pelapor", "No WhatsApp", "Asal Sekolah", "NPSN", "Kategori", "Rincian Keluhan", "Status"];
+    const rows = filteredTickets.map((t) => [
+      `"${t.id}"`,
+      `"${t.createdAt || "-"}"`,
+      `"${t.namaPelapor}"`,
+      `"${t.nikPelapor || "-"}"`,
+      `"${t.noWhatsapp}"`,
+      `"${t.asalSekolah}"`,
+      `"${t.npsn}"`,
+      `"${t.kategori}"`,
+      `"${t.rincian.replace(/"/g, '""')}"`,
+      `"${t.status === "RESOLVED" ? "Sudah Dibenahi" : "Belum Dibenahi"}"`,
+    ]);
+
+    const csvContent = "\uFEFF" + [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `Rekap_Pengaduan_SIPA_NGAWI_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleResetData = async () => {
+    if (!window.confirm("Apakah Anda yakin ingin menghapus SEMUA data pengaduan?")) return;
+
+    setIsLoading(true);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("sipa_rekap_pengaduan_backup");
+      localStorage.removeItem("sipa_rekap_pengaduan");
+    }
+
+    try {
+      await fetch("/api/tickets", { method: "DELETE" });
+    } catch (e) {
+      console.error(e);
+    }
+
+    setTickets([]);
+    setIsLoading(false);
+    alert("Seluruh data keluhan berhasil dibersihkan!");
+  };
+
   const handleAdminVerify = async (fileBase64: string) => {
     if (!selectedTicket) return;
-
     setIsSubmittingProof(true);
 
-    const updatedTickets = tickets.map((ticket) => {
-      if (ticket.id === selectedTicket.id) {
-        return {
-          ...ticket,
-          status: "RESOLVED" as const,
-          buktiPerbaikan: fileBase64,
-        };
-      }
-      return ticket;
-    });
-
-    setTickets(updatedTickets);
+    const updated = tickets.map((t) => (t.id === selectedTicket.id ? { ...t, status: "RESOLVED" as const, buktiPerbaikan: fileBase64 } : t));
+    setTickets(updated);
 
     if (typeof window !== "undefined") {
-      try {
-        localStorage.setItem("sipa_rekap_pengaduan_backup", JSON.stringify(updatedTickets));
-        localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(updatedTickets));
-      } catch {
-        console.warn("Storage penuh.");
-      }
+      localStorage.setItem("sipa_rekap_pengaduan_backup", JSON.stringify(updated));
+      localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(updated));
     }
 
     try {
       await fetch("/api/tickets", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: selectedTicket.id,
-          status: "RESOLVED",
-          buktiPerbaikan: fileBase64,
-        }),
+        body: JSON.stringify({ id: selectedTicket.id, status: "RESOLVED", buktiPerbaikan: fileBase64 }),
       });
     } catch (e) {
-      console.error("Gagal sinkronisasi update ke server:", e);
+      console.error(e);
     }
 
-    const waMsg = encodeURIComponent(
-      `Halo Bapak/Ibu ${selectedTicket.namaPelapor},\n\n` +
-      `Pengaduan Anda untuk sekolah *${selectedTicket.asalSekolah} (${selectedTicket.npsn})* telah *SELESAI DITINDAKLANJUTI* oleh Admin Disdikbud Kab. Ngawi.\n\n` +
-      `Terima kasih telah menggunakan layanan Asisten Virtual SIPA-NGAWI.`
-    );
+    const waMsg = encodeURIComponent(`Halo Bapak/Ibu ${selectedTicket.namaPelapor},\n\nPengaduan Anda untuk *${selectedTicket.asalSekolah}* telah *SELESAI DITINDAKLANJUTI* oleh Admin Disdikbud Ngawi.`);
     window.open(`https://wa.me/${selectedTicket.noWhatsapp}?text=${waMsg}`, "_blank");
 
     setIsSubmittingProof(false);
@@ -237,46 +229,42 @@ export default function AdminDashboard() {
     setAdminProofFile(null);
   };
 
-  // 4. FUNGSI RESET TOTAL PERMANEN (HAPUS SERVER + SEMUA KEY LOCALSTORAGE)
-  const handleResetData = async () => {
-    const confirmReset = window.confirm(
-      "Apakah Anda yakin ingin menghapus SEMUA data pengaduan? Tindakan ini akan membersihkan seluruh laporan secara permanen!"
-    );
-
-    if (!confirmReset) return;
-
-    setIsLoading(true);
-
-    // A. Hapus SEMUA Kunci Penyimpanan di Browser
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("sipa_rekap_pengaduan_backup");
-      localStorage.removeItem("sipa_rekap_pengaduan");
-      localStorage.removeItem("sipa_ngawi_tickets");
-      localStorage.removeItem("sipa_pengaduan_list");
-    }
-
-    // B. Panggil Endpoint DELETE API Server
-    try {
-      await fetch("/api/tickets", { method: "DELETE" });
-    } catch (e) {
-      console.error("Gagal reset data server:", e);
-    }
-
-    // C. Kosongkan State UI
-    setTickets([]);
-    setIsLoading(false);
-
-    alert("Seluruh data keluhan berhasil dibersihkan secara permanen! Sistem siap digunakan.");
-  };
-
+  // LOGIKA FILTERING TIKET (STATUS + RENTANG TANGGAL)
   const filteredTickets = tickets.filter((item) => {
-    if (filterStatus === "pending") return item.status === "PENDING";
-    if (filterStatus === "resolved") return item.status === "RESOLVED";
+    // Filter Status
+    if (filterStatus === "pending" && item.status !== "PENDING") return false;
+    if (filterStatus === "resolved" && item.status !== "RESOLVED") return false;
+
+    // Filter Rentang Tanggal
+    if (startDate || endDate) {
+      if (!item.createdAt) return false;
+      const [day, month, year] = item.createdAt.split("/").map(Number);
+      const ticketDate = new Date(year, month - 1, day);
+
+      if (startDate) {
+        const start = new Date(startDate);
+        if (ticketDate < start) return false;
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59);
+        if (ticketDate > end) return false;
+      }
+    }
+
     return true;
   });
 
+  // STATISTIK RINGKAS
+  const totalTickets = tickets.length;
   const pendingCount = tickets.filter((t) => t.status === "PENDING").length;
   const resolvedCount = tickets.filter((t) => t.status === "RESOLVED").length;
+
+  // Hitung Kategori Terbanyak
+  const categoryCounts: { [key: string]: number } = {};
+  tickets.forEach((t) => {
+    categoryCounts[t.kategori] = (categoryCounts[t.kategori] || 0) + 1;
+  });
 
   return (
     <div className="w-full h-screen overflow-y-auto bg-slate-50 p-4 sm:p-8 font-sans">
@@ -289,30 +277,35 @@ export default function AdminDashboard() {
               Panel Pengelolaan &amp; Verifikasi Pengaduan Data Dapodik Disdikbud Kab. Ngawi
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            {/* TOMBOL REFRESH / SYNC */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleExportExcel}
+              className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold shadow-xs cursor-pointer transition-colors"
+              title="Ekspor ke File Excel/CSV"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Ekspor Excel (.csv)</span>
+            </button>
+
             <button
               type="button"
               onClick={loadTickets}
-              className="flex items-center gap-1.5 bg-white hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
-              title="Refresh Data Pengaduan"
+              className="flex items-center gap-1.5 bg-white hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold cursor-pointer"
             >
-              <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? "animate-spin text-[#006837]" : ""}`} />
-              <span>Sync Server</span>
+              <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-[#006837]" : ""}`} />
+              <span>Sync</span>
             </button>
 
-            {/* TOMBOL RESET DATA KELUHAN */}
             <button
               type="button"
               onClick={handleResetData}
-              className="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-xl border border-red-200 text-xs font-semibold transition-colors cursor-pointer"
-              title="Bersihkan seluruh data keluhan"
+              className="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-xl border border-red-200 text-xs font-semibold cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5 text-red-600" />
-              <span>Reset Data Keluhan</span>
+              <span>Reset</span>
             </button>
 
-            {/* TOMBOL LOGOUT */}
             <button
               type="button"
               onClick={handleLogout}
@@ -324,41 +317,102 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* TAB FILTER */}
-        <div className="flex items-center gap-2 mb-6">
-          <button
-            type="button"
-            onClick={() => setFilterStatus("semua")}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              filterStatus === "semua"
-                ? "bg-[#006837] text-white shadow-sm"
-                : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
-            }`}
-          >
-            Semua ({tickets.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterStatus("pending")}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              filterStatus === "pending"
-                ? "bg-amber-500 text-white shadow-sm"
-                : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
-            }`}
-          >
-            Belum Dibenahi ({pendingCount})
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterStatus("resolved")}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              filterStatus === "resolved"
-                ? "bg-emerald-600 text-white shadow-sm"
-                : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
-            }`}
-          >
-            Sudah Dibenahi ({resolvedCount})
-          </button>
+        {/* WIDGET STATISTIK RINGKAS (CARDS & VISUAL) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-slate-500">Total Pengaduan Masuk</p>
+              <p className="text-2xl font-bold text-slate-900 mt-1">{totalTickets}</p>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700">
+              <BarChart3 className="w-5 h-5" />
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-amber-600">Belum Dibenahi (Pending)</p>
+              <p className="text-2xl font-bold text-amber-600 mt-1">{pendingCount}</p>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
+              <Clock className="w-5 h-5" />
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-emerald-600">Sudah Dibenahi (Resolved)</p>
+              <p className="text-2xl font-bold text-emerald-600 mt-1">{resolvedCount}</p>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+          </div>
+        </div>
+
+        {/* BARIS FILTER: STATUS & RENTANG TANGGAL */}
+        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs mb-6 flex flex-wrap items-center justify-between gap-4">
+          {/* TAB FILTER STATUS */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setFilterStatus("semua")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                filterStatus === "semua" ? "bg-[#006837] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              Semua ({totalTickets})
+            </button>
+            <button
+              type="button"
+              onClick={() => setFilterStatus("pending")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                filterStatus === "pending" ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              Pending ({pendingCount})
+            </button>
+            <button
+              type="button"
+              onClick={() => setFilterStatus("resolved")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                filterStatus === "resolved" ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              Resolved ({resolvedCount})
+            </button>
+          </div>
+
+          {/* FILTER RENTANG TANGGAL */}
+          <div className="flex items-center gap-2 text-xs">
+            <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
+            <span className="text-slate-500 font-medium">Tanggal:</span>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="px-2.5 py-1 rounded-xl border border-slate-200 text-slate-700 text-xs focus:outline-none focus:border-[#006837]"
+            />
+            <span className="text-slate-400">s/d</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setStartDateEnd(e.target.value)}
+              className="px-2.5 py-1 rounded-xl border border-slate-200 text-slate-700 text-xs focus:outline-none focus:border-[#006837]"
+            />
+            {(startDate || endDate) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setStartDate("");
+                  setStartDateEnd("");
+                }}
+                className="text-xs text-red-600 hover:underline font-semibold ml-1 cursor-pointer"
+              >
+                Reset Tanggal
+              </button>
+            )}
+          </div>
         </div>
 
         {/* TABEL PENGADUAN UTAMA */}
@@ -370,7 +424,7 @@ export default function AdminDashboard() {
                   <th className="p-3.5 whitespace-nowrap">ID TIKET</th>
                   <th className="p-3.5 whitespace-nowrap">PELAPOR, NIK &amp; WA</th>
                   <th className="p-3.5 whitespace-nowrap">SEKOLAH / NPSN</th>
-                  <th className="p-3.5 whitespace-nowrap">KATEGORI, RINCIAN &amp; LAMPIRAN</th>
+                  <th className="p-3.5 whitespace-nowrap">KATEGORI, RINCIAN &amp; FOTO KELUHAN</th>
                   <th className="p-3.5 whitespace-nowrap">STATUS</th>
                   <th className="p-3.5 whitespace-nowrap text-center">AKSI ADMIN</th>
                 </tr>
@@ -378,20 +432,17 @@ export default function AdminDashboard() {
               <tbody className="divide-y divide-slate-100 bg-white">
                 {filteredTickets.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="p-12 text-center">
-                      <div className="flex flex-col items-center justify-center text-slate-400">
-                        <Inbox className="w-12 h-12 stroke-[1.5] mb-2 text-slate-300" />
-                        <p className="font-bold text-slate-600 text-sm">Belum Ada Pengaduan Masuk</p>
-                        <p className="text-xs text-slate-400 mt-0.5">
-                          Setiap keluhan yang masuk akan tersimpan permanen di sini sampai Admin mengunggah bukti perbaikan.
-                        </p>
-                      </div>
+                    <td colSpan={6} className="p-12 text-center text-slate-400 font-bold">
+                      Belum Ada Data Pengaduan Masuk / Sesuai Filter
                     </td>
                   </tr>
                 ) : (
                   filteredTickets.map((ticket, index) => (
-                    <tr key={`${ticket.id}-${index}`} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="p-3.5 font-bold text-slate-900 whitespace-nowrap">{ticket.id}</td>
+                    <tr key={`${ticket.id}-${index}`} className="hover:bg-slate-50 transition-colors">
+                      <td className="p-3.5 font-bold text-slate-900 whitespace-nowrap">
+                        {ticket.id}
+                        <div className="text-[10px] text-slate-400 font-normal">{ticket.createdAt}</div>
+                      </td>
                       <td className="p-3.5 whitespace-nowrap">
                         <div className="font-bold text-slate-900">{ticket.namaPelapor}</div>
                         <div className="text-slate-500 font-mono text-[11px]">NIK: {ticket.nikPelapor || "-"}</div>
@@ -401,8 +452,7 @@ export default function AdminDashboard() {
                         <div className="font-bold text-slate-900">{ticket.asalSekolah}</div>
                         <div className="text-slate-400 font-mono text-[11px]">NPSN: {ticket.npsn}</div>
                       </td>
-                      
-                      {/* RINCIAN & FOTO KELUHAN PELAPOR */}
+
                       <td className="p-3.5 min-w-[300px]">
                         <div className="font-semibold text-[#006837] mb-0.5">{ticket.kategori}</div>
                         <div className="text-slate-600 whitespace-pre-wrap leading-relaxed text-[11px] mb-2">
@@ -411,7 +461,12 @@ export default function AdminDashboard() {
                         {ticket.fotoKeluhan ? (
                           <button
                             type="button"
-                            onClick={() => setPreviewImage({ url: ticket.fotoKeluhan!, title: `Foto Kendala Pelapor (${ticket.asalSekolah})` })}
+                            onClick={() =>
+                              setPreviewImage({
+                                url: ticket.fotoKeluhan!,
+                                title: `Foto Kendala Pelapor (${ticket.asalSekolah})`,
+                              })
+                            }
                             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-[#006837] font-semibold text-[10px] border border-emerald-200 hover:bg-emerald-100 cursor-pointer"
                           >
                             <ImageIcon className="w-3 h-3" /> Lihat Foto Keluhan Pelapor
@@ -432,20 +487,26 @@ export default function AdminDashboard() {
                           </span>
                         )}
                       </td>
+
                       <td className="p-3.5 whitespace-nowrap text-center">
                         {ticket.status === "PENDING" ? (
                           <button
                             type="button"
                             onClick={() => setSelectedTicket(ticket)}
-                            className="px-3 py-1.5 bg-[#006837] hover:bg-[#00522c] text-white rounded-xl text-xs font-semibold flex items-center gap-1 shadow-xs transition-colors cursor-pointer mx-auto"
+                            className="px-3 py-1.5 bg-[#006837] hover:bg-[#00522c] text-white rounded-xl text-xs font-semibold cursor-pointer mx-auto"
                           >
-                            <span>Unggah Bukti &amp; Selesaikan</span>
+                            Unggah Bukti &amp; Selesaikan
                           </button>
                         ) : (
                           <button
                             type="button"
-                            onClick={() => setPreviewImage({ url: ticket.buktiPerbaikan || "", title: `Bukti Hasil Perbaikan Dinas (${ticket.asalSekolah})` })}
-                            className="text-[#006837] hover:text-emerald-800 font-semibold text-xs flex items-center gap-1 hover:underline cursor-pointer mx-auto"
+                            onClick={() =>
+                              setPreviewImage({
+                                url: ticket.buktiPerbaikan || "",
+                                title: `Bukti Hasil Perbaikan Dinas (${ticket.asalSekolah})`,
+                              })
+                            }
+                            className="text-[#006837] hover:underline font-semibold text-xs flex items-center gap-1 mx-auto cursor-pointer"
                           >
                             <FileText className="w-3.5 h-3.5" /> Lihat Bukti Dinas
                           </button>
@@ -460,66 +521,34 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* MODAL UNGGAH BUKTI PERBAIKAN */}
+      {/* MODAL VERIFIKASI ADMIN */}
       {selectedTicket && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl shadow-xl max-w-md w-full p-6 relative border border-slate-100">
-            <button
-              type="button"
-              onClick={() => setSelectedTicket(null)}
-              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 cursor-pointer"
-            >
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full relative border border-slate-100 shadow-xl">
+            <button onClick={() => setSelectedTicket(null)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-700">
               <X className="w-5 h-5" />
             </button>
+            <h3 className="text-lg font-bold text-slate-900 mb-1">Selesaikan Tiket {selectedTicket.id}</h3>
+            <p className="text-xs text-slate-500 mb-4">Unggah bukti perbaikan untuk sekolah <strong>{selectedTicket.asalSekolah}</strong>.</p>
 
-            <h3 className="text-lg font-bold text-slate-900 mb-1">
-              Verifikasi &amp; Beri Bukti Tiket {selectedTicket.id}
-            </h3>
-            <p className="text-xs text-slate-500 mb-4">
-              Unggah screenshot / berkas bukti perbaikan dari Dinas untuk menyelesaikan pengaduan <strong>{selectedTicket.asalSekolah}</strong>.
-            </p>
-
-            <div className="space-y-4 text-xs">
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="font-semibold text-slate-800">{selectedTicket.namaPelapor} ({selectedTicket.noWhatsapp})</div>
-                <div className="text-slate-500 mt-1 whitespace-pre-wrap">{selectedTicket.kategori}: {selectedTicket.rincian}</div>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">
-                  Unggah Berkas Bukti Perbaikan Dinas (Gambar/PDF) *
-                </label>
-                <input
-                  type="file"
-                  accept="image/*,application/pdf"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => setAdminProofFile(reader.result as string);
-                      reader.readAsDataURL(file);
-                    }
-                  }}
-                  className="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer"
-                />
-              </div>
-
-              <div className="pt-2 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setSelectedTicket(null)}
-                  className="px-4 py-2 border border-slate-200 text-slate-600 rounded-xl font-medium cursor-pointer"
-                >
-                  Batal
-                </button>
-                <button
-                  type="button"
-                  disabled={!proofFile || isSubmittingProof}
-                  onClick={() => proofFile && handleAdminVerify(proofFile)}
-                  className="px-4 py-2 bg-[#006837] hover:bg-[#00522c] disabled:opacity-40 text-white rounded-xl font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
-                >
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>{isSubmittingProof ? "Memproses..." : "Simpan & Selesaikan"}</span>
+            <div className="space-y-3 text-xs">
+              <input
+                type="file"
+                accept="image/*,application/pdf"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => setAdminProofFile(reader.result as string);
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className="w-full text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:bg-emerald-50 file:text-emerald-700 cursor-pointer"
+              />
+              <div className="flex justify-end gap-2 pt-2">
+                <button onClick={() => setSelectedTicket(null)} className="px-4 py-2 border rounded-xl">Batal</button>
+                <button disabled={!proofFile || isSubmittingProof} onClick={() => proofFile && handleAdminVerify(proofFile)} className="px-4 py-2 bg-[#006837] text-white rounded-xl font-semibold disabled:opacity-40">
+                  <Upload className="w-3.5 h-3.5 inline mr-1" /> Simpan &amp; Selesaikan
                 </button>
               </div>
             </div>
@@ -527,47 +556,22 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* MODAL PREVIEW GAMBAR (LAMPIRAN KELUHAN PELAPOR / BUKTI PERBAIKAN DINAS) */}
+      {/* MODAL PREVIEW GAMBAR */}
       {previewImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 relative border border-slate-100 flex flex-col items-center">
-            <button
-              type="button"
-              onClick={() => setPreviewImage(null)}
-              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 cursor-pointer"
-            >
+          <div className="bg-white rounded-3xl p-6 max-w-2xl w-full relative flex flex-col items-center">
+            <button onClick={() => setPreviewImage(null)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-700">
               <X className="w-5 h-5" />
             </button>
-
             <h3 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
               <Eye className="w-5 h-5 text-emerald-600" /> {previewImage.title}
             </h3>
-
-            <div className="w-full max-h-[70vh] overflow-y-auto flex justify-center bg-slate-100 p-3 rounded-2xl border border-slate-200">
-              {previewImage.url.startsWith("data:application/pdf") ? (
-                <iframe
-                  src={previewImage.url}
-                  className="w-full h-[500px] rounded-xl"
-                  title="Lampiran PDF"
-                />
-              ) : (
-                <img
-                  src={previewImage.url}
-                  alt="Lampiran Foto"
-                  className="max-w-full max-h-[60vh] object-contain rounded-xl shadow-xs"
-                />
-              )}
+            <div className="w-full max-h-[70vh] overflow-y-auto flex justify-center bg-slate-100 p-3 rounded-2xl">
+              <img src={previewImage.url} alt="Preview" className="max-w-full max-h-[60vh] object-contain rounded-xl" />
             </div>
-
-            <div className="mt-4 flex justify-end w-full">
-              <button
-                type="button"
-                onClick={() => setPreviewImage(null)}
-                className="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold cursor-pointer"
-              >
-                Tutup
-              </button>
-            </div>
+            <button onClick={() => setPreviewImage(null)} className="mt-4 px-5 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold cursor-pointer">
+              Tutup
+            </button>
           </div>
         </div>
       )}
