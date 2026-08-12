@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck, User, Lock, Mail, ArrowRight, Building2, UserPlus, LogIn, AlertCircle, KeyRound } from "lucide-react";
 
-// WHITELIST DATA PEKERJA / ADMIN DINAS TERDAFTAR (UNTUK VALIDASI KEAMANAN)
+// WHITELIST DATA PEKERJA / ADMIN DINAS TERDAFTAR
 const ADMIN_DINAS_WHITELIST = [
   { nip: "198503132010011001", email: "admin.dapodik@ngawikab.go.id", pass: "admin123", nama: "Admin Disdikbud Utama" },
   { nip: "199005202015022002", email: "verifikator@ngawikab.go.id", pass: "disdik2026", nama: "Tim Verifikasi Dapodik" },
@@ -12,7 +12,7 @@ const ADMIN_DINAS_WHITELIST = [
 
 export default function LoginPage() {
   const router = useRouter();
-  const [role, setRole] = useState<"PUBLIC" | "ADMIN">("ADMIN");
+  const [role, setRole] = useState<"PUBLIC" | "ADMIN">("PUBLIC");
   const [isRegister, setIsRegister] = useState(false);
 
   // Form State
@@ -21,34 +21,22 @@ export default function LoginPage() {
   const [namaLengkap, setNamaLengkap] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Auto Check: Jika sudah login, langsung arahkan ke halaman utama/admin
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedSession = localStorage.getItem("sipa_user_session");
-      if (savedSession) {
-        try {
-          const parsed = JSON.parse(savedSession);
-          if (parsed.role === "ADMIN") {
-            router.push("/admin");
-          } else if (parsed.role === "PUBLIC") {
-            router.push("/");
-          }
-        } catch {
-          // Abaikan jika data corrupt
-        }
-      }
-    }
-  }, [router]);
+  // FUNGSI BERSIHKAN SESI LAMA KETIKA BERPINDAH TAB ROLE
+  const handleSwitchRole = (targetRole: "PUBLIC" | "ADMIN") => {
+    setRole(targetRole);
+    setIsRegister(false);
+    setErrorMsg("");
+    setEmailOrNip("");
+    setPassword("");
+    setNamaLengkap("");
+  };
 
   const saveSessionAndRedirect = (sessionData: any, targetPath: string) => {
-    const sessionString = JSON.stringify(sessionData);
-
-    // 1. Simpan ke LocalStorage
-    localStorage.setItem("sipa_user_session", sessionString);
-
-    // 2. Simpan ke Cookie agar bisa dibaca oleh Middleware Next.js
-    document.cookie = `sipa_user_session=${encodeURIComponent(sessionString)}; path=/; max-age=86400; SameSite=Lax`;
-
+    if (typeof window !== "undefined") {
+      const sessionString = JSON.stringify(sessionData);
+      localStorage.setItem("sipa_user_session", sessionString);
+      document.cookie = `sipa_user_session=${encodeURIComponent(sessionString)}; path=/; max-age=86400; SameSite=Lax`;
+    }
     router.push(targetPath);
   };
 
@@ -65,20 +53,32 @@ export default function LoginPage() {
     }
 
     // =========================================================================
-    // 🔑 1. BYPASS MASTER DEVELOPER MAULANA (PRIORITAS 1 - PASTI MASUK ADMIN)
+    // 🔑 AKUN MASTER DEVELOPER MAULANA (SECRET BACKEND BYPASS - DUAL ROLE)
     // =========================================================================
-    if (inputUser.toUpperCase() === "MAULANA-DEV@SIPA.COM" && inputPass === "Alhakim5758") {
-      const devSession = {
-        role: "ADMIN",
-        nama: "Maulana Syahid Al Fatah (Developer Utama)",
-        email: "MAULANA-DEV@SIPA.COM",
-      };
-      saveSessionAndRedirect(devSession, "/admin");
+    if (
+      (inputUser.toUpperCase() === "MAULANA-DEV@SIPA.COM" || inputUser.toLowerCase() === "maulana-dev@sipa.com") &&
+      inputPass === "Alhakim5758"
+    ) {
+      if (role === "ADMIN") {
+        const devAdminSession = {
+          role: "ADMIN",
+          nama: "Maulana Syahid Al Fatah (Developer)",
+          email: "MAULANA-DEV@SIPA.COM",
+        };
+        saveSessionAndRedirect(devAdminSession, "/admin");
+      } else {
+        const devPublicSession = {
+          role: "PUBLIC",
+          nama: "Maulana Syahid Al Fatah",
+          email: "MAULANA-DEV@SIPA.COM",
+        };
+        saveSessionAndRedirect(devPublicSession, "/");
+      }
       return;
     }
 
     // =========================================================================
-    // 🛡️ 2. CEK LOGIN ADMIN DINAS
+    // 🛡️ CEK LOGIN ADMIN DINAS RESMI
     // =========================================================================
     if (role === "ADMIN") {
       const matchedAdmin = ADMIN_DINAS_WHITELIST.find(
@@ -99,7 +99,7 @@ export default function LoginPage() {
     }
 
     // =========================================================================
-    // 👤 3. PROSES REGISTRASI DAN LOGIN PENGGUNA PUBLIK (OPERATOR / GURU)
+    // 👤 PROSES REGISTRASI DAN LOGIN PENGGUNA PUBLIK (OPERATOR / GURU)
     // =========================================================================
     if (role === "PUBLIC") {
       let registeredUsers: any[] = [];
@@ -115,7 +115,6 @@ export default function LoginPage() {
       }
 
       if (isRegister) {
-        // PROSES REGISTRASI BARU
         if (!namaLengkap.trim()) {
           setErrorMsg("Mohon isikan Nama Lengkap dan Gelar Anda.");
           return;
@@ -139,11 +138,10 @@ export default function LoginPage() {
         registeredUsers.push(newUser);
         localStorage.setItem("sipa_registered_users", JSON.stringify(registeredUsers));
 
-        alert("Pendaftaran berhasil! Silakan login dengan akun yang baru dibuat.");
+        alert("Pendaftaran berhasil! Silakan login menggunakan akun yang baru Anda buat.");
         setIsRegister(false);
         setPassword("");
       } else {
-        // PROSES LOGIN AKUN PUBLIK TERDAFTAR
         const matchedUser = registeredUsers.find(
           (u) => u.email.toLowerCase() === inputUser.toLowerCase() && u.password === inputPass
         );
@@ -156,7 +154,7 @@ export default function LoginPage() {
           };
           saveSessionAndRedirect(publicSession, "/");
         } else {
-          setErrorMsg("Akun belum terdaftar atau password salah! Silakan buat akun publik terlebih dahulu.");
+          setErrorMsg("Akun belum terdaftar atau password salah! Silakan klik 'Buat akun Pengguna Publik' terlebih dahulu.");
         }
       }
     }
@@ -178,11 +176,7 @@ export default function LoginPage() {
           <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-2xl mb-6">
             <button
               type="button"
-              onClick={() => {
-                setRole("PUBLIC");
-                setIsRegister(false);
-                setErrorMsg("");
-              }}
+              onClick={() => handleSwitchRole("PUBLIC")}
               className={`py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                 role === "PUBLIC" ? "bg-white text-[#006837] shadow-xs" : "text-slate-500 hover:text-slate-800"
               }`}
@@ -192,11 +186,7 @@ export default function LoginPage() {
             </button>
             <button
               type="button"
-              onClick={() => {
-                setRole("ADMIN");
-                setIsRegister(false);
-                setErrorMsg("");
-              }}
+              onClick={() => handleSwitchRole("ADMIN")}
               className={`py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                 role === "ADMIN" ? "bg-[#006837] text-white shadow-xs" : "text-slate-500 hover:text-slate-800"
               }`}
@@ -215,14 +205,14 @@ export default function LoginPage() {
 
           <form onSubmit={handleAuthSubmit} className="space-y-4 text-xs">
             {role === "ADMIN" ? (
-              /* FORM ADMIN DINAS */
+              /* FORM ADMIN DINAS (BERSIH DARI TEKS DEV) */
               <div className="space-y-3">
                 <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900 text-[11px] leading-relaxed">
-                  <strong>Akses Pegawai Disdikbud &amp; Developer:</strong> Masukkan Email Developer (`MAULANA-DEV@SIPA.COM`) atau NIP Admin Dinas terdaftar.
+                  <strong>Khusus Pegawai Disdikbud:</strong> Gunakan NIP resmi atau Email Dinas terdaftar untuk mengakses Panel Verifikasi Pengaduan.
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">NIP / Email Resmi Dinas / Developer *</label>
+                  <label className="block font-semibold text-slate-700 mb-1">NIP / Email Resmi Dinas *</label>
                   <div className="relative">
                     <Building2 className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
@@ -230,7 +220,7 @@ export default function LoginPage() {
                       required
                       value={emailOrNip}
                       onChange={(e) => setEmailOrNip(e.target.value)}
-                      placeholder="MAULANA-DEV@SIPA.COM / 19850313..."
+                      placeholder="198503132010011001 / admin.dapodik@ngawikab.go.id"
                       className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:border-[#006837]"
                     />
                   </div>
