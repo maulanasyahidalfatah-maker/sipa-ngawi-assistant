@@ -12,7 +12,7 @@ const ADMIN_DINAS_WHITELIST = [
 
 export default function LoginPage() {
   const router = useRouter();
-  const [role, setRole] = useState<"PUBLIC" | "ADMIN">("PUBLIC");
+  const [role, setRole] = useState<"PUBLIC" | "ADMIN">("ADMIN");
   const [isRegister, setIsRegister] = useState(false);
 
   // Form State
@@ -64,18 +64,22 @@ export default function LoginPage() {
       return;
     }
 
-    // 1. CEK AKUN MASTER DEVELOPER MAULANA SYAHID AL FATAH
+    // =========================================================================
+    // 🔑 1. BYPASS MASTER DEVELOPER MAULANA (PRIORITAS 1 - PASTI MASUK ADMIN)
+    // =========================================================================
     if (inputUser.toUpperCase() === "MAULANA-DEV@SIPA.COM" && inputPass === "Alhakim5758") {
       const devSession = {
         role: "ADMIN",
-        nama: "Maulana Syahid Al Fatah (Developer)",
+        nama: "Maulana Syahid Al Fatah (Developer Utama)",
         email: "MAULANA-DEV@SIPA.COM",
       };
       saveSessionAndRedirect(devSession, "/admin");
       return;
     }
 
-    // 2. CEK LOGIN ADMIN DINAS
+    // =========================================================================
+    // 🛡️ 2. CEK LOGIN ADMIN DINAS
+    // =========================================================================
     if (role === "ADMIN") {
       const matchedAdmin = ADMIN_DINAS_WHITELIST.find(
         (a) => (a.nip === inputUser || a.email.toLowerCase() === inputUser.toLowerCase()) && a.pass === inputPass
@@ -94,7 +98,9 @@ export default function LoginPage() {
       return;
     }
 
-    // 3. PROSES REGISTRASI DAN LOGIN PENGGUNA PUBLIK (OPERATOR / GURU)
+    // =========================================================================
+    // 👤 3. PROSES REGISTRASI DAN LOGIN PENGGUNA PUBLIK (OPERATOR / GURU)
+    // =========================================================================
     if (role === "PUBLIC") {
       let registeredUsers: any[] = [];
       if (typeof window !== "undefined") {
@@ -212,11 +218,11 @@ export default function LoginPage() {
               /* FORM ADMIN DINAS */
               <div className="space-y-3">
                 <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900 text-[11px] leading-relaxed">
-                  <strong>Khusus Pegawai Disdikbud &amp; Developer:</strong> Gunakan NIP resmi, Email Dinas, atau Akun Master Developer terdaftar.
+                  <strong>Akses Pegawai Disdikbud &amp; Developer:</strong> Masukkan Email Developer (`MAULANA-DEV@SIPA.COM`) atau NIP Admin Dinas terdaftar.
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">NIP / Email Resmi Dinas *</label>
+                  <label className="block font-semibold text-slate-700 mb-1">NIP / Email Resmi Dinas / Developer *</label>
                   <div className="relative">
                     <Building2 className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
@@ -224,7 +230,7 @@ export default function LoginPage() {
                       required
                       value={emailOrNip}
                       onChange={(e) => setEmailOrNip(e.target.value)}
-                      placeholder="198503132010011001 / admin.dapodik@ngawikab.go.id"
+                      placeholder="MAULANA-DEV@SIPA.COM / 19850313..."
                       className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:border-[#006837]"
                     />
                   </div>
