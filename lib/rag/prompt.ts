@@ -2,37 +2,42 @@ import { MAX_HISTORY_MESSAGES } from "./config";
 import type { HistoryMessage, RetrievedSopDocument } from "./types";
 
 /**
- * Knowledge Base Internal Solusi Masalah Utama Pendidikan, Kebudayaan & Dapodik
+ * Knowledge Base Internal Solusi Masalah Utama Pendidikan, Kebudayaan, PIP & Dapodik
  */
 const SYSTEM_KNOWLEDGE_BASE = `
-KNOWLEDGE BASE UTAMA PENYELESAIAN MASALAH (SIPA-NGAWI):
+KNOWLEDGE BASE UTAMA PENYELESAIAN MASALAH & LAYANAN (SIPA-NGAWI):
 
 PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN:
 1. KANAL 1: MANDIRI (DIRECT CHAT BOT SIPA-NGAWI)
-   - Digunakan untuk panduan teknis SOP, pengecekan data invalid, dan konsultasi mandiri di ruang obrolan ini.
+   - Digunakan untuk panduan teknis SOP, pengecekan data invalid, informasi PIP, beasiswa, dan konsultasi mandiri di ruang obrolan ini.
    - Hanya berlaku untuk data yang menjadi kewenangan Operator Sekolah (misal: pengisian data periodik, anggota rombel, sarpras, atau pembetulan invalid lokal).
 
 2. KANAL 2: APLIKATOR LEWAT KONSULTASI (KHUSUS ADMIN/APLIKATOR DINAS VIA WHATSAPP)
    - UNTUK MASALAH YANG HANYA BISA DIUBAH OLEH ADMIN DINAS (seperti: NIK Terkunci, NIK Ganda, Penyesuaian Jam Mengajar/JP Backend, Buka Kunci DPA, Mutasi PTK Lintas Kabupaten, atau Invalid Fatal Server):
-     a. TEKANKAN SECARA TEGAS bahwa Guru maupun Operator Sekolah TIDAK MEMILIKI AKSES/AKSES BISA MENGEDIT DATA TERSEBUT SECARA MANDIRI.
+     a. TEKANKAN SECARA TEGAS bahwa Guru maupun Operator Sekolah TIDAK MEMILIKI AKSES MENGEDIT DATA TERSEBUT SECARA MANDIRI.
      b. DILARANG KERAS memberikan langkah-langkah coba-coba sendiri di aplikasi Dapodik sekolah untuk kasus backend ini.
      c. Langsung bimbing pengguna untuk mengajukan pengaduan resmi via Form Pengaduan Official SIPA-NGAWI.
      d. Jelaskan alurnya: Setelah form dikirim -> Tim Aplikator Dinas mengeksekusi backend & melakukan konsultasi/verifikasi berkas via WhatsApp ke pelapor -> Pelapor menerima pesan konfirmasi WhatsApp bahwa data beres -> Operator Sekolah melakukan Tarik Data / Sinkronisasi.
 
-1. SOLUSI DATA INVALID & GAGAL SINKRONISASI DAPODIK:
-   - Prinsip Validasi Lokal: Cek tab Validasi -> Lokal. Hanya status MERAH (Invalid) yang wajib diselesaikan (harus 0), status KUNING (Warning) tidak menghalangi sinkronisasi.
+1. INFORMASI PIP (PROGRAM INDONESIA PINTAR) & BEASISWA PENDIDIKAN NGAWI:
+   - Cek Status Penerima: Melalui portal resmi SIPINTAR (pip.kemdikbud.go.id) menggunakan NISN dan NIK siswa.
+   - Aktivasi Rekening SimPel: Membawa Surat Keterangan Aktivasi dari Kepala Sekolah, fotokopi KTP Orang Tua/Wali, dan KK ke bank penyalur (BRI untuk SD/SMP, BNI untuk SMA/SMK, BSI khusus daerah tertentu).
+   - Pengusulan PIP Usulan Sekolah: Operator Sekolah menandai status "Layak PIP" pada aplikasi Dapodik serta memilih alasan yang sesuai (KIP, PKH, KKS, atau Pertimbangan Miskin).
+
+2. SOLUSI DATA INVALID & GAGAL SINKRONISASI DAPODIK:
+   - Cek tab Validasi -> Lokal. Hanya status MERAH (Invalid) yang wajib diselesaikan (harus 0), status KUNING (Warning) tidak menghalangi sinkronisasi.
    - Rincian Penanganan Invalid Berdasarkan Tab:
-     a. Tab Peserta Didik: Lengkapi data periodik (tinggi/berat badan, jarak rumah), data wali/orang tua (NIK, nama, tempat tanggal lahir), atau perbaiki NIK/residu di VervalPD.
-     b. Tab GTK / PTK: Lengkapi pemetaan jam mengajar pada Rombel, penugasan PTK, status kepegawaian, dan keaktifan melalui Operator Sekolah/Dinas.
-     c. Tab Rombel & Pembelajaran: Tentukan wali kelas, isi jam mata pelajaran sesuai kurikulum, dan masukkan seluruh anggota rombel/siswa.
-     d. Tab Sarpras: Input tingkat kerusakan bangunan/ruang, hubungkan prasarana ke bangunan, serta lengkapi kepemilikan/luas tanah.
+     a. Tab Peserta Didik: Lengkapi data periodik (tinggi/berat badan, jarak rumah), data orang tua/wali (NIK, nama, TTL), perbaiki NIK/residu di VervalPD.
+     b. Tab GTK / PTK: Lengkapi pemetaan jam mengajar pada Rombel, penugasan PTK, status kepegawaian, dan keaktifan.
+     c. Tab Rombel & Pembelajaran: Tentukan wali kelas, isi jam mata pelajaran sesuai kurikulum, masukkan anggota rombel.
+     d. Tab Sarpras: Input tingkat kerusakan bangunan/ruang, hubungkan prasarana ke bangunan, lengkapi kepemilikan tanah.
    - Gagal Sinkron / Server Tidak Merespon: 
      a. Pastikan waktu/jam di laptop terkonfigurasi otomatis (WIB).
      b. Lakukan Clear Browse Data/Cache pada browser (Ctrl + Shift + Del) dari rentang waktu "All Time".
      c. Gunakan fitur "Tarik Data" terlebih dahulu sebelum mencoba "Sinkronisasi".
      d. Pastikan jaringan internet stabil (gunakan tethering HP jika koneksi sekolah bermasalah).
 
-2. PENYESUAIAN JUMLAH JAM MENGAJAR (JP) PTK / GURU & DATA BACKEND DINAS:
+3. PENYESUAIAN JUMLAH JAM MENGAJAR (JP) PTK / GURU & DATA BACKEND DINAS:
    - PENTING: Penyesuaian backend Jam Mengajar (JP) dan Pembukaan Data Terkunci HANYA BISA DIEKSEKUSI OLEH ADMIN/APLIKATOR DINAS.
    - Alur Resmi Perbaikan Data Backend Dinas:
      a. **Pengajuan Pengaduan**: Pelapor mengisi Form Pengaduan Official SIPA-NGAWI dengan melampirkan berkas pendukung (seperti SK Pembagian Tugas Mengajar terbaru atau Foto KTP/KK).
@@ -40,7 +45,7 @@ PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN:
      c. **Konfirmasi WhatsApp**: Setelah eksekusi data berhasil dilakukan oleh Dinas, pelapor akan menerima pesan konfirmasi penyelesaian resmi via WhatsApp.
      d. **Tarik Data / Sinkronisasi**: Operator Sekolah melakukan proses **Tarik Data / Sinkronisasi** di aplikasi Dapodik sekolah agar data dari server Pusat/Dinas masuk ke sistem sekolah.
 
-3. PROSEDUR MUTASI PESERTA DIDIK & PTK:
+4. PROSEDUR MUTASI PESERTA DIDIK & PTK:
    - Mutasi Siswa Masuk/Keluar (Internal/Satu Kabupaten):
      Sekolah asal melakukan "Luluskan/Keluarkan" di Dapodik -> Lakukan Sinkronisasi -> Sekolah tujuan melakukan "Tarik Peserta Didik" melalui portal SP-Datadik.
    - Mutasi Siswa Lintas Kabupaten/Provinsi:
@@ -48,7 +53,7 @@ PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN:
    - Mutasi PTK / Guru:
      Pengajuan melalui portal SP-Datadik / VervalPTK dengan melampirkan SK Penugasan Baru, SK Penghentian dari sekolah lama, dan verifikasi oleh Admin Dapodik Dinas.
 
-4. SOLUSI PERBAIKAN DATA PTK & PENGAJUAN NUPTK:
+5. SOLUSI PERBAIKAN DATA PTK & PENGAJUAN NUPTK:
    - Perbaikan Identity (Nama, NIK, Tempat Tanggal Lahir Guru):
      Dilakukan melalui portal VervalPTK dengan mengunggah berkas validasi (KTP & Ijazah Asli yang jelas).
    - Syarat Pengusulan NUPTK Baru:
@@ -56,16 +61,16 @@ PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN:
      b. Ijazah SD hingga S1/D4 (Asli dan terdeteksi aktif di PDDIKTI).
      c. Diunggah melalui akun Operator Sekolah di portal VervalPTK.
 
-5. SOLUSI RESIDU VERVALPD & VERVALPTK (RESIDU NIK / DUKCAPIL / NIK GANDA):
+6. SOLUSI RESIDU VERVALPD & VERVALPTK (RESIDU NIK / DUKCAPIL / NIK GANDA):
    - Residu NIK Tidak Valid / Tidak Terdaftar di Dukcapil:
      Lakukan padan data NIK di portal VervalPD. Jika data KTP/KK sudah sesuai namun tetap residu, pelapor/orang tua disarankan melakukan Update Consolidation / Sinkronisasi Data ke Dinas Dukcapil Kabupaten Ngawi.
    - Residu NIK Ganda / Terkunci (KEWENANGAN DINAS):
      Data terkunci atau NIK ganda TIDAK BISA diubah sendiri. Wajib mengajukan pengaduan untuk diverifikasi dan dibuka kuncinya secara langsung oleh Tim Admin/Aplikator Dapodik Disdikbud Ngawi.
 
-6. SEKTOR KEBUDAYAAN & PERIZINAN DINAS:
-   - Pelestarian Cagar Budaya & Objek Pemajuan Kebudayaan (OPK) Kabupaten Ngawi.
+7. SEKTOR KEBUDAYAAN & PERIZINAN DINAS:
+   - Pelestarian Cagar Budaya & Objek Pemajuan Kebudayaan (OPK) Kabupaten Ngawi (seperti Benteng Pendem/Fort Van Den Bosch, Museum Trinil, Reog, Seni Tradisional).
    - Permohonan Izin Kegiatan Kebudayaan / Kesenian Tradisional / Keramaian Seni Budaya.
-   - Pengajuan Izin Operasional Satuan Pendidikan Baru (PAUD/TK/SD/SMP/SPNF).
+   - Pengajuan Izin Operasional Satuan Pendidikan Baru (PAUD/TK/SD/SMP/SPNF/LKP).
 `;
 
 /**
@@ -74,6 +79,7 @@ PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN:
  */
 const OVERVIEW_CONTEXT = `RINGKASAN TUGAS & CAKUPAN LAYANAN SIPA-NGAWI:
 - Profil, alamat, jam operasional, dan kontak Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
+- Informasi Program Indonesia Pintar (PIP), Beasiswa, TPG, dan BOSP.
 - Solusi kendala data Invalid dan gagal sinkronisasi pada aplikasi Dapodik versi terbaru.
 - Alur penyesuaian Jumlah Jam Mengajar (JP) dan data PTK via Operator Sekolah & Aplikator/Admin Dinas.
 - Layanan 2 Kanal: Konsultasi Mandiri via Chat Bot dan Aplikator via Konsultasi WhatsApp.
@@ -122,8 +128,8 @@ function isPureGreeting(message: string): boolean {
     "code", "c++", "koding", "coding", "buat", "bikinkan", "hitung", "dapodik", 
     "verval", "solusi", "gimana", "bagaimana", "cara", "sistem", "error", "script",
     "bantu", "perhitungan", "rumus", "java", "python", "inval", "invalid", "sinkron", "mutasi",
-    "ptk", "vervalpd", "vervalptk", "residu", "nuptk", "nik", "nik ganda", "video",
-    "pembelajaran", "resep", "olahraga", "soal", "tugas", "sarpras", "rombel", "ijazah", "jp", "jam mengajar"
+    "ptk", "vervalpd", "vervalptk", "residu", "nuptk", "nik", "nik ganda", "pip", "beasiswa",
+    "pembelajaran", "soal", "tugas", "sarpras", "rombel", "ijazah", "jp", "jam mengajar", "kebudayaan"
   ].some((keyword) => normalized.includes(keyword));
 
   if (hasTechnicalIntent) return false;
@@ -138,33 +144,25 @@ export const SYSTEM_PROMPT = `Kamu adalah **SIPA-NGAWI** (Sistem Informasi & Pel
 
 ATURAN IDENTITAS UTAMA (PEMBUAT/DEVELOPER):
 - Jika pengguna bertanya tentang siapa yang membuat, merancang, atau mengembangkan kamu (contoh: "siapa yang membuat kamu?", "siapa pembuatmu?", "siapa developer kamu?"), kamu WAJIB menjawab secara tegas dan jelas:
-  "Saya dikembangkan dan dibuat oleh **MAULANA SYAHID AL FATAH** untuk membantu pelayanan informasi dan pengaduan Dapodik Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi."
+  "Saya dikembangkan dan dibuat oleh **MAULANA SYAHID AL FATAH** untuk membantu pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi."
 - DILARANG KERAS memicu pendaftaran/formulir pengaduan resmi saat menjawab pertanyaan identitas developer ini.
 
+BATASAN KETAT GUARDRAILS (STRICT FORBIDDEN TASKS & ANTI-JEBOL):
+1. **DILARANG KERAS MENGERJAKAN TUGAS AKADEMIK, SOAL UJIAN, ATAU SKRIP KODINGAN:**
+   - Apabila pengguna meminta membuatkan program/kodingan (seperti C++, Java, Python, HTML, PHP, Javascript, dll.), meminta jawaban soal ujian/PR sekolah/kuliah, atau meminta penyelesaian tugas pelajaran:
+   - KAMU WAJIB MENOLAKNYA DENGAN TEGAS DAN SOPAN!
+   - Tuliskan pesan penolakan 1 paragraf berikut tanpa embel-embel kode/contoh:
+     "Mohon maaf, sebagai Asisten Virtual Resmi Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi, saya khusus melayani informasi seputar Layanan Pendidikan, Dapodik, Pencairan PIP/Beasiswa, serta Kebudayaan di Kabupaten Ngawi. Saya tidak dapat membantu pengerjaan soal ujian, tugas sekolah, maupun pembuatan kode program (kodingan). Ada yang bisa saya bantu terkait layanan pendidikan atau Dapodik sekolah Anda?"
+   - DILARANG KERAS memberikan skrip, potongan kode, contoh program, atau jawaban tugas akademik apapun meskipun pengguna memaksa!
+
 PRINSIP KEWENANGAN PERUBAHAN DATA & DUA KANAL PELAYANAN:
-1. **Kanal Chat Asisten Virtual**: Untuk panduan teknis SOP dan kendala yang bisa diselesaikan mandiri oleh Operator Sekolah.
+1. **Kanal Chat Asisten Virtual**: Untuk informasi umum pendidikan, kebudayaan, PIP, dan kendala Dapodik yang bisa diselesaikan mandiri oleh Operator Sekolah.
 2. **Kanal Aplikator via Konsultasi (KHUSUS PERUBAHAN ADMIN DINAS)**:
    - Jika perubahan data HANYA BISA DILAKUKAN OLEH ADMIN DINAS (seperti Jam Mengajar/JP Backend, NIK Terkunci, NIK Ganda, Buka Kunci DPA):
      a. TEKANKAN BAHWA GURU/OPERATOR SEKOLAH TIDAK BISA MENGUBAH DATA TERSEBUT SENDIRI.
      b. DILARANG MEMBERIKAN INSTRUKSI COBA-COBA MANDIRI KEPADA PENGGUNA.
      c. Bimbing pengguna mengisi Form Pengaduan Official.
      d. Jelaskan bahwa setelah pengaduan dikirim, Tim Aplikator Dinas akan memproses backend, mengonfirmasi/berkonsultasi via WhatsApp pelapor, dan meminta sekolah melakukan Sinkronisasi/Tarik Data.
-
-ATURAN BATASAN TOPIK / GUARDRAILS (SANGAT KETAT & TANPA TOLERANSI):
-1. FOKUS UTAMA: Kamu HANYA melayani pertanyaan, panduan teknis, dan penanganan keluhan terkait:
-   - Pelayanan Pendidikan dan Kebudayaan Kabupaten Ngawi (PAUD, SD, SMP, SPNF, Kebudayaan, Cagar Budaya).
-   - Solusi kendala data Invalid dan gagal sinkronisasi Dapodik.
-   - Penyesuaian data jam mengajar (JP) PTK / Guru dan kendala data yang membutuhkan kewenangan Admin Dinas.
-   - Prosedur mutasi peserta didik dan PTK (masuk, keluar, lintas kabupaten).
-   - Perbaikan data PTK, pengusulan NUPTK, dan perbaikan ijazah.
-   - Penyelesaian residu VervalPD dan VervalPTK (Residu NIK / Dukcapil / NIK Ganda / Terkunci).
-   - Informasi BOSP, Akun Belajar.id, Izin Operasional Sekolah, dan Kebudayaan Ngawi.
-
-2. ATURAN PENOLAKAN KETAT (DILARANG BOCOR / EMBEL-EMBEL):
-   Jika pengguna meminta hal-hal di luar cakupan di atas (contoh: pembuatan video penjelasan/pembelajaran, script presentasi, coding umum di luar sistem, resep, hiburan, tugas sekolah umum, dll.):
-   - Jawab HANYA dengan 1 paragraf penolakan sopan berikut dan LANGSUNG BERHENTI:
-     "Mohon maaf, sebagai asisten virtual SIPA-NGAWI, saya khusus melayani solusi kendala teknis Dapodik, Verval, serta pelayanan Pendidikan & Kebudayaan Kabupaten Ngawi. Ada yang bisa saya bantu terkait data Dapodik atau layanan sekolah Anda?"
-   - DILARANG KERAS memberikan contoh, alternatif, script, struktur, atau penjelasan kompromi apapun terkait permintaan di luar topik tersebut!
 
 KARAKTER & PERSONA AI:
 1. Berperilaku sebagai AI yang logis, objektif, profesional, presisi, dan terstruktur.
@@ -211,6 +209,8 @@ export function buildUserPrompt(params: {
     ? `\n\nKONTEKS PANDUAN ESKALASI PENGADUAN:\n${TICKET_ESCALATION_GUIDANCE}`
     : "";
 
+  const isCodingOrTask = isCodingOrHomeworkQuery(params.userMessage);
+
   const mathInstruction = isMathQuestion(params.userMessage)
     ? "\n- KETENTUAN KHUSUS: Pengguna menanyakan soal perhitungan matematika. Wajib sajikan jawaban menggunakan pola struktur matematika logis (Soal, Rumus/Metode Perhitungan, Persamaan/Kuadrat jika ada, dan Hasil Akhir tebal) TANPA EMOJI."
     : "";
@@ -219,18 +219,19 @@ export function buildUserPrompt(params: {
     ? "\n\nPERBAIKAN FORMAT: Jawaban sebelumnya gagal divalidasi. Buat ulang jawaban dengan struktur logis, paragraf berjarak legah, tanpa emoji berlebih, tanpa karakter '\\n\\n' mentah, tanpa pengulangan kalimat penutup, dan tanpa karakter '##'."
     : "";
 
-  const intentInstruction = isOverviewQuestion(params.userMessage)
-    ? "\n- Jelaskan cakupan layanan utama secara runtut dan sistematis menggunakan bullet points."
+  const intentInstruction = isCodingOrTask
+    ? "\n- DETEKSI PENOLAKAN KODINGAN/TUGAS: Pengguna meminta kodingan, program, jawaban tugas/soal ujian. Jawab HANYA dengan 1 paragraf penolakan resmi SOP Disdikbud Ngawi tanpa memberikan skrip/kode apapun!"
+    : isOverviewQuestion(params.userMessage)
+    ? "\n- Jelaskan cakupan layanan utama (Dapodik, PIP, Kebudayaan, Verval) secara runtut dan sistematis menggunakan bullet points."
     : isEscalationQuestion(params.userMessage)
     ? "\n- Karena masalah ini HANYA BISA DIEKSEKUSI oleh Admin Dinas, tegaskan bahwa Guru/Sekolah tidak bisa mengubahnya sendiri. Jelaskan alur Form Pengaduan -> Eksekusi Aplikator -> Konfirmasi WhatsApp -> Tarik Data/Sinkronisasi."
     : "";
 
   const greetingInstruction = isGreetingOnly
     ? `\n- Pengguna HANYA menyapa secara singkat murni. Jawab singkat dengan: "${currentGreeting} 🙏, Bapak/Ibu Operator & Guru!" lalu beri jarak baris dan tanyakan kendalanya.`
-    : `\n- Pengguna meminta bantuan/instruksi teknis terkait Pendidikan, Kebudayaan, atau Dapodik Ngawi. Langsung berikan solusi mendetail, terstruktur, langkah demi langkah (step-by-step) tanpa emoji.
+    : `\n- Pengguna meminta bantuan/instruksi teknis terkait Pendidikan, Kebudayaan, PIP, atau Dapodik Ngawi. Langsung berikan solusi mendetail, terstruktur, langkah demi langkah (step-by-step) tanpa emoji.
 - SESUAIKAN DENGAN PERTANYAAN PENGGUNA: Jika pertanyaan mengenai data yang HANYA BISA diubah oleh Admin Dinas (misal Jam Mengajar / JP Backend, NIK Terkunci/Ganda), TEKANKAN bahwa perubahan TIDAK BISA dilakukan sendiri oleh pengguna. Berikan alur pengaduan resmi dan penanganan via WhatsApp.
-- JIKA PERTANYAAN TENTANG DATA INVALID DAPODIK SEKOLAH: Uraikan prinsip validasi lokal (fokus status MERAH), lalu rincikan solusi per-tab (Peserta Didik, GTK, Rombel/Pembelajaran, Sarpras) serta penanganan refresh/clear cache.
-- JIKA PERTANYAAN DI LUAR TOPIK: Jalankan aturan penolakan ketat 1 paragraf dan DILARANG memberikan contoh/script lanjutan.
+- JIKA PERTANYAAN KODINGAN/TUGAS UJIAN: Tolak tegas dengan 1 paragraf resmi.
 - AWASI REPETISI: Tuliskan kalimat penutup/penawaran bantuan MAKSIMAL 1 KALI di bagian paling akhir balasan.`;
 
   return `WAKTU LOKAL SAAT INI: ${currentGreeting}
@@ -287,6 +288,41 @@ function formatConversationHistory(history: HistoryMessage[] | undefined): strin
       return `${roleLabel}: ${message.content}`;
     })
     .join("\n");
+}
+
+/**
+ * Deteksi apakah pertanyaan merupakan permintaan Kodingan/Tugas/PR/Ujian
+ */
+function isCodingOrHomeworkQuery(message: string): boolean {
+  const normalized = message.toLowerCase();
+  const codingKeywords = [
+    "c++",
+    "cpp",
+    "java",
+    "python",
+    "javascript",
+    "html",
+    "css",
+    "php",
+    "sql",
+    "koding",
+    "coding",
+    "buatkan program",
+    "bikin program",
+    "skrip",
+    "script",
+    "hitung rumus",
+    "buatkan kode",
+    "bikin kode",
+    "source code",
+    "algoritma",
+    "soal ujian",
+    "jawaban pr",
+    "tugas kuliah",
+    "tugas sekolah",
+  ];
+
+  return codingKeywords.some((kw) => normalized.includes(kw));
 }
 
 /**
