@@ -633,7 +633,7 @@ export function ChatInterface({
     }
   };
 
-  // SUBMIT PENGADUAN KE SERVER BACKEND & LOCALSTORAGE ADMIN
+  // SUBMIT PENGADUAN TERPUSAT VIA API BACKEND SERVER (TANPA DOUBLE SAVE)
   const handleSubmitPengaduan = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -655,55 +655,26 @@ export function ChatInterface({
         buktiKeluhanPelapor: formData.buktiKeluhanPelapor || selectedImage || undefined,
       };
 
-      // POST TERPUSAT KE BACKEND SERVER VERCEL (`/api/tickets`)
-      try {
-        await fetch("/api/tickets", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            namaPelapor: payload.namaPelapor,
-            nikPelapor: payload.nikPelapor,
-            noWhatsapp: payload.noWhatsapp,
-            asalSekolah: payload.asalSekolah,
-            npsn: payload.npsn,
-            kategori: payload.kategori,
-            rincian: payload.rincian,
-            fotoKeluhan: payload.buktiKeluhanPelapor,
-            status: "PENDING",
-          }),
-        });
-      } catch (e) {
-        console.warn("Server API offline, menyimpan secara lokal:", e);
-      }
+      // 1. KIRIM TERPUSAT HANYA VIA API BACKEND SERVER (/api/tickets)
+      const res = await fetch("/api/tickets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          namaPelapor: payload.namaPelapor,
+          nikPelapor: payload.nikPelapor,
+          noWhatsapp: payload.noWhatsapp,
+          asalSekolah: payload.asalSekolah,
+          npsn: payload.npsn,
+          kategori: payload.kategori,
+          rincian: payload.rincian,
+          fotoKeluhan: payload.buktiKeluhanPelapor,
+          status: "PENDING",
+        }),
+      });
 
-      // SIMPAN KE LOCALSTORAGE SEBAGAI BACKUP SINKRONISASI
-      if (typeof window !== "undefined") {
-        try {
-          const existingRaw = localStorage.getItem("sipa_rekap_pengaduan_backup") || localStorage.getItem("sipa_rekap_pengaduan");
-          const existingData = existingRaw ? JSON.parse(existingRaw) : [];
-
-          const newAdminTicket = {
-            id: `TK-00${existingData.length + 1}`,
-            namaPelapor: payload.namaPelapor,
-            nikPelapor: payload.nikPelapor,
-            noWhatsapp: payload.noWhatsapp,
-            asalSekolah: payload.asalSekolah,
-            npsn: payload.npsn,
-            kategori: payload.kategori,
-            rincian: payload.rincian,
-            fotoKeluhan: payload.buktiKeluhanPelapor,
-            status: "PENDING",
-            createdAt: new Date().toLocaleDateString("id-ID"),
-          };
-
-          const updatedData = [newAdminTicket, ...existingData];
-          localStorage.setItem("sipa_rekap_pengaduan_backup", JSON.stringify(updatedData));
-          localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(updatedData));
-
-          window.dispatchEvent(new Event("storage"));
-        } catch (err) {
-          console.error("Gagal menyimpan ke LocalStorage:", err);
-        }
+      if (res.ok) {
+        // Trigger event storage agar tab admin melakukan auto-sync secara real-time
+        window.dispatchEvent(new Event("storage"));
       }
 
       if (onPengaduanSubmitted) {

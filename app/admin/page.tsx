@@ -75,57 +75,50 @@ export default function AdminDashboard() {
     });
   };
 
-  // LOAD DATA DARI SERVER & LOCAL STORAGE DENGAN PENCEGAHAN DUPLIKASI (DEDUPLICATION)
+  // LOAD DATA TERPUSAT: UTAMAKAN API SERVER BACKEND UNTUK MENCEGAH INPUT BERGANDA
   const loadTickets = async () => {
     setIsLoading(true);
 
-    let localBackup: AdminTicket[] = [];
-    if (typeof window !== "undefined") {
-      const savedBackup = localStorage.getItem("sipa_rekap_pengaduan_backup");
-      const savedRekap = localStorage.getItem("sipa_rekap_pengaduan");
-      const raw = savedBackup || savedRekap;
-
-      if (raw) {
-        try {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            localBackup = sanitizeAndSortTickets(parsed);
-          }
-        } catch (e) {
-          console.error("Gagal membaca backup lokal:", e);
-        }
-      }
-    }
-
     let serverTickets: AdminTicket[] = [];
+    let isServerSuccess = false;
+
+    // Step 1: Tarik data dari API Server Backend
     try {
       const res = await fetch("/api/tickets", { cache: "no-store" });
       if (res.ok) {
         const result = await res.json();
-        if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+        if (result.success && Array.isArray(result.data)) {
           serverTickets = sanitizeAndSortTickets(result.data);
+          isServerSuccess = true;
         }
       }
     } catch (e) {
-      console.warn("Gagal terhubung ke API backend:", e);
+      console.warn("Server offline, mencoba membaca backup lokal:", e);
     }
 
-    // GABUNGKAN DATA MENGGUNAKAN MAP BERDASARKAN ID TIKET UNTUK MENCEGAH DATA BERGANDA
-    const ticketMap = new Map<string, AdminTicket>();
-    
-    // Masukkan data lokal terlebih dahulu
-    localBackup.forEach((t) => ticketMap.set(t.id, t));
-
-    // Timpa atau tambahkan dari server (Server diutamakan jika statusnya RESOLVED)
-    serverTickets.forEach((t) => {
-      const existing = ticketMap.get(t.id);
-      if (!existing || (existing.status === "PENDING" && t.status === "RESOLVED")) {
-        ticketMap.set(t.id, t);
+    // Step 2: Jika Server sukses, gunakan data Server sebagai utama & update backup lokal
+    if (isServerSuccess) {
+      setTickets(serverTickets);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("sipa_rekap_pengaduan_backup", JSON.stringify(serverTickets));
+        localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(serverTickets));
       }
-    });
-
-    const mergedTickets = Array.from(ticketMap.values());
-    setTickets(mergedTickets);
+    } else {
+      // Step 3: Fallback jika server offline
+      if (typeof window !== "undefined") {
+        const saved = localStorage.getItem("sipa_rekap_pengaduan_backup") || localStorage.getItem("sipa_rekap_pengaduan");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) {
+              setTickets(sanitizeAndSortTickets(parsed));
+            }
+          } catch (e) {
+            console.error("Gagal membaca backup lokal:", e);
+          }
+        }
+      }
+    }
 
     setIsLoading(false);
   };
@@ -268,7 +261,6 @@ export default function AdminDashboard() {
     if (startDate || endDate) {
       if (!item.createdAt) return false;
 
-      // Parsing format tanggal DD/MM/YYYY atau YYYY-MM-DD
       let ticketDate: Date;
       if (item.createdAt.includes("/")) {
         const [day, month, year] = item.createdAt.split("/").map(Number);
@@ -563,7 +555,7 @@ export default function AdminDashboard() {
       {selectedTicket && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white rounded-3xl p-6 max-w-md w-full relative border border-slate-100 shadow-xl">
-            <button onClick={() => setSelectedTicket(null)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-700">
+            <button onClick={() => setSelectedTicket(null)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 cursor-pointer">
               <X className="w-5 h-5" />
             </button>
             <h3 className="text-lg font-bold text-slate-900 mb-1">Selesaikan Tiket {selectedTicket.id}</h3>
@@ -602,7 +594,7 @@ export default function AdminDashboard() {
       {previewImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-white rounded-3xl p-6 max-w-2xl w-full relative flex flex-col items-center">
-            <button onClick={() => setPreviewImage(null)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-700">
+            <button onClick={() => setPreviewImage(null)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 cursor-pointer">
               <X className="w-5 h-5" />
             </button>
             <h3 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
