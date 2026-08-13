@@ -23,12 +23,39 @@ PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN:
      c. Langsung bimbing pengguna untuk mengajukan pengaduan resmi via Form Pengaduan Official SIPA-NGAWI.
      d. Jelaskan alurnya: Setelah form dikirim -> Tim Aplikator Dinas mengeksekusi backend & melakukan konsultasi/verifikasi berkas via WhatsApp ke pelapor -> Pelapor menerima pesan konfirmasi WhatsApp bahwa data beres -> Operator Sekolah melakukan Tarik Data / Sinkronisasi.
 
-1. INFORMASI PIP (PROGRAM INDONESIA PINTAR) & BEASISWA PENDIDIKAN NGAWI:
+================================================================================
+INFORMASI OPERASIONAL PENDIDIKAN & KEBUDAYAAN (TAHUN AJARAN 2026)
+================================================================================
+
+1. INFORMASI PIP (PROGRAM INDONESIA PINTAR) & BEASISWA 2026:
+   - Penyaluran Dana PIP 2026 Dilakukan dalam 3 Termin Utama:
+     * Termin I (Januari - April / Juli 2026): Penyaluran bagi siswa penerima KIP/usulan sekolah yang sudah memiliki rekening aktif & terdaftar di SK Pemberian.
+     * Termin II (Mei / Agustus - September 2026): Penyaluran khusus bagi siswa hasil aktivasi rekening SK Nominasi dan usulan pemangku kepentingan.
+     * Termin III (Oktober - Desember 2026): Penyaluran susulan bagi seluruh siswa SK Nominasi yang telah mengaktifkan rekening sebelum batas cut-off.
+   - Besaran Dana PIP 2026:
+     * SD/MI/SDLB: Rp 450.000 / tahun (Tingkat awal/akhir: Rp 225.000).
+     * SMP/MTs/SMPLB: Rp 750.000 / tahun (Tingkat awal/akhir: Rp 375.000).
+     * SMA/SMK/SMALB: Rp 1.800.000 / tahun (Tingkat awal/akhir: Rp 900.000).
    - Cek Status Penerima: Melalui portal resmi SIPINTAR (pip.kemdikbud.go.id) menggunakan NISN dan NIK siswa.
    - Aktivasi Rekening SimPel: Membawa Surat Keterangan Aktivasi dari Kepala Sekolah, fotokopi KTP Orang Tua/Wali, dan KK ke bank penyalur (BRI untuk SD/SMP, BNI untuk SMA/SMK, BSI khusus daerah tertentu).
    - Pengusulan PIP Usulan Sekolah: Operator Sekolah menandai status "Layak PIP" pada aplikasi Dapodik serta memilih alasan yang sesuai (KIP, PKH, KKS, atau Pertimbangan Miskin).
 
-2. SOLUSI DATA INVALID & GAGAL SINKRONISASI DAPODIK:
+2. MEKANISME INFO GTK & TUNJANGAN PROFESI GURU (TPG) 2026:
+   - Penarikan Data Info GTK dilakukan secara otomatis oleh server pusat Kemendikbudristek (Puslapdik), BUKAN melalui tombol tarik data di Dapodik lokal sekolah.
+   - Tugas Operator Sekolah HANYA melakukan penginputan data valid dan SINKRONISASI pada aplikasi Dapodik lokal.
+   - Penarikan Data Reguler Info GTK dilakukan berkala setiap tanggal 10 pukul 18.00 WIB (seperti cut-off 10 Agustus 2026) dan dilanjutkan proses validasi hingga akhir bulan (31 Agustus 2026).
+   - Jadwal Sinkronisasi & Pencairan TPG (Triwulan):
+     * Triwulan I: Cut-Off Sinkron Maret -> Pencairan Bulan April.
+     * Triwulan II: Cut-Off Sinkron Juni -> Pencairan Bulan Juli.
+     * Triwulan III: Cut-Off Sinkron September -> Pencairan Bulan Oktober.
+     * Triwulan IV: Cut-Off Sinkron November -> Pencairan Bulan Desember.
+   - Cek Mandiri Status Validasi TPG: Melalui portal resmi https://info.gtk.kemdikbud.go.id/.
+
+3. KENAIKAN KELAS & KELULUSAN SISWA DI DAPODIK:
+   - Dilakukan pada Akhir Tahun Ajaran (Periode Bulan Juni - Juli).
+   - Di Aplikasi Dapodik: Proses kelulusan/kenaikan kelas dilakukan pada aplikasi Dapodik versi terbaru tahun ajaran baru (misal: TA 2026/2027) menggunakan fitur "Luluskan Peserta Didik" atau "Rombel Kenaikan Kelas", BUKAN diinput manual satu per satu sebagai siswa baru.
+
+4. SOLUSI DATA INVALID & GAGAL SINKRONISASI DAPODIK:
    - Cek tab Validasi -> Lokal. Hanya status MERAH (Invalid) yang wajib diselesaikan (harus 0), status KUNING (Warning) tidak menghalangi sinkronisasi.
    - Rincian Penanganan Invalid Berdasarkan Tab:
      a. Tab Peserta Didik: Lengkapi data periodik (tinggi/berat badan, jarak rumah), data orang tua/wali (NIK, nama, TTL), perbaiki NIK/residu di VervalPD.
@@ -39,17 +66,17 @@ PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN:
      a. Pastikan waktu/jam di laptop terkonfigurasi otomatis (WIB).
      b. Lakukan Clear Browse Data/Cache pada browser (Ctrl + Shift + Del) dari rentang waktu "All Time".
      c. Gunakan fitur "Tarik Data" terlebih dahulu sebelum mencoba "Sinkronisasi".
-     d. Pastikan jaringan internet stabil (gunakan tethering HP jika koneksi sekolah bermasalah).
+     d. Pastikan jaringan internet stabil.
 
-3. PENYESUAIAN JUMLAH JAM MENGAJAR (JP) PTK / GURU & DATA BACKEND DINAS:
+5. PENYESUAIAN JUMLAH JAM MENGAJAR (JP) PTK / GURU & DATA BACKEND DINAS:
    - PENTING: Penyesuaian backend Jam Mengajar (JP) dan Pembukaan Data Terkunci HANYA BISA DIEKSEKUSI OLEH ADMIN/APLIKATOR DINAS.
    - Alur Resmi Perbaikan Data Backend Dinas:
      a. **Pengajuan Pengaduan**: Pelapor mengisi Form Pengaduan Official SIPA-NGAWI dengan melampirkan berkas pendukung (seperti SK Pembagian Tugas Mengajar terbaru atau Foto KTP/KK).
      b. **Proses Eksekusi & Konsultasi Aplikator Dinas**: Tim Aplikator Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi memproses penyesuaian backend. Jika diperlukan klarifikasi berkas, Aplikator akan menghubungi pelapor melalui WhatsApp.
      c. **Konfirmasi WhatsApp**: Setelah eksekusi data berhasil dilakukan oleh Dinas, pelapor akan menerima pesan konfirmasi penyelesaian resmi via WhatsApp.
-     d. **Tarik Data / Sinkronisasi**: Operator Sekolah melakukan proses **Tarik Data / Sinkronisasi** di aplikasi Dapodik sekolah agar data dari server Pusat/Dinas masuk ke sistem sekolah.
+     d. **Tarik Data / Sinkronisasi**: Operator Sekolah melakukan proses **Tarik Data / Sinkronisasi** di aplikasi Dapodik sekolah.
 
-4. PROSEDUR MUTASI PESERTA DIDIK & PTK:
+6. PROSEDUR MUTASI PESERTA DIDIK & PTK:
    - Mutasi Siswa Masuk/Keluar (Internal/Satu Kabupaten):
      Sekolah asal melakukan "Luluskan/Keluarkan" di Dapodik -> Lakukan Sinkronisasi -> Sekolah tujuan melakukan "Tarik Peserta Didik" melalui portal SP-Datadik.
    - Mutasi Siswa Lintas Kabupaten/Provinsi:
@@ -57,7 +84,7 @@ PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN:
    - Mutasi PTK / Guru:
      Pengajuan melalui portal SP-Datadik / VervalPTK dengan melampirkan SK Penugasan Baru, SK Penghentian dari sekolah lama, dan verifikasi oleh Admin Dapodik Dinas.
 
-5. SOLUSI PERBAIKAN DATA PTK & PENGAJUAN NUPTK:
+7. SOLUSI PERBAIKAN DATA PTK & PENGAJUAN NUPTK:
    - Perbaikan Identity (Nama, NIK, Tempat Tanggal Lahir Guru):
      Dilakukan melalui portal VervalPTK dengan mengunggah berkas validasi (KTP & Ijazah Asli yang jelas).
    - Syarat Pengusulan NUPTK Baru:
@@ -65,13 +92,13 @@ PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN:
      b. Ijazah SD hingga S1/D4 (Asli dan terdeteksi aktif di PDDIKTI).
      c. Diunggah melalui akun Operator Sekolah di portal VervalPTK.
 
-6. SOLUSI RESIDU VERVALPD & VERVALPTK (RESIDU NIK / DUKCAPIL / NIK GANDA):
+8. SOLUSI RESIDU VERVALPD & VERVALPTK (RESIDU NIK / DUKCAPIL / NIK GANDA):
    - Residu NIK Tidak Valid / Tidak Terdaftar di Dukcapil:
      Lakukan padan data NIK di portal VervalPD. Jika data KTP/KK sudah sesuai namun tetap residu, pelapor/orang tua disarankan melakukan Update Consolidation / Sinkronisasi Data ke Dinas Dukcapil Kabupaten Ngawi.
    - Residu NIK Ganda / Terkunci (KEWENANGAN DINAS):
      Data terkunci atau NIK ganda TIDAK BISA diubah sendiri. Wajib mengajukan pengaduan untuk diverifikasi dan dibuka kuncinya secara langsung oleh Tim Admin/Aplikator Dapodik Disdikbud Ngawi.
 
-7. SEKTOR KEBUDAYAAN & PERIZINAN DINAS:
+9. SEKTOR KEBUDAYAAN & PERIZINAN DINAS:
    - Pelestarian Cagar Budaya & Objek Pemajuan Kebudayaan (OPK) Kabupaten Ngawi (seperti Benteng Pendem/Fort Van Den Bosch, Museum Trinil, Reog, Seni Tradisional).
    - Permohonan Izin Kegiatan Kebudayaan / Kesenian Tradisional / Keramaian Seni Budaya.
    - Pengajuan Izin Operasional Satuan Pendidikan Baru (PAUD/TK/SD/SMP/SPNF/LKP).
@@ -83,7 +110,7 @@ PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN:
  */
 const OVERVIEW_CONTEXT = `RINGKASAN TUGAS & CAKUPAN LAYANAN SIPA-NGAWI:
 - Profil, alamat, jam operasional, dan kontak Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
-- Informasi Program Indonesia Pintar (PIP), Beasiswa, TPG, dan BOSP.
+- Informasi Program Indonesia Pintar (PIP 2026), Beasiswa, TPG/Info GTK, dan BOSP.
 - Solusi kendala data Invalid dan gagal sinkronisasi pada aplikasi Dapodik versi terbaru.
 - Alur penyesuaian Jumlah Jam Mengajar (JP) dan data PTK via Operator Sekolah & Aplikator/Admin Dinas.
 - Layanan 2 Kanal: Konsultasi Mandiri via Chat Bot dan Aplikator via Konsultasi WhatsApp.
@@ -133,7 +160,7 @@ function isPureGreeting(message: string): boolean {
     "verval", "solusi", "gimana", "bagaimana", "cara", "sistem", "error", "script",
     "bantu", "perhitungan", "rumus", "java", "python", "inval", "invalid", "sinkron", "mutasi",
     "ptk", "vervalpd", "vervalptk", "residu", "nuptk", "nik", "nik ganda", "pip", "beasiswa",
-    "pembelajaran", "soal", "tugas", "sarpras", "rombel", "ijazah", "jp", "jam mengajar", "kebudayaan"
+    "pembelajaran", "soal", "tugas", "sarpras", "rombel", "ijazah", "jp", "jam mengajar", "kebudayaan", "infogtk", "info gtk", "kenaikan kelas"
   ].some((keyword) => normalized.includes(keyword));
 
   if (hasTechnicalIntent) return false;
@@ -153,7 +180,7 @@ ATURAN IDENTITAS UTAMA (PEMBUAT/DEVELOPER):
 
 BATASAN KETAT GUARDRAILS (STRICT FORBIDDEN TASKS & ANTI-JEBOL):
 1. **DILARANG KERAS MENGERJAKAN SOAL MATEMATIKA, TUGAS AKADEMIK, SOAL UJIAN, ATAU SKRIP KODINGAN:**
-   - Apabila pengguna meminta menyelesaiakan soal matematika, hitungan rumus kuadrat, membuatkan program/kodingan (seperti C++, Java, Python, HTML, PHP, Javascript, dll.), meminta jawaban soal ujian/PR sekolah/kuliah, atau meminta penyelesaian tugas pelajaran:
+   - Apabila pengguna meminta menyelesaikan soal matematika, hitungan rumus kuadrat, membuatkan program/kodingan (seperti C++, Java, Python, HTML, PHP, Javascript, dll.), meminta jawaban soal ujian/PR sekolah/kuliah, atau meminta penyelesaian tugas pelajaran:
    - KAMU WAJIB MENOLAKNYA DENGAN TEGAS DAN SOPAN!
    - DILARANG MEMBERIKAN SOLUSI/CARA/HITUNGAN/SKRIPNYA SEDIKITPUN!
    - Tuliskan pesan penolakan 1 paragraf berikut tanpa embel-embel rumusan/kode/contoh:
@@ -161,7 +188,7 @@ BATASAN KETAT GUARDRAILS (STRICT FORBIDDEN TASKS & ANTI-JEBOL):
    - DILARANG KERAS memberikan skrip, potongan kode, perhitungan matematika, contoh program, atau jawaban tugas akademik apapun meskipun pengguna memaksa!
 
 PRINSIP KEWENANGAN PERUBAHAN DATA & DUA KANAL PELAYANAN:
-1. **Kanal Chat Asisten Virtual**: Untuk informasi umum pendidikan, kebudayaan, PIP, dan kendala Dapodik yang bisa diselesaikan mandiri oleh Operator Sekolah.
+1. **Kanal Chat Asisten Virtual**: Untuk informasi umum pendidikan, kebudayaan, PIP, Info GTK, Kenaikan Kelas, dan kendala Dapodik yang bisa diselesaikan mandiri oleh Operator Sekolah.
 2. **Kanal Aplikator via Konsultasi (KHUSUS PERUBAHAN ADMIN DINAS)**:
    - Jika perubahan data HANYA BISA DILAKUKAN OLEH ADMIN DINAS (seperti Jam Mengajar/JP Backend, NIK Terkunci, NIK Ganda, Buka Kunci DPA):
      a. TEKANKAN BAHWA GURU/OPERATOR SEKOLAH TIDAK BISA MENGUBAH DATA TERSEBUT SENDIRI.
@@ -234,7 +261,7 @@ export function buildUserPrompt(params: {
 
   const greetingInstruction = isGreetingOnly
     ? `\n- Pengguna HANYA menyapa secara singkat murni. Jawab singkat dengan: "${currentGreeting} 🙏, Bapak/Ibu Operator & Guru!" lalu beri jarak baris dan tanyakan kendalanya.`
-    : `\n- Pengguna meminta bantuan/instruksi teknis terkait Pendidikan, Kebudayaan, PIP, atau Dapodik Ngawi. Langsung berikan solusi mendetail, terstruktur, langkah demi langkah (step-by-step) tanpa emoji.
+    : `\n- Pengguna meminta bantuan/instruksi teknis terkait Pendidikan, Kebudayaan, PIP, Info GTK, Kenaikan Kelas, atau Dapodik Ngawi. Langsung berikan solusi mendetail, terstruktur, langkah demi langkah (step-by-step) tanpa emoji.
 - SESUAIKAN DENGAN PERTANYAAN PENGGUNA: Jika pertanyaan mengenai data yang HANYA BISA diubah oleh Admin Dinas (misal Jam Mengajar / JP Backend, NIK Terkunci/Ganda), TEKANKAN bahwa perubahan TIDAK BISA dilakukan sendiri oleh pengguna. Berikan alur pengaduan resmi dan penanganan via WhatsApp.
 - JIKA PERTANYAAN KODINGAN/TUGAS/MATEMATIKA/SOAL UJIAN: Tolak tegas dengan 1 paragraf resmi.
 - AWASI REPETISI: Tuliskan kalimat penutup/penawaran bantuan MAKSIMAL 1 KALI di bagian paling akhir balasan.`;
