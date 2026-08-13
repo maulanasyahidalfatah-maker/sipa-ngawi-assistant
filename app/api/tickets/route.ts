@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Redis } from "@upstash/redis";
 
 export interface TicketData {
   id: string;
@@ -15,25 +16,68 @@ export interface TicketData {
   createdAt?: string;
 }
 
-// Memory Storage Terpusat di Server
+// Inisialisasi Database Cloud Upstash Redis
+const redis =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN,
+      })
+    : null;
+
+// Memory Storage Backup Jika Redis Belum Terhubung
 let globalTickets: TicketData[] = [];
+
+// Helper Ambil Data dari Redis Cloud
+async function getTicketsFromCloud(): Promise<TicketData[]> {
+  if (redis) {
+    try {
+      const data = await redis.get<TicketData[]>("sipa_tickets");
+      if (Array.isArray(data)) {
+        return data;
+      }
+    } catch (err) {
+      console.warn("⚠️ Gagal membaca dari Upstash Redis, menggunakan memori server:", err);
+    }
+  }
+  return globalTickets;
+}
+
+// Helper Simpan Data ke Redis Cloud
+async function saveTicketsToCloud(tickets: TicketData[]) {
+  globalTickets = tickets;
+  if (redis) {
+    try {
+      await redis.set("sipa_tickets", tickets);
+    } catch (err) {
+      console.error("❌ Gagal menyimpan ke Upstash Redis:", err);
+    }
+  }
+}
 
 // GET: Dipanggil oleh Dashboard Admin untuk mengambil semua tiket pengaduan
 export async function GET() {
-  return NextResponse.json(
-    {
-      success: true,
-      data: globalTickets,
-    },
-    {
-      headers: {
-        "Cache-Control": "no-store, max-age=0, must-revalidate",
+  try {
+    const tickets = await getTicketsFromCloud();
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: tickets,
       },
-    }
-  );
+      {
+        headers: {
+          "Cache-Control": "no-store, max-age=0, must-revalidate",
+        },
+      }
+    );
+  } catch (error) {
+    console.error("❌ Error GET /api/tickets:", error);
+    return NextResponse.json({ success: false, data: [] }, { status: 500 });
+  }
 }
 
-// POST: Dipanggil saat ada pengaduan baru (Dengan Proteksi Anti-Tiket Ganda)
+// POST: Dipanggil saat ada pengaduan baru (Dengan De-duplikasi Konten & Integrasi Cloud)
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -43,9 +87,11 @@ export async function POST(request: Request) {
     const inputRincian = body.rincian || body.rincianKeluhan || "-";
     const inputSekolah = body.asalSekolah || body.sekolah || "-";
 
-    // 1. CEK DE-DUPLIKASI KONTEN (Pencegahan Double-Trigger dari Client/Server)
-    // Jika ada tiket dengan Nama + No WA + Sekolah + Rincian yang persis sama, pakai ID tiket tersebut!
-    const duplicateTicket = globalTickets.find(
+    // 1. Ambil Tiket dari Database Cloud
+    let currentTickets = await getTicketsFromCloud();
+
+    // 2. CEK DE-DUPLIKASI KONTEN (Pencegahan Double-Trigger)
+    const duplicateTicket = currentTickets.find(
       (t) =>
         t.namaPelapor.toLowerCase().trim() === inputNama.toLowerCase().trim() &&
         t.noWhatsapp.trim() === inputWa.trim() &&
@@ -56,9 +102,9 @@ export async function POST(request: Request) {
     let finalId = body.id;
 
     if (duplicateTicket) {
-      finalId = duplicateTicket.id; // Gunakan ID lama agar tidak membuat TK-002
+      finalId = duplicateTicket.id; // Pakai ID lama jika duplikat
     } else if (!finalId || !finalId.startsWith("TK-")) {
-      const nextNum = globalTickets.length + 1;
+      const nextNum = currentTickets.length + 1;
       finalId = `TK-${nextNum < 10 ? `00${nextNum}` : nextNum < 100 ? `0${nextNum}` : nextNum}`;
     }
 
@@ -77,21 +123,24 @@ export async function POST(request: Request) {
       createdAt: body.createdAt || duplicateTicket?.createdAt || new Date().toLocaleDateString("id-ID"),
     };
 
-    // 2. SIMPAN / UPDATE DENGAN DEDUPLIKASI ID TIKET
-    const existingIndex = globalTickets.findIndex((t) => t.id === newTicket.id);
+    // 3. Update atau Tambahkan Tiket
+    const existingIndex = currentTickets.findIndex((t) => t.id === newTicket.id);
 
     if (existingIndex !== -1) {
-      globalTickets[existingIndex] = {
-        ...globalTickets[existingIndex],
+      currentTickets[existingIndex] = {
+        ...currentTickets[existingIndex],
         ...newTicket,
       };
     } else {
-      globalTickets.unshift(newTicket);
+      currentTickets.unshift(newTicket);
     }
+
+    // 4. Simpan Permanen ke Upstash Redis Cloud
+    await saveTicketsToCloud(currentTickets);
 
     return NextResponse.json({
       success: true,
-      message: "Pengaduan berhasil tersimpan permanen!",
+      message: "Pengaduan berhasil tersimpan permanen di cloud server!",
       data: newTicket,
     });
   } catch (error) {
@@ -109,7 +158,9 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { id, status, buktiPerbaikan } = body;
 
-    globalTickets = globalTickets.map((t) => {
+    let currentTickets = await getTicketsFromCloud();
+
+    currentTickets = currentTickets.map((t) => {
       if (t.id === id) {
         return {
           ...t,
@@ -120,10 +171,12 @@ export async function PUT(request: Request) {
       return t;
     });
 
+    await saveTicketsToCloud(currentTickets);
+
     return NextResponse.json({
       success: true,
-      message: "Status tiket & bukti perbaikan berhasil diperbarui!",
-      data: globalTickets,
+      message: "Status tiket & bukti perbaikan berhasil diperbarui secara permanen!",
+      data: currentTickets,
     });
   } catch (error) {
     return NextResponse.json(
@@ -135,7 +188,7 @@ export async function PUT(request: Request) {
 
 // DELETE: Dipanggil oleh Admin untuk RESET TOTAL SELURUH DATA
 export async function DELETE() {
-  globalTickets = []; // KOSONGKAN TOTAL MEMORI SERVER
+  await saveTicketsToCloud([]);
   return NextResponse.json({
     success: true,
     message: "Seluruh data pengaduan berhasil dibersihkan dari server!",

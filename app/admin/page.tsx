@@ -75,49 +75,20 @@ export default function AdminDashboard() {
     });
   };
 
-  // LOAD DATA TERPUSAT: UTAMAKAN API SERVER BACKEND UNTUK MENCEGAH INPUT BERGANDA
+  // LOAD DATA MURNI DARI CLOUD DATABASE SERVERLESS
   const loadTickets = async () => {
     setIsLoading(true);
 
-    let serverTickets: AdminTicket[] = [];
-    let isServerSuccess = false;
-
-    // Step 1: Tarik data dari API Server Backend
     try {
       const res = await fetch("/api/tickets", { cache: "no-store" });
       if (res.ok) {
         const result = await res.json();
         if (result.success && Array.isArray(result.data)) {
-          serverTickets = sanitizeAndSortTickets(result.data);
-          isServerSuccess = true;
+          setTickets(sanitizeAndSortTickets(result.data));
         }
       }
     } catch (e) {
-      console.warn("Server offline, mencoba membaca backup lokal:", e);
-    }
-
-    // Step 2: Jika Server sukses, gunakan data Server sebagai utama & update backup lokal
-    if (isServerSuccess) {
-      setTickets(serverTickets);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("sipa_rekap_pengaduan_backup", JSON.stringify(serverTickets));
-        localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(serverTickets));
-      }
-    } else {
-      // Step 3: Fallback jika server offline
-      if (typeof window !== "undefined") {
-        const saved = localStorage.getItem("sipa_rekap_pengaduan_backup") || localStorage.getItem("sipa_rekap_pengaduan");
-        if (saved) {
-          try {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed)) {
-              setTickets(sanitizeAndSortTickets(parsed));
-            }
-          } catch (e) {
-            console.error("Gagal membaca backup lokal:", e);
-          }
-        }
-      }
+      console.error("Gagal terhubung ke Cloud Server:", e);
     }
 
     setIsLoading(false);
@@ -225,11 +196,6 @@ export default function AdminDashboard() {
 
     const updated = tickets.map((t) => (t.id === selectedTicket.id ? { ...t, status: "RESOLVED" as const, buktiPerbaikan: fileBase64 } : t));
     setTickets(updated);
-
-    if (typeof window !== "undefined") {
-      localStorage.setItem("sipa_rekap_pengaduan_backup", JSON.stringify(updated));
-      localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(updated));
-    }
 
     try {
       await fetch("/api/tickets", {
