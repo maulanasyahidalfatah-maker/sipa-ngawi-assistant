@@ -633,9 +633,13 @@ export function ChatInterface({
     }
   };
 
-  // SUBMIT PENGADUAN TERPUSAT VIA API BACKEND SERVER (TANPA DOUBLE SAVE)
+  // SUBMIT PENGADUAN OFFICIAL (PROTEKSI INPUT GANDA & SINGLE-TRIGGER GUARD)
   const handleSubmitPengaduan = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // Mencegah double event bubbling dari form & button
+
+    // KUNCI PENCEGAHAN INPUT GANDA: Jika sedang dalam proses submit, hentikan eksekusi
+    if (isSubmitting) return;
 
     if (!formData.kategori) {
       alert("Silakan pilih Kategori Kendala terlebih dahulu!");
@@ -647,7 +651,7 @@ export function ChatInterface({
       return;
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true); // Kunci tombol seketika saat pertama kali diklik
 
     try {
       const payload: PengaduanData = {
@@ -655,7 +659,7 @@ export function ChatInterface({
         buktiKeluhanPelapor: formData.buktiKeluhanPelapor || selectedImage || undefined,
       };
 
-      // 1. KIRIM TERPUSAT HANYA VIA API BACKEND SERVER (/api/tickets)
+      // KIRIM TERPUSAT HANYA 1X VIA API BACKEND SERVER (/api/tickets)
       const res = await fetch("/api/tickets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -673,7 +677,6 @@ export function ChatInterface({
       });
 
       if (res.ok) {
-        // Trigger event storage agar tab admin melakukan auto-sync secara real-time
         window.dispatchEvent(new Event("storage"));
       }
 
@@ -686,7 +689,7 @@ export function ChatInterface({
       console.error("Gagal mengirim pengaduan:", err);
       setPengaduanSuccess(true);
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // Buka kunci setelah selesai
     }
   };
 
@@ -1377,7 +1380,7 @@ export function ChatInterface({
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="bg-[#006837] hover:bg-[#00522c] text-white rounded-full px-5 py-2 text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
+                      className="bg-[#006837] hover:bg-[#00522c] text-white rounded-full px-5 py-2 text-xs flex items-center gap-1.5 shadow-md disabled:opacity-50 cursor-pointer"
                     >
                       {isSubmitting ? (
                         "Memproses..."
