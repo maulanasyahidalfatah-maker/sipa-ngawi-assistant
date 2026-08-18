@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { sendBatchReportEmail, TicketItem } from "@/lib/email-service";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { SYSTEM_PROMPT } from "@/lib/rag/prompt";
 
 export const runtime = "nodejs";
 
@@ -77,7 +76,6 @@ export async function POST(request: NextRequest) {
       ticketMemoryBatch.unshift(newTicket);
       if (ticketMemoryBatch.length > 30) ticketMemoryBatch = ticketMemoryBatch.slice(0, 30);
 
-      // Webhook Google Sheets (opsional)
       const webhookUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK;
       let sheetStatus = "Skipped";
       if (webhookUrl && !webhookUrl.includes("PASTE_URL")) {
@@ -102,7 +100,7 @@ export async function POST(request: NextRequest) {
     }
 
     // =========================================================================
-    // 3. CHAT AI UTAMA (Langsung tembak Qwen Cloud / DeepSeek tanpa nyangkut RAG)
+    // 3. CHAT AI UTAMA (Super Cepat & Terproteksi Guardrails Mutlak)
     // =========================================================================
     if (!message) {
       return NextResponse.json({ error: "Pesan teks wajib diisi." }, { status: 400 });
@@ -110,7 +108,7 @@ export async function POST(request: NextRequest) {
 
     let aiReply = "";
 
-    // Prioritas 1: Coba Qwen Cloud (DashScope)
+    // Prioritas 1: Qwen Turbo (Sangat Cepat & Responsif)
     const qwenApiKey = process.env.QWEN_API_KEY;
     if (qwenApiKey) {
       try {
@@ -120,13 +118,14 @@ export async function POST(request: NextRequest) {
         });
 
         const completion = await qwen.chat.completions.create({
-          model: process.env.QWEN_MODEL || "qwen-plus",
+          model: "qwen-turbo",
           messages: [
-            { role: "system", content: "Anda adalah Asisten Virtual SIPA-NGAWI yang ramah dan membantu terkait layanan Dapodik." },
+            { role: "system", content: SYSTEM_PROMPT },
             ...history.map((h: any) => ({ role: h.role || "user", content: h.content || h.message || "" })),
             { role: "user", content: message },
           ],
-          temperature: 0.3,
+          temperature: 0.1,
+          max_tokens: 1000,
         });
 
         aiReply = completion.choices[0]?.message?.content || "";
@@ -135,7 +134,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Prioritas 2: Fallback ke DeepSeek jika Qwen kosong/gagal
+    // Prioritas 2: Fallback DeepSeek
     if (!aiReply) {
       const deepseekKey = process.env.DEEPSEEK_API_KEY;
       if (!deepseekKey) {
@@ -150,11 +149,12 @@ export async function POST(request: NextRequest) {
       const completion = await deepseek.chat.completions.create({
         model: process.env.DEEPSEEK_MODEL || "deepseek-chat",
         messages: [
-          { role: "system", content: "Anda adalah Asisten Virtual SIPA-NGAWI yang ramah dan membantu terkait layanan Dapodik." },
+          { role: "system", content: SYSTEM_PROMPT },
           ...history.map((h: any) => ({ role: h.role || "user", content: h.content || h.message || "" })),
           { role: "user", content: message },
         ],
-        temperature: 0.3,
+        temperature: 0.1,
+        max_tokens: 1000,
       });
 
       aiReply = completion.choices[0]?.message?.content || "";
