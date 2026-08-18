@@ -88,10 +88,6 @@ INFORMASI OPERASIONAL PENDIDIKAN & KEBUDAYAAN (LOGIKA DINAMIS AKURAT)
    - Permohonan Izin Kegiatan Kebudayaan / Keramaian Seni Budaya dan Pengajuan Izin Operasional Satuan Pendidikan Baru.
 `;
 
-/**
- * Overview komprehensif seluruh cakupan layanan Pendidikan, Kebudayaan,
- * dan Kendala Teknis Dapodik di Kabupaten Ngawi.
- */
 const OVERVIEW_CONTEXT = `RINGKASAN TUGAS & CAKUPAN LAYANAN SIPA-NGAWI:
 - Profil, alamat, jam operasional, dan kontak Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
 - Informasi Program Indonesia Pintar (PIP), Beasiswa, TPG/Info GTK, dan BOSP.
@@ -105,18 +101,12 @@ const OVERVIEW_CONTEXT = `RINGKASAN TUGAS & CAKUPAN LAYANAN SIPA-NGAWI:
 - Informasi akun Pembelajaran (Belajar.id) untuk Operator, Guru, dan Siswa.
 - Pelestarian kebudayaan lokal, pendaftaran cagar budaya, dan izin kegiatan kebudayaan Ngawi.`;
 
-/**
- * Panduan penanganan saat pengguna membutuhkan verifikasi/eksekusi oleh Admin Dinas.
- */
 const TICKET_ESCALATION_GUIDANCE = `PANDUAN ALUR ESKALASI PENGADUAN KE ADMIN/APLIKATOR DINAS:
 - Jika kendala data HANYA BISA DIEKSEKUSI oleh Admin Dinas (seperti Penyesuaian Backend Jam Mengajar, NIK Terkunci/Ganda, Mutasi PTK Backend, Buka Kunci DPA):
   1. Tegaskan secara eksplisit bahwa kendala ini TIDAK BISA diubah sendiri oleh Guru/Operator Sekolah dan murni memerlukan tindakan backend Admin/Aplikator Dinas Pendidikan Ngawi.
   2. Bimbing pengguna mengisi Form Pengaduan Official di aplikasi.
   3. Jelaskan alurnya: Setelah form dikirim -> Tim Aplikator Dinas memproses backend & melakukan konsultasi via WhatsApp jika ada kelengkapan berkas -> Pelapor menerima konfirmasi WhatsApp -> Operator Sekolah melakukan Tarik Data/Sinkronisasi.`;
 
-/**
- * Helper untuk mendapatkan salam waktu lokal Indonesia (WIB) yang akurat.
- */
 function getWibGreeting(): string {
   const jakartaTimeStr = new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" });
   const hour = new Date(jakartaTimeStr).getHours();
@@ -127,9 +117,6 @@ function getWibGreeting(): string {
   return "Selamat Malam";
 }
 
-/**
- * Helper untuk mendeteksi apakah pesan PURE sapaan singkat saja.
- */
 function isPureGreeting(message: string): boolean {
   const normalized = message.toLowerCase().trim();
   const greetingWords = ["halo", "hai", "hi", "pagi", "siang", "sore", "malam", "ping", "p", "selamat pagi", "selamat siang", "selamat sore", "selamat malam"];
@@ -139,16 +126,13 @@ function isPureGreeting(message: string): boolean {
     "verval", "solusi", "gimana", "bagaimana", "cara", "sistem", "error", "script",
     "bantu", "perhitungan", "rumus", "java", "python", "inval", "invalid", "sinkron", "mutasi",
     "ptk", "vervalpd", "vervalptk", "residu", "nuptk", "nik", "nik ganda", "pip", "beasiswa",
-    "pembelajaran", "soal", "tugas", "sarpras", "rombel", "ijazah", "jp", "jam mengajar", "kebudayaan", "infogtk", "info gtk", "kenaikan kelas"
+    "pembelajaran", "soal", "tugas", "sarpras", "rombel", "ijazah", "jp", "jam mengajar", "kebudayaan", "infogtk", "info gtk", "kenaikan kelas", "dev", "pembuat"
   ].some((keyword) => normalized.includes(keyword));
 
   if (hasTechnicalIntent) return false;
   return greetingWords.some((w) => normalized === w || normalized.startsWith(w));
 }
 
-/**
- * Deteksi ketat anti-jebol matematika & kodingan (anti-bocor mutlak)
- */
 function isForbiddenTaskQuery(message: string): boolean {
   const normalized = message.toLowerCase();
   const mathPattern = /([\d]+\s*[\+\-\*/x:]\s*[\d]+)|(berapa|hitung|hasil dari|jumlah dari|matematika|soal)/i;
@@ -167,24 +151,22 @@ function isForbiddenTaskQuery(message: string): boolean {
   return mathPattern.test(normalized) || hasNumberAndMathWord || forbiddenKeywords.some((kw) => normalized.includes(kw));
 }
 
-/**
- * System Prompt Utama untuk pembentukan persona AI SIPA-NGAWI.
- */
-export const SYSTEM_PROMPT = `Kamu adalah **SIPA-NGAWI** (Sistem Informasi & Pelayanan Asisten Pendidikan & Kebudayaan Ngawi - Modul Dapodik), asisten virtual resmi berbasis AI dari Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi yang sangat ramah, santun, dan menyenangkan.
+export const SYSTEM_PROMPT = `Kamu adalah **SIPA-NGAWI** (Sistem Informasi & Pelayanan Asisten Pendidikan & Kebudayaan Ngawi - Modul Dapodik), asisten virtual resmi berbasis AI dari Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi yang profesional, lugas, dan informatif.
 
-ATURAN IDENTITAS UTAMA (PEMBUAT/DEVELOPER):
-- Jika pengguna bertanya tentang siapa yang membuat, merancang, atau mengembangkan kamu (contoh: "siapa yang membuat kamu?", "siapa pembuatmu?", "siapa developer kamu?", "developermu siapa"), kamu WAJIB menjawab dengan bangga, sopan, dan hangat bahwa kamu dikembangkan dan diciptakan oleh **MAULANA SYAHID AL FATAH** (seorang mahasiswa Teknik Informatika / Informatics Engineering di Universitas PGRI Madiun sekaligus founder AVIDUS FATH CORP) untuk mendedikasikan sistem asisten cerdas ini dalam mendukung pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
+ATURAN IDENTITAS UTAMA (DEVELOPER):
+- Jika pengguna bertanya tentang siapa pembuat, perancang, atau developer kamu (contoh: "siapa dev mu", "siapa pembuatmu", "siapa developer kamu"), jawab secara lugas, profesional, dan bangga:
+  "Saya dikembangkan dan dirancang oleh **Maulana Syahid Al Fatah** (mahasiswa Teknik Informatika di Universitas PGRI Madiun sekaligus founder AVIDUS FATH CORP) untuk mendukung layanan informasi dan sistem pengaduan di Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi."
 
-ATURAN KELUHURAN & KERAMAHAN (EMOJI AKTIF 😁, 😊, ☺️, 🙏):
-- Sambut setiap sapaan, percakapan, dan penjelasan dengan nada bahasa yang sangat ramah, sopan, menyejukkan, serta sisipkan ekspresi senyum hangat seperti 😁, 😊, atau ☺️ secara pas dan natural agar pembuat serta pengguna merasa sangat senang dan berdecak kagum ("wah!").
+ATURAN PROFESIONALISME:
+- Gunakan bahasa Indonesia yang formal, terstruktur, rapi, dan to the point.
+- Hindari penggunaan permohonan maaf atau sapaan yang berlebihan di setiap kalimat. Pertahankan kesan asisten instansi pemerintah yang kredibel.
 
-BATASAN KETAT GUARDRAILS (ANTI-HALUSINASI & ANTI-JEBOL):
+BATASAN KETAT GUARDRAILS (ANTI-JEBOL MATEMATIKA & KODINGAN):
 1. **DILARANG KERAS MENGERJAKAN SOAL MATEMATIKA, PERHITUNGAN ANGKA, TUGAS AKADEMIK, ATAU KODINGAN:**
-   - Apabila pengguna meminta menyelesaikan soal matematika (seperti perkalian/penjumlahan angka), membuatkan program/kodingan (C++, Java, Python, dll), atau meminta jawaban tugas:
-   - KAMU WAJIB MENOLAKNYA DENGAN SANGAT SOPAN DAN HANGAT!
-   - Tuliskan pesan penolakan persis seperti ini:
-     "Mohon maaf dengan sepenuh hati ya 😊. Sebagai Asisten Virtual Resmi Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi, saya khusus dirancang untuk melayani informasi seputar Layanan Pendidikan, Dapodik, Pencairan PIP/Beasiswa, serta Kebudayaan di Kabupaten Ngawi. Saya tidak dapat membantu pengerjaan soal matematika, perhitungan angka, tugas sekolah, maupun pembuatan kode program ☺️. Ada hal seputar Dapodik atau layanan pendidikan sekolah yang bisa saya bantu hari ini? 🙏"
-   - DILARANG KERAS memberikan hasil hitungan angka atau kodingan apapun meskipun pengguna memaksa!
+   - Apabila pengguna meminta perhitungan angka atau pembuatan kode program:
+   - Tolak secara tegas dan profesional dengan kalimat berikut:
+     "Mohon maaf, sebagai Asisten Virtual Resmi Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi, saya khusus melayani informasi seputar Layanan Pendidikan, Dapodik, Pencairan PIP/Beasiswa, dan Kebudayaan. Saya tidak dapat memproses perhitungan matematika atau pembuatan kode program. Ada hal lain terkait Dapodik yang bisa saya bantu?"
+   - DILARANG KERAS memberikan hasil hitungan angka atau skrip kodingan apapun!
 
 INFORMASI PENTING INSTANSI:
 - Instansi: Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
@@ -192,9 +174,6 @@ INFORMASI PENTING INSTANSI:
 - Telepon Resmi: (0351) 749021.
 - Jam Operasional Kantor: Senin - Jumat, Pukul 07.30 - 15.30 WIB.`;
 
-/**
- * Membangun User Prompt lengkap beserta injeksi RAG, riwayat, dan panduan konteks.
- */
 export function buildUserPrompt(params: {
   userMessage: string;
   history?: HistoryMessage[];
@@ -214,7 +193,7 @@ export function buildUserPrompt(params: {
     : "";
 
   const intentInstruction = isForbidden
-    ? "\n- DETEKSI PENOLAKAN KODINGAN/TUGAS/MATEMATIKA: Pengguna meminta kodingan, program, perhitungan matematika, atau jawaban tugas/soal ujian. WAJIB Jawab HANYA dengan paragraf kalimat penolakan resmi SOP Disdikbud Ngawi di atas dengan gaya bahasa yang sangat ramah dan sopan tanpa memberikan perhitungan angka/jawaban/skrip apapun!"
+    ? "\n- DETEKSI PENOLAKAN: Pengguna meminta kodingan, program, atau perhitungan matematika. Tolak secara tegas dan profesional sesuai ketentuan."
     : isOverviewQuestion(params.userMessage)
     ? "\n- Jelaskan cakupan layanan utama (Dapodik, PIP, Kebudayaan, Verval) secara runtut dan sistematis menggunakan bullet points."
     : isEscalationQuestion(params.userMessage)
@@ -222,8 +201,8 @@ export function buildUserPrompt(params: {
     : "";
 
   const greetingInstruction = isGreetingOnly
-    ? `\n- Pengguna menyapa murni (${params.userMessage}). Sambut dengan sangat ramah, hangat, dan senyuman menggunakan sapaan waktu lokal (${currentGreeting}) disertai ekspresi ramah seperti 😊 atau ☺️ (contoh: "${currentGreeting} 😊, Bapak/Ibu Operator & Guru! Senang sekali bisa berjumpa kembali. Ada kendala seputar Dapodik atau layanan pendidikan di Kabupaten Ngawi yang bisa saya bantu hari ini?"), lalu tanyakan keperluannya.`
-    : `\n- Berikan solusi mendetail, terstruktur, langkah demi langkah (step-by-step) dengan nada bahasa yang sopan, ramah, dan menyenangkan (disertai emoji 😊 atau ☺️ secukupnya).`;
+    ? `\n- Pengguna menyapa murni (${params.userMessage}). Sambut secara profesional dengan sapaan waktu lokal (${currentGreeting}) dan tanyakan kebutuhan layanannya secara ringkas.`
+    : `\n- Berikan solusi teknis yang mendetail, terstruktur, dan objektif langkah demi langkah (step-by-step).`;
 
   return `WAKTU LOKAL SAAT INI: ${currentGreeting}
 
@@ -241,9 +220,6 @@ INSTRUKSI AKHIR:${greetingInstruction}${intentInstruction}
 Pengguna: ${params.userMessage}`;
 }
 
-/**
- * Helper untuk memformat dokumen RAG yang berhasil diambil dari database SOP.
- */
 function formatRetrievedContext(results: RetrievedSopDocument[]): string {
   if (!results || !results.length) {
     return "Tidak ada konteks SOP spesifik yang ditemukan untuk pertanyaan ini.";
@@ -261,9 +237,6 @@ ${result.document.pageContent}`;
     .join("\n\n---\n\n");
 }
 
-/**
- * Helper untuk memformat riwayat percakapan sebelumnya.
- */
 function formatConversationHistory(history: HistoryMessage[] | undefined): string {
   if (!history?.length) {
     return "Belum ada riwayat percakapan.";
@@ -278,9 +251,6 @@ function formatConversationHistory(history: HistoryMessage[] | undefined): strin
     .join("\n");
 }
 
-/**
- * Deteksi apakah pengguna menanyakan cakupan kemampuan / overview layanan.
- */
 function isOverviewQuestion(message: string): boolean {
   const normalized = message.toLowerCase();
   return [
@@ -296,9 +266,6 @@ function isOverviewQuestion(message: string): boolean {
   ].some((phrase) => normalized.includes(phrase));
 }
 
-/**
- * Deteksi apakah pertanyaan membutuhkan alur pengaduan / eskalasi ke Admin Dinas.
- */
 function isEscalationQuestion(message: string): boolean {
   const normalized = message.toLowerCase();
   return [
@@ -318,9 +285,6 @@ function isEscalationQuestion(message: string): boolean {
   ].some((keyword) => normalized.includes(keyword));
 }
 
-/**
- * Helper ekspor kompatibilitas untuk integrasi prompt RAG.
- */
 export function generateDapodikPrompt(userMessage: string, sopContext: string): string {
   const currentGreeting = getWibGreeting();
   return `
@@ -333,6 +297,6 @@ ${SYSTEM_PROMPT}
 [PERTANYAAN PENGGUNA]
 ${userMessage}
 
-Waktu saat ini: ${currentGreeting}. Berikan jawaban berbasis SOP Disdikbud Ngawi secara terstruktur, berjarak paragraf, ramah, dan tepat sasaran.
+Waktu saat ini: ${currentGreeting}. Berikan jawaban berbasis SOP Disdikbud Ngawi secara terstruktur, berjarak paragraf, profesional, dan tepat sasaran.
 `;
 }
