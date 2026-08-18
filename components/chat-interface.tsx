@@ -27,6 +27,10 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TextShimmer } from "@/components/core/text-shimmer";
+import {
+  DATABASE_SEKOLAH_NGAWI,
+  DAFTAR_SEKOLAH_NGAWI,
+} from "@/lib/data-sekolah";
 
 export interface Message {
   id: string;
@@ -52,14 +56,14 @@ export interface FormattedAnswerSection {
 export interface PengaduanData {
   id?: string;
   namaPelapor: string;
-  nikPelapor?: string; // NIK Pelapor
+  nikPelapor?: string;
   laporanUntukDataDari: string;
   asalSekolah: string;
   npsn: string;
   noWhatsapp: string;
   kategori: string;
   rincian: string;
-  buktiKeluhanPelapor?: string; // Foto bukti kendala pelapor
+  buktiKeluhanPelapor?: string;
 }
 
 type SpeechRecognitionResultEvent = {
@@ -110,76 +114,6 @@ interface ChatInterfaceProps {
   onPengaduanSubmitted?: (data: PengaduanData) => void;
   isAdminServer?: boolean;
 }
-
-const DATABASE_SEKOLAH_NGAWI: { [npsn: string]: { nama: string; jenjang: string } } = {
-  "20508506": { nama: "SMPN 2 KARANGJATI", jenjang: "SMP/MTs" },
-  "205758857": { nama: "SMPN 3 NGAWI", jenjang: "SMP/MTs" },
-  "20546740": { nama: "SMKN 1 NGAWI", jenjang: "SMA/SMK/MA" },
-  "20539345": { nama: "SDN MARGOMULYO 1 NGAWI", jenjang: "SD/MI" },
-  "20539350": { nama: "SMAN 1 NGAWI", jenjang: "SMA/SMK/MA" },
-  "20539352": { nama: "SMAN 2 NGAWI", jenjang: "SMA/SMK/MA" },
-  "20508641": { nama: "SD Negeri Tempuran 5", jenjang: "SD/MI" },
-};
-
-const DAFTAR_SEKOLAH_NGAWI = [
-  { nama: "TK Negeri Pembina Ngawi", jenjang: "TK/PAUD" },
-  { nama: "TK Aisyiyah Bustanul Athfal Ngawi", jenjang: "TK/PAUD" },
-  { nama: "TK Aisyiyah 1 Karangjati", jenjang: "TK/PAUD" },
-  { nama: "TK Dharma Wanita Geneng", jenjang: "TK/PAUD" },
-  { nama: "TK Pertiwi Padas", jenjang: "TK/PAUD" },
-  { nama: "TK Bringin 1", jenjang: "TK/PAUD" },
-  { nama: "SDN Margomulyo 1 Ngawi", jenjang: "SD/MI" },
-  { nama: "SDN Margomulyo 2 Ngawi", jenjang: "SD/MI" },
-  { nama: "SDN Pelem 1 Ngawi", jenjang: "SD/MI" },
-  { nama: "SDN Pelem 2 Ngawi", jenjang: "SD/MI" },
-  { nama: "SDN Karangjati 1", jenjang: "SD/MI" },
-  { nama: "SDN Karangjati 2", jenjang: "SD/MI" },
-  { nama: "SDN Bringin 1", jenjang: "SD/MI" },
-  { nama: "SDN Bringin 2", jenjang: "SD/MI" },
-  { nama: "SDN Padas 1", jenjang: "SD/MI" },
-  { nama: "SDN Geneng 1", jenjang: "SD/MI" },
-  { nama: "SDN Jogorogo 1", jenjang: "SD/MI" },
-  { nama: "SDN Ngrambe 1", jenjang: "SD/MI" },
-  { nama: "SDIT Al-Qalam Ngawi", jenjang: "SD/MI" },
-  { nama: "MI Negeri 1 Ngawi", jenjang: "SD/MI" },
-  { nama: "SD Negeri Tempuran 1", jenjang: "SD/MI" },
-  { nama: "SD Negeri Tempuran 2", jenjang: "SD/MI" },
-  { nama: "SD Negeri Tempuran 3", jenjang: "SD/MI" },
-  { nama: "SD Negeri Tempuran 4", jenjang: "SD/MI" },
-  { nama: "SD Negeri Tempuran 5", jenjang: "SD/MI" },
-  { nama: "SMPN 1 Ngawi", jenjang: "SMP/MTs" },
-  { nama: "SMPN 2 Ngawi", jenjang: "SMP/MTs" },
-  { nama: "SMPN 3 Ngawi", jenjang: "SMP/MTs" },
-  { nama: "SMPN 4 Ngawi", jenjang: "SMP/MTs" },
-  { nama: "SMPN 5 Ngawi", jenjang: "SMP/MTs" },
-  { nama: "SMPN 1 Karangjati", jenjang: "SMP/MTs" },
-  { nama: "SMPN 2 Karangjati", jenjang: "SMP/MTs" },
-  { nama: "SMPN 3 Karangjati", jenjang: "SMP/MTs" },
-  { nama: "SMPN 1 Bringin", jenjang: "SMP/MTs" },
-  { nama: "SMPN 2 Bringin", jenjang: "SMP/MTs" },
-  { nama: "SMPN 1 Pangkur", jenjang: "SMP/MTs" },
-  { nama: "SMPN 1 Geneng", jenjang: "SMP/MTs" },
-  { nama: "SMPN 1 Padas", jenjang: "SMP/MTs" },
-  { nama: "SMPN 1 Paron", jenjang: "SMP/MTs" },
-  { nama: "SMPN 1 Ngrambe", jenjang: "SMP/MTs" },
-  { nama: "SMPN 1 Jogorogo", jenjang: "SMP/MTs" },
-  { nama: "MTsN 1 Ngawi", jenjang: "SMP/MTs" },
-  { nama: "MTsN 3 Ngawi", jenjang: "SMP/MTs" },
-  { nama: "SMAN 1 Ngawi", jenjang: "SMA/SMK/MA" },
-  { nama: "SMAN 2 Ngawi", jenjang: "SMA/SMK/MA" },
-  { nama: "SMAN 1 Karangjati", jenjang: "SMA/SMK/MA" },
-  { nama: "SMAN 1 Jogorogo", jenjang: "SMA/SMK/MA" },
-  { nama: "SMAN 1 Geneng", jenjang: "SMA/SMK/MA" },
-  { nama: "SMAN 1 Ngrambe", jenjang: "SMA/SMK/MA" },
-  { nama: "SMKN 1 Ngawi", jenjang: "SMA/SMK/MA" },
-  { nama: "SMKN 2 Ngawi", jenjang: "SMA/SMK/MA" },
-  { nama: "SMKN 1 Geneng", jenjang: "SMA/SMK/MA" },
-  { nama: "SMKN 1 Bringin", jenjang: "SMA/SMK/MA" },
-  { nama: "SMKN 1 Kasreman", jenjang: "SMA/SMK/MA" },
-  { nama: "SMKN 1 Paron", jenjang: "SMA/SMK/MA" },
-  { nama: "MAN 1 Ngawi", jenjang: "SMA/SMK/MA" },
-  { nama: "MAN 2 Ngawi", jenjang: "SMA/SMK/MA" },
-];
 
 const DAFTAR_SUBJEK_DATA = [
   "Murid / Siswa",
@@ -360,7 +294,9 @@ export function ChatInterface({
 
   // Dropdown Custom
   const [isSekolahDropdownOpen, setIsSekolahDropdownOpen] = useState(false);
+  const [searchSekolah, setSearchSekolah] = useState("");
   const sekolahDropdownRef = useRef<HTMLDivElement>(null);
+  const searchSekolahInputRef = useRef<HTMLInputElement>(null);
 
   const [isSubjekDropdownOpen, setIsSubjekDropdownOpen] = useState(false);
   const subjekDropdownRef = useRef<HTMLDivElement>(null);
@@ -368,7 +304,7 @@ export function ChatInterface({
   const [isKategoriDropdownOpen, setIsKategoriDropdownOpen] = useState(false);
   const kategoriDropdownRef = useRef<HTMLDivElement>(null);
 
-  // State Form Pengaduan Lengkap (Termasuk NIK & Foto Keluhan)
+  // State Form Pengaduan Lengkap
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pengaduanSuccess, setPengaduanSuccess] = useState(false);
   const [formData, setFormData] = useState<PengaduanData>({
@@ -407,6 +343,16 @@ export function ChatInterface({
     }
   }, [input]);
 
+  // FOKUSKAN INPUT PENCARIAN SAAT DROPDOWN ASAL SEKOLAH DIBUKA
+  useEffect(() => {
+    if (isSekolahDropdownOpen) {
+      setTimeout(() => {
+        searchSekolahInputRef.current?.focus();
+      }, 50);
+    }
+  }, [isSekolahDropdownOpen]);
+
+  // LOGIKA NPSN LENGKAP -> AUTO-FILL ASAL SEKOLAH, HILANG 1 DIGIT/TIDAK COCOK -> KOSONGKAN ASAL SEKOLAH
   const handleNpsnChange = (val: string) => {
     const cleanNpsn = val.trim();
     const matchedSekolah = DATABASE_SEKOLAH_NGAWI[cleanNpsn];
@@ -421,7 +367,7 @@ export function ChatInterface({
       setFormData((prev) => ({
         ...prev,
         npsn: val,
-        asalSekolah: "",
+        asalSekolah: "", // Kembali kosong jika NPSN tidak lengkap / belum cocok
       }));
     }
   };
@@ -493,9 +439,15 @@ export function ChatInterface({
     };
   }, [setInput]);
 
-  const filteredSekolah = DAFTAR_SEKOLAH_NGAWI.filter((item) =>
-    item.nama.toLowerCase().includes((formData.asalSekolah || "").toLowerCase())
-  );
+  // FILTERING SEKOLAH: BERDASARKAN NAMA DAN NPSN PADA INPUT SEARCH DROPDOWN
+  const filteredSekolah = DAFTAR_SEKOLAH_NGAWI.filter((item) => {
+    const query = searchSekolah.toLowerCase().trim();
+    if (!query) return true;
+    return (
+      item.nama.toLowerCase().includes(query) ||
+      (item.npsn && item.npsn.includes(query))
+    );
+  });
 
   const handleOpenBlankComplaintModal = () => {
     setFormData({
@@ -509,6 +461,7 @@ export function ChatInterface({
       rincian: "",
       buktiKeluhanPelapor: selectedImage || undefined,
     });
+    setSearchSekolah("");
     setPengaduanSuccess(false);
     setIsModalOpen(true);
   };
@@ -537,6 +490,7 @@ export function ChatInterface({
       buktiKeluhanPelapor: selectedImage || prev.buktiKeluhanPelapor,
     }));
 
+    setSearchSekolah("");
     setPengaduanSuccess(false);
     setIsModalOpen(true);
   };
@@ -636,9 +590,8 @@ export function ChatInterface({
   // SUBMIT PENGADUAN OFFICIAL (PROTEKSI INPUT GANDA & SINGLE-TRIGGER GUARD)
   const handleSubmitPengaduan = async (e: React.FormEvent) => {
     e.preventDefault();
-    e.stopPropagation(); // Mencegah double event bubbling dari form & button
+    e.stopPropagation();
 
-    // KUNCI PENCEGAHAN INPUT GANDA: Jika sedang dalam proses submit, hentikan eksekusi
     if (isSubmitting) return;
 
     if (!formData.kategori) {
@@ -651,7 +604,7 @@ export function ChatInterface({
       return;
     }
 
-    setIsSubmitting(true); // Kunci tombol seketika saat pertama kali diklik
+    setIsSubmitting(true);
 
     try {
       const payload: PengaduanData = {
@@ -659,7 +612,6 @@ export function ChatInterface({
         buktiKeluhanPelapor: formData.buktiKeluhanPelapor || selectedImage || undefined,
       };
 
-      // KIRIM TERPUSAT HANYA 1X VIA API BACKEND SERVER (/api/tickets)
       const res = await fetch("/api/tickets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -689,7 +641,7 @@ export function ChatInterface({
       console.error("Gagal mengirim pengaduan:", err);
       setPengaduanSuccess(true);
     } finally {
-      setIsSubmitting(false); // Buka kunci setelah selesai
+      setIsSubmitting(false);
     }
   };
 
@@ -1057,7 +1009,7 @@ export function ChatInterface({
         </>
       )}
 
-      {/* MODAL POP-UP FORM PENGADUAN DENGAN NIK & UPLOAD FOTO KELUHAN */}
+      {/* MODAL POP-UP FORM PENGADUAN DENGAN SEARCHABLE COMBOBOX & AUTO-FILL NPSN */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white rounded-3xl shadow-xl max-w-xl w-full max-h-[90vh] flex flex-col border border-neutral-100 relative overflow-hidden">
@@ -1118,65 +1070,104 @@ export function ChatInterface({
                       </div>
                     </div>
 
-                    {/* BARIS 2: ASAL SEKOLAH & NOMOR WHATSAPP */}
+                    {/* BARIS 2: ASAL SEKOLAH (DENGAN SEARCH BOX) & NOMOR WHATSAPP */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="relative" ref={sekolahDropdownRef}>
                         <label className="block font-semibold text-neutral-700 mb-1">
                           Asal Sekolah *
                         </label>
-                        <div className="relative">
-                          <input
-                            type="text"
-                            required
-                            value={formData.asalSekolah}
-                            onFocus={() => setIsSekolahDropdownOpen(true)}
-                            onChange={(e) => {
-                              setFormData({ ...formData, asalSekolah: e.target.value });
-                              setIsSekolahDropdownOpen(true);
-                            }}
-                            placeholder="Ketik / pilih sekolah..."
-                            className="w-full px-3 py-2 pr-8 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setIsSekolahDropdownOpen(!isSekolahDropdownOpen)}
-                            className="absolute inset-y-0 right-0 flex items-center px-2.5 text-neutral-400 hover:text-[#006837] transition-colors cursor-pointer"
+                        
+                        {/* Tombol Pilihan Asal Sekolah */}
+                        <div
+                          onClick={() => {
+                            setIsSekolahDropdownOpen(!isSekolahDropdownOpen);
+                            setSearchSekolah("");
+                          }}
+                          className="relative w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] bg-white text-xs sm:text-sm cursor-pointer select-none h-10 flex items-center justify-between"
+                        >
+                          <span
+                            className={cn(
+                              "truncate font-medium",
+                              formData.asalSekolah ? "text-neutral-800" : "text-neutral-400"
+                            )}
                           >
-                            <ChevronDown
-                              className={cn(
-                                "w-4 h-4 transition-transform duration-200",
-                                isSekolahDropdownOpen ? "rotate-180 text-[#006837]" : ""
-                              )}
-                            />
-                          </button>
+                            {formData.asalSekolah || "Ketik / pilih sekolah..."}
+                          </span>
+                          <ChevronDown
+                            className={cn(
+                              "w-4 h-4 text-neutral-400 transition-transform duration-200 shrink-0",
+                              isSekolahDropdownOpen ? "rotate-180 text-[#006837]" : ""
+                            )}
+                          />
                         </div>
 
+                        {/* Dropdown Pencarian Sekolah */}
                         {isSekolahDropdownOpen && (
-                          <div className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-neutral-200 rounded-xl shadow-lg text-xs divide-y divide-neutral-100">
-                            {filteredSekolah.length > 0 ? (
-                              filteredSekolah.map((sekolah, idx) => (
+                          <div className="absolute z-50 left-0 right-0 mt-1.5 bg-white border border-neutral-200 rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+                            {/* Kolom Pencarian di dalam Dropdown */}
+                            <div className="p-2 border-b border-neutral-100 bg-neutral-50/90 sticky top-0 z-10 flex items-center gap-2">
+                              <Search className="w-4 h-4 text-neutral-400 shrink-0 ml-1" />
+                              <input
+                                ref={searchSekolahInputRef}
+                                type="text"
+                                value={searchSekolah}
+                                onChange={(e) => setSearchSekolah(e.target.value)}
+                                placeholder="Cari nama sekolah / NPSN..."
+                                className="w-full bg-transparent text-xs py-1.5 px-1 text-neutral-800 placeholder-neutral-400 focus:outline-none"
+                              />
+                              {searchSekolah && (
                                 <button
-                                  key={`sekolah-${idx}`}
                                   type="button"
-                                  onClick={() => {
-                                    setFormData({ ...formData, asalSekolah: sekolah.nama });
-                                    setIsSekolahDropdownOpen(false);
-                                  }}
-                                  className="w-full text-left px-3 py-2 hover:bg-green-50 hover:text-[#006837] transition-colors flex justify-between items-center cursor-pointer"
+                                  onClick={() => setSearchSekolah("")}
+                                  className="p-1 hover:bg-neutral-200 rounded-full text-neutral-400 hover:text-neutral-600"
                                 >
-                                  <span className="font-medium text-neutral-800">
-                                    {sekolah.nama}
-                                  </span>
-                                  <span className="text-[10px] bg-neutral-100 text-neutral-500 px-1.5 py-0.5 rounded font-mono shrink-0 ml-2">
-                                    {sekolah.jenjang}
-                                  </span>
+                                  <X className="w-3 h-3" />
                                 </button>
-                              ))
-                            ) : (
-                              <div className="px-3 py-2.5 text-neutral-400 italic text-center">
-                                Sekolah tidak ditemukan (Ketik manual)
-                              </div>
-                            )}
+                              )}
+                            </div>
+
+                            {/* List Hasil Pencarian */}
+                            <div className="max-h-52 overflow-y-auto divide-y divide-neutral-100 text-xs [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full">
+                              {filteredSekolah.length > 0 ? (
+                                filteredSekolah.slice(0, 100).map((sekolah, idx) => (
+                                  <button
+                                    key={`sekolah-${idx}`}
+                                    type="button"
+                                    onClick={() => {
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        asalSekolah: sekolah.nama,
+                                        npsn: sekolah.npsn || prev.npsn,
+                                      }));
+                                      setIsSekolahDropdownOpen(false);
+                                      setSearchSekolah("");
+                                    }}
+                                    className={cn(
+                                      "w-full text-left px-3.5 py-2.5 hover:bg-green-50 hover:text-[#006837] transition-colors flex justify-between items-center cursor-pointer",
+                                      formData.asalSekolah === sekolah.nama ? "bg-green-50/60 font-semibold text-[#006837]" : ""
+                                    )}
+                                  >
+                                    <div className="min-w-0 pr-2">
+                                      <span className="block truncate text-neutral-800 font-medium">
+                                        {sekolah.nama}
+                                      </span>
+                                      {sekolah.npsn && (
+                                        <span className="text-[10px] text-neutral-400 font-mono">
+                                          NPSN: {sekolah.npsn}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="text-[10px] bg-neutral-100 text-neutral-500 px-1.5 py-0.5 rounded font-mono shrink-0">
+                                      {sekolah.jenjang}
+                                    </span>
+                                  </button>
+                                ))
+                              ) : (
+                                <div className="p-4 text-center text-xs text-neutral-400 italic">
+                                  Sekolah tidak ditemukan.
+                                </div>
+                              )}
+                            </div>
                           </div>
                         )}
                       </div>
@@ -1257,7 +1248,7 @@ export function ChatInterface({
                           required
                           value={formData.npsn}
                           onChange={(e) => handleNpsnChange(e.target.value)}
-                          placeholder="Ketik NPSN (cth: 205XXXXX)"
+                          placeholder="205XXXXX"
                           className="w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] text-xs sm:text-sm h-10 font-mono"
                         />
                       </div>
