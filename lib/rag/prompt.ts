@@ -102,7 +102,7 @@ const OVERVIEW_CONTEXT = `RINGKASAN TUGAS & CAKUPAN LAYANAN SIPA-NGAWI:
 - Pelestarian kebudayaan lokal, pendaftaran cagar budaya, dan izin kegiatan kebudayaan Ngawi.`;
 
 const TICKET_ESCALATION_GUIDANCE = `PANDUAN ALUR ESKALASI PENGADUAN KE ADMIN/APLIKATOR DINAS:
-- Jika kendala data HANYA BISA DIEKSEKUSI oleh Admin Dinas (seperti Penyesuaian Backend Jam Mengajar, NIK Terkunci/Ganda, Mutasi PTK Backend, Buka Kunci DPA):
+- Jika kendala data HANYA BISA DIEKSEKUSI oleh Admin Dinas (seperti Penyesuaian Jam Mengajar, NIK Terkunci/Ganda, Mutasi PTK Backend, Buka Kunci DPA):
   1. Tegaskan secara eksplisit bahwa kendala ini TIDAK BISA diubah sendiri oleh Guru/Operator Sekolah dan murni memerlukan tindakan backend Admin/Aplikator Dinas Pendidikan Ngawi.
   2. Bimbing pengguna mengisi Form Pengaduan Official di aplikasi.
   3. Jelaskan alurnya: Setelah form dikirim -> Tim Aplikator Dinas memproses backend & melakukan konsultasi via WhatsApp jika ada kelengkapan berkas -> Pelapor menerima konfirmasi WhatsApp -> Operator Sekolah melakukan Tarik Data/Sinkronisasi.`;
@@ -134,11 +134,18 @@ function isPureGreeting(message: string): boolean {
 }
 
 /**
- * Logika Deteksi Kodingan & Matematika (Aktif & Presisi)
+ * Logika Deteksi Kodingan & Matematika dengan pengecualian istilah teknis Dapodik
  */
 function isForbiddenTaskQuery(message: string): boolean {
   const normalized = message.toLowerCase();
-  const mathPattern = /([\d]+\s*[\+\-\*/x:]\s*[\d]+)|(berapa|hitung|hasil dari|jumlah dari|matematika|soal)/i;
+  
+  // Jika pertanyaan menyangkut operasional atau informasi instansi/dapodik/infogtk, JANGAN DIBLOKIR
+  const allowedKeywords = ["dapodik", "infogtk", "info gtk", "tarik data", "sinkron", "pip", "beasiswa", "ptk", "verval", "mutasi", "sipa", "ngawi"];
+  if (allowedKeywords.some((kw) => normalized.includes(kw))) {
+    return false;
+  }
+
+  const mathPattern = /([\d]+\s*[\+\-\*/x:]\s*[\d]+)|(berapa|hitung|hasil dari|jumlah dari|matematika)/i;
   const wordMathPattern = /(kali|tambah|kurang|bagi|dikali|dibagi|penjumlahan|perkalian|pengurangan|pembagian)/i;
   
   const forbiddenKeywords = [
