@@ -3917,11 +3917,3446 @@ export const DATABASE_SEKOLAH_NGAWI: Record<string, { nama: string; jenjang: str
   "69954975": {
     "nama": "TK Islam Terpadu Raden Syahid XI",
     "jenjang": "TK/PAUD"
+  },
+  "60717928": {
+    "nama": "MI Muhammadiyah Jagir",
+    "jenjang": "SD/MI"
+  },
+  "60717930": {
+    "nama": "MI Muhammadiyah Nglencong",
+    "jenjang": "SD/MI"
+  },
+  "60717929": {
+    "nama": "MI Muhammadiyah Ngrendeng",
+    "jenjang": "SD/MI"
+  },
+  "60717925": {
+    "nama": "MI Yaspi 2 Ketanggung",
+    "jenjang": "SD/MI"
+  },
+  "60727017": {
+    "nama": "MI Yaspi 3 Pocol",
+    "jenjang": "SD/MI"
+  },
+  "60717926": {
+    "nama": "MI Yaspi 6 Bayemrejo",
+    "jenjang": "SD/MI"
+  },
+  "60717927": {
+    "nama": "MI Yaspi 7 Sumbersari",
+    "jenjang": "SD/MI"
+  },
+  "60717924": {
+    "nama": "MIN 12 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "20582564": {
+    "nama": "MTS AL Irsyad AL Islamiyyah",
+    "jenjang": "SMP/MTs"
+  },
+  "20582565": {
+    "nama": "MTS Yaspi SINE",
+    "jenjang": "SMP/MTs"
+  },
+  "20582563": {
+    "nama": "MTSN 7 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20555403": {
+    "nama": "SD Muhammadiyah 1 SINE",
+    "jenjang": "SD/MI"
+  },
+  "20539267": {
+    "nama": "SD Negeri Gendol",
+    "jenjang": "SD/MI"
+  },
+  "20509101": {
+    "nama": "SD Negeri Girikerto 1",
+    "jenjang": "SD/MI"
+  },
+  "20509100": {
+    "nama": "SD Negeri Girikerto 2",
+    "jenjang": "SD/MI"
+  },
+  "20509113": {
+    "nama": "SD Negeri Hargosari 1",
+    "jenjang": "SD/MI"
+  },
+  "20509112": {
+    "nama": "SD Negeri Hargosari 2",
+    "jenjang": "SD/MI"
+  },
+  "20509110": {
+    "nama": "SD Negeri Jagir 1",
+    "jenjang": "SD/MI"
+  },
+  "20509109": {
+    "nama": "SD Negeri Jagir 2",
+    "jenjang": "SD/MI"
+  },
+  "20509108": {
+    "nama": "SD Negeri Jagir 3",
+    "jenjang": "SD/MI"
+  },
+  "20509092": {
+    "nama": "SD Negeri Jagir 4",
+    "jenjang": "SD/MI"
+  },
+  "20508986": {
+    "nama": "SD Negeri Kauman 1",
+    "jenjang": "SD/MI"
+  },
+  "20508358": {
+    "nama": "SD Negeri Ketanggung 1",
+    "jenjang": "SD/MI"
+  },
+  "20508337": {
+    "nama": "SD Negeri Kuniran 1",
+    "jenjang": "SD/MI"
+  },
+  "20508336": {
+    "nama": "SD Negeri Kuniran 2",
+    "jenjang": "SD/MI"
+  },
+  "20508335": {
+    "nama": "SD Negeri Kuniran 3",
+    "jenjang": "SD/MI"
+  },
+  "20508397": {
+    "nama": "SD Negeri Ngrendeng 2",
+    "jenjang": "SD/MI"
+  },
+  "20508403": {
+    "nama": "SD Negeri Pandansari",
+    "jenjang": "SD/MI"
+  },
+  "20508224": {
+    "nama": "SD Negeri Pocol",
+    "jenjang": "SD/MI"
+  },
+  "20508584": {
+    "nama": "SD Negeri SINE 1",
+    "jenjang": "SD/MI"
+  },
+  "20508582": {
+    "nama": "SD Negeri SINE 3",
+    "jenjang": "SD/MI"
+  },
+  "20508578": {
+    "nama": "SD Negeri Sumberejo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508560": {
+    "nama": "SD Negeri Sumbersari 1",
+    "jenjang": "SD/MI"
+  },
+  "20508561": {
+    "nama": "SD Negeri Sumbersari 2",
+    "jenjang": "SD/MI"
+  },
+  "20508635": {
+    "nama": "SD Negeri Tulakan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508634": {
+    "nama": "SD Negeri Tulakan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508633": {
+    "nama": "SD Negeri Tulakan 3",
+    "jenjang": "SD/MI"
+  },
+  "20508644": {
+    "nama": "SD Negeri Tulakan 4",
+    "jenjang": "SD/MI"
+  },
+  "20508646": {
+    "nama": "SD Negeri Tulakan 6",
+    "jenjang": "SD/MI"
+  },
+  "20508627": {
+    "nama": "SD Negeri Wonosari 1",
+    "jenjang": "SD/MI"
+  },
+  "20508626": {
+    "nama": "SD Negeri Wonosari 2",
+    "jenjang": "SD/MI"
+  },
+  "20566401": {
+    "nama": "SDIT AL Ihsan SINE",
+    "jenjang": "SD/MI"
+  },
+  "20577221": {
+    "nama": "SDIT AL Islam SINE",
+    "jenjang": "SD/MI"
+  },
+  "20508459": {
+    "nama": "SMP Muhammadiyah 2 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508457": {
+    "nama": "SMP Muhammadiyah 4 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508539": {
+    "nama": "SMP Negeri 1 SINE",
+    "jenjang": "SMP/MTs"
+  },
+  "20508496": {
+    "nama": "SMP Negeri 2 SINE",
+    "jenjang": "SMP/MTs"
+  },
+  "20554802": {
+    "nama": "SMP Negeri 3 SINE",
+    "jenjang": "SMP/MTs"
+  },
+  "60717896": {
+    "nama": "MI Muhammadiyah Cepoko",
+    "jenjang": "SD/MI"
+  },
+  "60717894": {
+    "nama": "MI Muhammadiyah Pucangan",
+    "jenjang": "SD/MI"
+  },
+  "60717897": {
+    "nama": "MI Muhammadiyah Tawangrejo",
+    "jenjang": "SD/MI"
+  },
+  "60717895": {
+    "nama": "MI PSM Gedoro",
+    "jenjang": "SD/MI"
+  },
+  "60717899": {
+    "nama": "MI PSM Hargomulyo",
+    "jenjang": "SD/MI"
+  },
+  "60717900": {
+    "nama": "MI PSM Nglaran",
+    "jenjang": "SD/MI"
+  },
+  "60717898": {
+    "nama": "MI PSM Wakah",
+    "jenjang": "SD/MI"
+  },
+  "60717893": {
+    "nama": "MIN 11 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "20582555": {
+    "nama": "MTS Darul Hikmah",
+    "jenjang": "SMP/MTs"
+  },
+  "20582554": {
+    "nama": "MTSN 8 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508671": {
+    "nama": "SD IT AL Mukminun",
+    "jenjang": "SD/MI"
+  },
+  "20573190": {
+    "nama": "SD Muhammadiyah 1 Ngrambe",
+    "jenjang": "SD/MI"
+  },
+  "20508665": {
+    "nama": "SD Negeri Babadan 1",
+    "jenjang": "SD/MI"
+  },
+  "20539262": {
+    "nama": "SD Negeri Babadan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508729": {
+    "nama": "SD Negeri Cepoko 1",
+    "jenjang": "SD/MI"
+  },
+  "20508739": {
+    "nama": "SD Negeri Cepoko 3",
+    "jenjang": "SD/MI"
+  },
+  "20508738": {
+    "nama": "SD Negeri Cepoko 4",
+    "jenjang": "SD/MI"
+  },
+  "20509103": {
+    "nama": "SD Negeri Giriharjo 1",
+    "jenjang": "SD/MI"
+  },
+  "20509102": {
+    "nama": "SD Negeri Giriharjo 2",
+    "jenjang": "SD/MI"
+  },
+  "20509120": {
+    "nama": "SD Negeri Hargomulyo 2",
+    "jenjang": "SD/MI"
+  },
+  "20509114": {
+    "nama": "SD Negeri Hargomulyo 4",
+    "jenjang": "SD/MI"
+  },
+  "20508373": {
+    "nama": "SD Negeri Krandegan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508372": {
+    "nama": "SD Negeri Krandegan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508328": {
+    "nama": "SD Negeri Manisharjo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508422": {
+    "nama": "SD Negeri Manisharjo 3",
+    "jenjang": "SD/MI"
+  },
+  "20508421": {
+    "nama": "SD Negeri Manisharjo 4",
+    "jenjang": "SD/MI"
+  },
+  "20508425": {
+    "nama": "SD Negeri Mendiro 2",
+    "jenjang": "SD/MI"
+  },
+  "20508391": {
+    "nama": "SD Negeri Ngrambe 1",
+    "jenjang": "SD/MI"
+  },
+  "20508390": {
+    "nama": "SD Negeri Ngrambe 2",
+    "jenjang": "SD/MI"
+  },
+  "20508389": {
+    "nama": "SD Negeri Ngrambe 3",
+    "jenjang": "SD/MI"
+  },
+  "20508223": {
+    "nama": "SD Negeri Pucangan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508232": {
+    "nama": "SD Negeri Pucangan 3",
+    "jenjang": "SD/MI"
+  },
+  "20554874": {
+    "nama": "SD Negeri Sambirejo",
+    "jenjang": "SD/MI"
+  },
+  "20508283": {
+    "nama": "SD Negeri Setono 1",
+    "jenjang": "SD/MI"
+  },
+  "20508282": {
+    "nama": "SD Negeri Setono 2",
+    "jenjang": "SD/MI"
+  },
+  "20508279": {
+    "nama": "SD Negeri Setono 5",
+    "jenjang": "SD/MI"
+  },
+  "20508295": {
+    "nama": "SD Negeri Sidomulyo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508572": {
+    "nama": "SD Negeri Tawangrejo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508571": {
+    "nama": "SD Negeri Tawangrejo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508655": {
+    "nama": "SD Negeri Wakah 1",
+    "jenjang": "SD/MI"
+  },
+  "20508654": {
+    "nama": "SD Negeri Wakah 2",
+    "jenjang": "SD/MI"
+  },
+  "70058139": {
+    "nama": "SDIT MTA Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "20508460": {
+    "nama": "SMP Muhammadiyah 1 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508543": {
+    "nama": "SMP Negeri 1 Ngrambe",
+    "jenjang": "SMP/MTs"
+  },
+  "20508500": {
+    "nama": "SMP Negeri 2 Ngrambe",
+    "jenjang": "SMP/MTs"
+  },
+  "20508518": {
+    "nama": "SMP Negeri 3 Ngrambe",
+    "jenjang": "SMP/MTs"
+  },
+  "60717847": {
+    "nama": "MI AL Fatah Gerit",
+    "jenjang": "SD/MI"
+  },
+  "60717846": {
+    "nama": "MI Islamiyah Genggong",
+    "jenjang": "SD/MI"
+  },
+  "60717849": {
+    "nama": "MI Salafiyah Ngijo",
+    "jenjang": "SD/MI"
+  },
+  "60717848": {
+    "nama": "MI Salafiyah Tanjungsari",
+    "jenjang": "SD/MI"
+  },
+  "60717845": {
+    "nama": "MIN 9 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "69983030": {
+    "nama": "MIS Ashabu Suffah",
+    "jenjang": "SD/MI"
+  },
+  "60729665": {
+    "nama": "MTS Persiapan",
+    "jenjang": "SMP/MTs"
+  },
+  "20582537": {
+    "nama": "MTS SA PP Daarul Mutaallimin",
+    "jenjang": "SMP/MTs"
+  },
+  "20582536": {
+    "nama": "MTS Walisongo",
+    "jenjang": "SMP/MTs"
+  },
+  "20582535": {
+    "nama": "MTSN 9 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "69983096": {
+    "nama": "MTSS AL Khodijah",
+    "jenjang": "SMP/MTs"
+  },
+  "20554708": {
+    "nama": "SD Muhammadiyah 1 Jogorogo",
+    "jenjang": "SD/MI"
+  },
+  "20508721": {
+    "nama": "SD Negeri Brubuh 2",
+    "jenjang": "SD/MI"
+  },
+  "20508715": {
+    "nama": "SD Negeri Dawung 1",
+    "jenjang": "SD/MI"
+  },
+  "20508879": {
+    "nama": "SD Negeri Dawung 2",
+    "jenjang": "SD/MI"
+  },
+  "20509065": {
+    "nama": "SD Negeri Dawung 3",
+    "jenjang": "SD/MI"
+  },
+  "20509099": {
+    "nama": "SD Negeri Girimulyo 1",
+    "jenjang": "SD/MI"
+  },
+  "20509098": {
+    "nama": "SD Negeri Girimulyo 2",
+    "jenjang": "SD/MI"
+  },
+  "20509072": {
+    "nama": "SD Negeri Jaten 1",
+    "jenjang": "SD/MI"
+  },
+  "20509071": {
+    "nama": "SD Negeri Jaten 2",
+    "jenjang": "SD/MI"
+  },
+  "20508935": {
+    "nama": "SD Negeri Jogorogo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508934": {
+    "nama": "SD Negeri Jogorogo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508933": {
+    "nama": "SD Negeri Jogorogo 3",
+    "jenjang": "SD/MI"
+  },
+  "20508932": {
+    "nama": "SD Negeri Jogorogo 4",
+    "jenjang": "SD/MI"
+  },
+  "20508930": {
+    "nama": "SD Negeri Jogorogo 6",
+    "jenjang": "SD/MI"
+  },
+  "20508378": {
+    "nama": "SD Negeri Kletekan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508377": {
+    "nama": "SD Negeri Kletekan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508354": {
+    "nama": "SD Negeri Macanan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508352": {
+    "nama": "SD Negeri Macanan 3",
+    "jenjang": "SD/MI"
+  },
+  "20508387": {
+    "nama": "SD Negeri Ngrayudan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508385": {
+    "nama": "SD Negeri Ngrayudan 3",
+    "jenjang": "SD/MI"
+  },
+  "20508579": {
+    "nama": "SD Negeri SOCO 1",
+    "jenjang": "SD/MI"
+  },
+  "20508590": {
+    "nama": "SD Negeri SOCO 2",
+    "jenjang": "SD/MI"
+  },
+  "20508556": {
+    "nama": "SD Negeri Talang 1",
+    "jenjang": "SD/MI"
+  },
+  "20508554": {
+    "nama": "SD Negeri Talang 2",
+    "jenjang": "SD/MI"
+  },
+  "20508575": {
+    "nama": "SD Negeri Tanjungsari 1",
+    "jenjang": "SD/MI"
+  },
+  "20508573": {
+    "nama": "SD Negeri Tanjungsari 3",
+    "jenjang": "SD/MI"
+  },
+  "20508656": {
+    "nama": "SD Negeri Umbulrejo",
+    "jenjang": "SD/MI"
+  },
+  "70036817": {
+    "nama": "SMP AL Falah Jogorogo Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508534": {
+    "nama": "SMP Negeri 1 Jogorogo",
+    "jenjang": "SMP/MTs"
+  },
+  "20508521": {
+    "nama": "SMP Negeri 2 Jogorogo",
+    "jenjang": "SMP/MTs"
+  },
+  "20573416": {
+    "nama": "SMP NUR Yusuf",
+    "jenjang": "SMP/MTs"
+  },
+  "20508531": {
+    "nama": "SMP PGRI Jogorogo",
+    "jenjang": "SMP/MTs"
+  },
+  "60717878": {
+    "nama": "MI AL Mujahidin",
+    "jenjang": "SD/MI"
+  },
+  "60717879": {
+    "nama": "MI Al-hidayah",
+    "jenjang": "SD/MI"
+  },
+  "60717880": {
+    "nama": "MI Darul ULUM",
+    "jenjang": "SD/MI"
+  },
+  "60717873": {
+    "nama": "MI Islamiyah 1 Majasem",
+    "jenjang": "SD/MI"
+  },
+  "60717874": {
+    "nama": "MI Islamiyah 2 Majasem",
+    "jenjang": "SD/MI"
+  },
+  "60717877": {
+    "nama": "MI Muawwanah Ngijo",
+    "jenjang": "SD/MI"
+  },
+  "60717876": {
+    "nama": "MI Mubtadiin Islam",
+    "jenjang": "SD/MI"
+  },
+  "60717872": {
+    "nama": "MI PSM Jerukgulung",
+    "jenjang": "SD/MI"
+  },
+  "60717875": {
+    "nama": "MI PSM Jetak",
+    "jenjang": "SD/MI"
+  },
+  "60717871": {
+    "nama": "MI Salafiyah Tanon",
+    "jenjang": "SD/MI"
+  },
+  "60717870": {
+    "nama": "MIN 1 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "60717869": {
+    "nama": "MIN 3 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "69881687": {
+    "nama": "MTS AL Hidayah Karanggupito",
+    "jenjang": "SMP/MTs"
+  },
+  "20582545": {
+    "nama": "MTS Al-barokah",
+    "jenjang": "SMP/MTs"
+  },
+  "20582547": {
+    "nama": "MTS Al-hidayah Kendal",
+    "jenjang": "SMP/MTs"
+  },
+  "69977779": {
+    "nama": "MTS Darul `ulum",
+    "jenjang": "SMP/MTs"
+  },
+  "20582548": {
+    "nama": "MTS Darul ULUM Kendal",
+    "jenjang": "SMP/MTs"
+  },
+  "69882358": {
+    "nama": "MTS MA`arif",
+    "jenjang": "SMP/MTs"
+  },
+  "69986899": {
+    "nama": "MTSN 13 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20582546": {
+    "nama": "MTSS Sunan Kalijogo",
+    "jenjang": "SMP/MTs"
+  },
+  "69990855": {
+    "nama": "SD Muhammadiyah 1 Kendal",
+    "jenjang": "SD/MI"
+  },
+  "20508737": {
+    "nama": "SD Negeri Dadapan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508736": {
+    "nama": "SD Negeri Dadapan 2",
+    "jenjang": "SD/MI"
+  },
+  "20509063": {
+    "nama": "SD Negeri Gayam 1",
+    "jenjang": "SD/MI"
+  },
+  "20509062": {
+    "nama": "SD Negeri Gayam 2",
+    "jenjang": "SD/MI"
+  },
+  "20509061": {
+    "nama": "SD Negeri Gayam 3",
+    "jenjang": "SD/MI"
+  },
+  "20508896": {
+    "nama": "SD Negeri Karanggupito 1",
+    "jenjang": "SD/MI"
+  },
+  "20508899": {
+    "nama": "SD Negeri Karanggupito 2",
+    "jenjang": "SD/MI"
+  },
+  "20508898": {
+    "nama": "SD Negeri Karanggupito 3",
+    "jenjang": "SD/MI"
+  },
+  "20508897": {
+    "nama": "SD Negeri Karanggupito 4",
+    "jenjang": "SD/MI"
+  },
+  "20508913": {
+    "nama": "SD Negeri Karangrejo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508914": {
+    "nama": "SD Negeri Karangrejo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508915": {
+    "nama": "SD Negeri Karangrejo 3",
+    "jenjang": "SD/MI"
+  },
+  "20508978": {
+    "nama": "SD Negeri Kendal 1",
+    "jenjang": "SD/MI"
+  },
+  "20508977": {
+    "nama": "SD Negeri Kendal 2",
+    "jenjang": "SD/MI"
+  },
+  "20508351": {
+    "nama": "SD Negeri Majasem 1",
+    "jenjang": "SD/MI"
+  },
+  "20508350": {
+    "nama": "SD Negeri Majasem 3",
+    "jenjang": "SD/MI"
+  },
+  "20508349": {
+    "nama": "SD Negeri Majasem 4",
+    "jenjang": "SD/MI"
+  },
+  "20508250": {
+    "nama": "SD Negeri Patalan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508249": {
+    "nama": "SD Negeri Patalan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508248": {
+    "nama": "SD Negeri Patalan 4",
+    "jenjang": "SD/MI"
+  },
+  "20508228": {
+    "nama": "SD Negeri Ploso 1",
+    "jenjang": "SD/MI"
+  },
+  "20508227": {
+    "nama": "SD Negeri Ploso 2",
+    "jenjang": "SD/MI"
+  },
+  "20508292": {
+    "nama": "SD Negeri Sidorejo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508289": {
+    "nama": "SD Negeri Sidorejo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508586": {
+    "nama": "SD Negeri SIMO 1",
+    "jenjang": "SD/MI"
+  },
+  "20508585": {
+    "nama": "SD Negeri SIMO 2",
+    "jenjang": "SD/MI"
+  },
+  "20508547": {
+    "nama": "SMP Negeri 1 Kendal",
+    "jenjang": "SMP/MTs"
+  },
+  "20508504": {
+    "nama": "SMP Negeri 2 Kendal",
+    "jenjang": "SMP/MTs"
+  },
+  "20508509": {
+    "nama": "SMP Negeri 3 Kendal",
+    "jenjang": "SMP/MTs"
+  },
+  "69881903": {
+    "nama": "MI Al-haqqi",
+    "jenjang": "SD/MI"
+  },
+  "69963418": {
+    "nama": "MI AR Risalah",
+    "jenjang": "SD/MI"
+  },
+  "60717839": {
+    "nama": "MI Hidayatul Mubtadiin Dempel",
+    "jenjang": "SD/MI"
+  },
+  "60717840": {
+    "nama": "MI PSM Nglencong",
+    "jenjang": "SD/MI"
+  },
+  "60717838": {
+    "nama": "MI PSM Satriyan",
+    "jenjang": "SD/MI"
+  },
+  "60717837": {
+    "nama": "MIN 2 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "70023688": {
+    "nama": "MTS Kalijogo",
+    "jenjang": "SMP/MTs"
+  },
+  "69986898": {
+    "nama": "MTSN 12 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508686": {
+    "nama": "SD Negeri Baderan 2",
+    "jenjang": "SD/MI"
+  },
+  "20509050": {
+    "nama": "SD Negeri Dempel 1",
+    "jenjang": "SD/MI"
+  },
+  "20509049": {
+    "nama": "SD Negeri Dempel 2",
+    "jenjang": "SD/MI"
+  },
+  "20509048": {
+    "nama": "SD Negeri Dempel 3",
+    "jenjang": "SD/MI"
+  },
+  "20509035": {
+    "nama": "SD Negeri Geneng 2",
+    "jenjang": "SD/MI"
+  },
+  "20509034": {
+    "nama": "SD Negeri Geneng 3",
+    "jenjang": "SD/MI"
+  },
+  "20509033": {
+    "nama": "SD Negeri Geneng 4",
+    "jenjang": "SD/MI"
+  },
+  "20508916": {
+    "nama": "SD Negeri Kasreman 1",
+    "jenjang": "SD/MI"
+  },
+  "20508992": {
+    "nama": "SD Negeri Kasreman 3",
+    "jenjang": "SD/MI"
+  },
+  "20508974": {
+    "nama": "SD Negeri Keniten 1",
+    "jenjang": "SD/MI"
+  },
+  "20508973": {
+    "nama": "SD Negeri Keniten 2",
+    "jenjang": "SD/MI"
+  },
+  "20508365": {
+    "nama": "SD Negeri Keraswetan",
+    "jenjang": "SD/MI"
+  },
+  "20508363": {
+    "nama": "SD Negeri Kersikan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508362": {
+    "nama": "SD Negeri Kersikan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508360": {
+    "nama": "SD Negeri Kersoharjo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508380": {
+    "nama": "SD Negeri Klampisan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508379": {
+    "nama": "SD Negeri Klampisan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508375": {
+    "nama": "SD Negeri Klitik 1",
+    "jenjang": "SD/MI"
+  },
+  "20508374": {
+    "nama": "SD Negeri Klitik 2",
+    "jenjang": "SD/MI"
+  },
+  "20508293": {
+    "nama": "SD Negeri Sidorejo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508290": {
+    "nama": "SD Negeri Sidorejo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508438": {
+    "nama": "SD Negeri Sidorejo 3",
+    "jenjang": "SD/MI"
+  },
+  "20508550": {
+    "nama": "SD Negeri Tambakromo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508576": {
+    "nama": "SD Negeri Tambakromo 3",
+    "jenjang": "SD/MI"
+  },
+  "20508637": {
+    "nama": "SD Negeri Tepas 3",
+    "jenjang": "SD/MI"
+  },
+  "20575898": {
+    "nama": "SD PLUS Darussalam",
+    "jenjang": "SD/MI"
+  },
+  "20508523": {
+    "nama": "SMP Negeri 1 Geneng",
+    "jenjang": "SMP/MTs"
+  },
+  "20508522": {
+    "nama": "SMP Negeri 2 Geneng",
+    "jenjang": "SMP/MTs"
+  },
+  "69994783": {
+    "nama": "MI Fathul HUDA Sumengko",
+    "jenjang": "SD/MI"
+  },
+  "69881904": {
+    "nama": "MI Miftahus Sa Adah",
+    "jenjang": "SD/MI"
+  },
+  "60717881": {
+    "nama": "MIN 10 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "70027469": {
+    "nama": "MTS AL Fatah",
+    "jenjang": "SMP/MTs"
+  },
+  "20582549": {
+    "nama": "MTS PSM Tirak",
+    "jenjang": "SMP/MTs"
+  },
+  "20508685": {
+    "nama": "SD Negeri Banget 1",
+    "jenjang": "SD/MI"
+  },
+  "20508684": {
+    "nama": "SD Negeri Banget 2",
+    "jenjang": "SD/MI"
+  },
+  "20508720": {
+    "nama": "SD Negeri Budug",
+    "jenjang": "SD/MI"
+  },
+  "20509044": {
+    "nama": "SD Negeri Dinden 1",
+    "jenjang": "SD/MI"
+  },
+  "20509043": {
+    "nama": "SD Negeri Dinden 2",
+    "jenjang": "SD/MI"
+  },
+  "20509082": {
+    "nama": "SD Negeri Jenangan",
+    "jenjang": "SD/MI"
+  },
+  "20508926": {
+    "nama": "SD Negeri Karangsono 1",
+    "jenjang": "SD/MI"
+  },
+  "20508925": {
+    "nama": "SD Negeri Karangsono 2",
+    "jenjang": "SD/MI"
+  },
+  "20508924": {
+    "nama": "SD Negeri Karangsono 3",
+    "jenjang": "SD/MI"
+  },
+  "20508975": {
+    "nama": "SD Negeri Kendung",
+    "jenjang": "SD/MI"
+  },
+  "20508334": {
+    "nama": "SD Negeri Kwadungan",
+    "jenjang": "SD/MI"
+  },
+  "20508431": {
+    "nama": "SD Negeri Mojomanis 2",
+    "jenjang": "SD/MI"
+  },
+  "20508220": {
+    "nama": "SD Negeri Pojok 1",
+    "jenjang": "SD/MI"
+  },
+  "20508244": {
+    "nama": "SD Negeri Purwosari 1",
+    "jenjang": "SD/MI"
+  },
+  "20508243": {
+    "nama": "SD Negeri Purwosari 2",
+    "jenjang": "SD/MI"
+  },
+  "20508587": {
+    "nama": "SD Negeri SIMO",
+    "jenjang": "SD/MI"
+  },
+  "20508559": {
+    "nama": "SD Negeri Sumengko",
+    "jenjang": "SD/MI"
+  },
+  "20508636": {
+    "nama": "SD Negeri Tirak",
+    "jenjang": "SD/MI"
+  },
+  "20508653": {
+    "nama": "SD Negeri Warukkalong 1",
+    "jenjang": "SD/MI"
+  },
+  "20508652": {
+    "nama": "SD Negeri Warukkalong 2",
+    "jenjang": "SD/MI"
+  },
+  "69988878": {
+    "nama": "SMP Miftahus Saadah",
+    "jenjang": "SMP/MTs"
+  },
+  "20508546": {
+    "nama": "SMP Negeri 1 Kwadungan",
+    "jenjang": "SMP/MTs"
+  },
+  "20508503": {
+    "nama": "SMP Negeri 2 Kwadungan",
+    "jenjang": "SMP/MTs"
+  },
+  "69853582": {
+    "nama": "MI Al-amnaniyah Paras",
+    "jenjang": "SD/MI"
+  },
+  "69927941": {
+    "nama": "MI Terpadu Nurul Islam",
+    "jenjang": "SD/MI"
+  },
+  "60717902": {
+    "nama": "MIN 13 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "70029394": {
+    "nama": "MTS Nahdlatul Ulama",
+    "jenjang": "SMP/MTs"
+  },
+  "20582557": {
+    "nama": "MTSN 2 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508663": {
+    "nama": "SD Negeri Babadan 2",
+    "jenjang": "SD/MI"
+  },
+  "20509064": {
+    "nama": "SD Negeri Gandri 2",
+    "jenjang": "SD/MI"
+  },
+  "20509053": {
+    "nama": "SD Negeri Gandri I",
+    "jenjang": "SD/MI"
+  },
+  "20508393": {
+    "nama": "SD Negeri Ngompro I",
+    "jenjang": "SD/MI"
+  },
+  "20508392": {
+    "nama": "SD Negeri Ngompro II",
+    "jenjang": "SD/MI"
+  },
+  "20508258": {
+    "nama": "SD Negeri Pangkur I",
+    "jenjang": "SD/MI"
+  },
+  "20508256": {
+    "nama": "SD Negeri Pangkur III",
+    "jenjang": "SD/MI"
+  },
+  "20508253": {
+    "nama": "SD Negeri Paras 2",
+    "jenjang": "SD/MI"
+  },
+  "20508230": {
+    "nama": "SD Negeri Pleset I",
+    "jenjang": "SD/MI"
+  },
+  "20508229": {
+    "nama": "SD Negeri Pleset II",
+    "jenjang": "SD/MI"
+  },
+  "20508218": {
+    "nama": "SD Negeri Pohkonyal",
+    "jenjang": "SD/MI"
+  },
+  "20508598": {
+    "nama": "SD Negeri Sumber",
+    "jenjang": "SD/MI"
+  },
+  "20508650": {
+    "nama": "SD Negeri Waruk Tengah 2",
+    "jenjang": "SD/MI"
+  },
+  "20508651": {
+    "nama": "SD Negeri Waruktengah I",
+    "jenjang": "SD/MI"
+  },
+  "20508541": {
+    "nama": "SMP Negeri 1 Pangkur",
+    "jenjang": "SMP/MTs"
+  },
+  "60717853": {
+    "nama": "MI Islamiyah Ringinanom",
+    "jenjang": "SD/MI"
+  },
+  "60717854": {
+    "nama": "MIS AL Hidayah Sidokerto",
+    "jenjang": "SD/MI"
+  },
+  "20582538": {
+    "nama": "MTS KP Karangjati",
+    "jenjang": "SMP/MTs"
+  },
+  "20582539": {
+    "nama": "MTS Miftahul Lubab",
+    "jenjang": "SMP/MTs"
+  },
+  "20582540": {
+    "nama": "MTSS Al-hidayah",
+    "jenjang": "SMP/MTs"
+  },
+  "20557627": {
+    "nama": "SD Islam AL Amnaniyah Karangjati",
+    "jenjang": "SD/MI"
+  },
+  "20574960": {
+    "nama": "SD Muhammadiyah 1 Karangjati",
+    "jenjang": "SD/MI"
+  },
+  "20508741": {
+    "nama": "SD Negeri Brangol 1",
+    "jenjang": "SD/MI"
+  },
+  "20508718": {
+    "nama": "SD Negeri Campurasri 1",
+    "jenjang": "SD/MI"
+  },
+  "20508719": {
+    "nama": "SD Negeri Campurasri 2",
+    "jenjang": "SD/MI"
+  },
+  "20539264": {
+    "nama": "SD Negeri Danguk",
+    "jenjang": "SD/MI"
+  },
+  "20509017": {
+    "nama": "SD Negeri Gempol 1",
+    "jenjang": "SD/MI"
+  },
+  "20509016": {
+    "nama": "SD Negeri Gempol 2",
+    "jenjang": "SD/MI"
+  },
+  "20509089": {
+    "nama": "SD Negeri Jatipuro 1",
+    "jenjang": "SD/MI"
+  },
+  "20509088": {
+    "nama": "SD Negeri Jatipuro 2",
+    "jenjang": "SD/MI"
+  },
+  "20509090": {
+    "nama": "SD Negeri Jatipuro 3",
+    "jenjang": "SD/MI"
+  },
+  "20508895": {
+    "nama": "SD Negeri Karangjati 1",
+    "jenjang": "SD/MI"
+  },
+  "20508894": {
+    "nama": "SD Negeri Karangjati 2",
+    "jenjang": "SD/MI"
+  },
+  "20508958": {
+    "nama": "SD Negeri Kedungmiri",
+    "jenjang": "SD/MI"
+  },
+  "20508343": {
+    "nama": "SD Negeri Legundi 1",
+    "jenjang": "SD/MI"
+  },
+  "20508342": {
+    "nama": "SD Negeri Legundi 2",
+    "jenjang": "SD/MI"
+  },
+  "20508226": {
+    "nama": "SD Negeri Ploso LOR 1",
+    "jenjang": "SD/MI"
+  },
+  "20539270": {
+    "nama": "SD Negeri Puhti 2",
+    "jenjang": "SD/MI"
+  },
+  "20508239": {
+    "nama": "SD Negeri Rejomulyo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508238": {
+    "nama": "SD Negeri Rejomulyo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508237": {
+    "nama": "SD Negeri Rejuno 1",
+    "jenjang": "SD/MI"
+  },
+  "20508246": {
+    "nama": "SD Negeri Rejuno 5",
+    "jenjang": "SD/MI"
+  },
+  "20508312": {
+    "nama": "SD Negeri Ringinanom",
+    "jenjang": "SD/MI"
+  },
+  "20508302": {
+    "nama": "SD Negeri SAWO 1",
+    "jenjang": "SD/MI"
+  },
+  "20508319": {
+    "nama": "SD Negeri Sembung 1",
+    "jenjang": "SD/MI"
+  },
+  "20508318": {
+    "nama": "SD Negeri Sembung 2",
+    "jenjang": "SD/MI"
+  },
+  "20508276": {
+    "nama": "SD Negeri Sidokerto 1",
+    "jenjang": "SD/MI"
+  },
+  "20508277": {
+    "nama": "SD Negeri Sidokerto 2",
+    "jenjang": "SD/MI"
+  },
+  "20508291": {
+    "nama": "SD Negeri Sidorejo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508274": {
+    "nama": "SD Negeri Sidorejo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508687": {
+    "nama": "SDI AL Amnaniyah Puhti Karangjati",
+    "jenjang": "SD/MI"
+  },
+  "20574962": {
+    "nama": "SDIT AL IMAM Asy-syafii",
+    "jenjang": "SD/MI"
+  },
+  "20557628": {
+    "nama": "SMP AL Amnaniyah Karangjati",
+    "jenjang": "SMP/MTs"
+  },
+  "20508535": {
+    "nama": "SMP Negeri 1 Karangjati",
+    "jenjang": "SMP/MTs"
+  },
+  "20508506": {
+    "nama": "SMP Negeri 2 Karangjati",
+    "jenjang": "SMP/MTs"
+  },
+  "20508508": {
+    "nama": "SMP Negeri 3 Karangjati",
+    "jenjang": "SMP/MTs"
+  },
+  "20508548": {
+    "nama": "SMP PGRI Karangjati",
+    "jenjang": "SMP/MTs"
+  },
+  "69819611": {
+    "nama": "MI Al Karomah",
+    "jenjang": "SD/MI"
+  },
+  "60717836": {
+    "nama": "MI AL Yusufiyah",
+    "jenjang": "SD/MI"
+  },
+  "60717835": {
+    "nama": "MI Darussalam",
+    "jenjang": "SD/MI"
+  },
+  "60717834": {
+    "nama": "MI Islamiyah Legowetan",
+    "jenjang": "SD/MI"
+  },
+  "20582531": {
+    "nama": "MTS Al-karomah",
+    "jenjang": "SMP/MTs"
+  },
+  "69787299": {
+    "nama": "MTS Walisongo Sumberbening",
+    "jenjang": "SMP/MTs"
+  },
+  "20508725": {
+    "nama": "SD Negeri Bringin 01",
+    "jenjang": "SD/MI"
+  },
+  "20508724": {
+    "nama": "SD Negeri Bringin 02",
+    "jenjang": "SD/MI"
+  },
+  "20508723": {
+    "nama": "SD Negeri Bringin 03",
+    "jenjang": "SD/MI"
+  },
+  "20508735": {
+    "nama": "SD Negeri Dampit 01",
+    "jenjang": "SD/MI"
+  },
+  "20508734": {
+    "nama": "SD Negeri Dampit 03",
+    "jenjang": "SD/MI"
+  },
+  "20509047": {
+    "nama": "SD Negeri DERO 01",
+    "jenjang": "SD/MI"
+  },
+  "20509045": {
+    "nama": "SD Negeri DERO 03",
+    "jenjang": "SD/MI"
+  },
+  "20509040": {
+    "nama": "SD Negeri Gandong 01",
+    "jenjang": "SD/MI"
+  },
+  "20509052": {
+    "nama": "SD Negeri Gandong 3",
+    "jenjang": "SD/MI"
+  },
+  "20508971": {
+    "nama": "SD Negeri Kenongorejo 01",
+    "jenjang": "SD/MI"
+  },
+  "20508383": {
+    "nama": "SD Negeri Kenongorejo 05",
+    "jenjang": "SD/MI"
+  },
+  "20508970": {
+    "nama": "SD Negeri Kenongorejo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508356": {
+    "nama": "SD Negeri Krompol 1",
+    "jenjang": "SD/MI"
+  },
+  "20508340": {
+    "nama": "SD Negeri Krompol 2",
+    "jenjang": "SD/MI"
+  },
+  "20508341": {
+    "nama": "SD Negeri Legowetan",
+    "jenjang": "SD/MI"
+  },
+  "20508434": {
+    "nama": "SD Negeri MOJO 1",
+    "jenjang": "SD/MI"
+  },
+  "20508433": {
+    "nama": "SD Negeri MOJO 2",
+    "jenjang": "SD/MI"
+  },
+  "20508593": {
+    "nama": "SD Negeri Sumberbening 05",
+    "jenjang": "SD/MI"
+  },
+  "20508597": {
+    "nama": "SD Negeri Sumberbening 1",
+    "jenjang": "SD/MI"
+  },
+  "20508595": {
+    "nama": "SD Negeri Sumberbening 3",
+    "jenjang": "SD/MI"
+  },
+  "20508594": {
+    "nama": "SD Negeri Sumberbening 4",
+    "jenjang": "SD/MI"
+  },
+  "20508558": {
+    "nama": "SD Negeri Suruh 01",
+    "jenjang": "SD/MI"
+  },
+  "20508524": {
+    "nama": "SMP Negeri 1 Bringin",
+    "jenjang": "SMP/MTs"
+  },
+  "20508537": {
+    "nama": "SMP Negeri 2 Bringin",
+    "jenjang": "SMP/MTs"
+  },
+  "69881905": {
+    "nama": "MI Fathul Ulum",
+    "jenjang": "SD/MI"
+  },
+  "60717901": {
+    "nama": "MI Muhammadiyah Kwadungan LOR",
+    "jenjang": "SD/MI"
+  },
+  "69853581": {
+    "nama": "MI Roudlotus Salamah",
+    "jenjang": "SD/MI"
+  },
+  "20582556": {
+    "nama": "MTS Guppi Padas",
+    "jenjang": "SMP/MTs"
+  },
+  "69948432": {
+    "nama": "SD Muhammadiyah 1 Padas",
+    "jenjang": "SD/MI"
+  },
+  "20508746": {
+    "nama": "SD Negeri Banjaransari 2",
+    "jenjang": "SD/MI"
+  },
+  "20508764": {
+    "nama": "SD Negeri Bendo I",
+    "jenjang": "SD/MI"
+  },
+  "20508763": {
+    "nama": "SD Negeri Bendo II",
+    "jenjang": "SD/MI"
+  },
+  "20508742": {
+    "nama": "SD Negeri Bintoyo",
+    "jenjang": "SD/MI"
+  },
+  "20508956": {
+    "nama": "SD Negeri Kedungprahu 2",
+    "jenjang": "SD/MI"
+  },
+  "20508331": {
+    "nama": "SD Negeri Kwadungan LOR",
+    "jenjang": "SD/MI"
+  },
+  "20508430": {
+    "nama": "SD Negeri Munggut 1",
+    "jenjang": "SD/MI"
+  },
+  "20508429": {
+    "nama": "SD Negeri Munggut II",
+    "jenjang": "SD/MI"
+  },
+  "20508398": {
+    "nama": "SD Negeri Pacing I",
+    "jenjang": "SD/MI"
+  },
+  "20508409": {
+    "nama": "SD Negeri Pacing II",
+    "jenjang": "SD/MI"
+  },
+  "20508408": {
+    "nama": "SD Negeri Padas I",
+    "jenjang": "SD/MI"
+  },
+  "20508407": {
+    "nama": "SD Negeri Padas II",
+    "jenjang": "SD/MI"
+  },
+  "20508303": {
+    "nama": "SD Negeri Sambiroto 2",
+    "jenjang": "SD/MI"
+  },
+  "20508304": {
+    "nama": "SD Negeri Sambiroto I",
+    "jenjang": "SD/MI"
+  },
+  "20508599": {
+    "nama": "SD Negeri Sukowiyono 4",
+    "jenjang": "SD/MI"
+  },
+  "20508602": {
+    "nama": "SD Negeri Sukowiyono I",
+    "jenjang": "SD/MI"
+  },
+  "20508562": {
+    "nama": "SD Negeri Tambakromo I",
+    "jenjang": "SD/MI"
+  },
+  "20508564": {
+    "nama": "SD Negeri Tambakromo II",
+    "jenjang": "SD/MI"
+  },
+  "20508657": {
+    "nama": "SD Negeri Tungkulrejo",
+    "jenjang": "SD/MI"
+  },
+  "69900208": {
+    "nama": "SDI Fathul HUDA Bendo",
+    "jenjang": "SD/MI"
+  },
+  "70037305": {
+    "nama": "SMP Islam Fathul HUDA Bendo",
+    "jenjang": "SMP/MTs"
+  },
+  "20508542": {
+    "nama": "SMP Negeri 1 Padas",
+    "jenjang": "SMP/MTs"
+  },
+  "60717891": {
+    "nama": "MI AL Falah Beran",
+    "jenjang": "SD/MI"
+  },
+  "69983029": {
+    "nama": "MI AL Hijrah 01",
+    "jenjang": "SD/MI"
+  },
+  "60729507": {
+    "nama": "MI AN NOOR Karangasri",
+    "jenjang": "SD/MI"
+  },
+  "60717892": {
+    "nama": "MI Muhammadiyah Kartoharjo",
+    "jenjang": "SD/MI"
+  },
+  "70034629": {
+    "nama": "MI NUSA Bakti",
+    "jenjang": "SD/MI"
+  },
+  "60717890": {
+    "nama": "MI PSM Watualang",
+    "jenjang": "SD/MI"
+  },
+  "69993390": {
+    "nama": "MI Tahfidz Madinatul Huffadz",
+    "jenjang": "SD/MI"
+  },
+  "60717889": {
+    "nama": "MIN 6 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "69927942": {
+    "nama": "Mistahfidz Ash-habul Kahfi",
+    "jenjang": "SD/MI"
+  },
+  "20582553": {
+    "nama": "MTS PSA An-noor",
+    "jenjang": "SMP/MTs"
+  },
+  "20582552": {
+    "nama": "MTSN 3 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "69934102": {
+    "nama": "SD Islam AL Qolam",
+    "jenjang": "SD/MI"
+  },
+  "20508669": {
+    "nama": "SD Katolik Santo Yosef",
+    "jenjang": "SD/MI"
+  },
+  "20554776": {
+    "nama": "SD Luqman AL Hakim",
+    "jenjang": "SD/MI"
+  },
+  "20508688": {
+    "nama": "SD Muhammadiyah 1 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "20508767": {
+    "nama": "SD Negeri Banyuurip",
+    "jenjang": "SD/MI"
+  },
+  "20508759": {
+    "nama": "SD Negeri Beran 4",
+    "jenjang": "SD/MI"
+  },
+  "20508758": {
+    "nama": "SD Negeri Beran 5",
+    "jenjang": "SD/MI"
+  },
+  "20508757": {
+    "nama": "SD Negeri Beran 6",
+    "jenjang": "SD/MI"
+  },
+  "20509096": {
+    "nama": "SD Negeri Grudo 3 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "20509095": {
+    "nama": "SD Negeri Grudo 4",
+    "jenjang": "SD/MI"
+  },
+  "20508940": {
+    "nama": "SD Negeri Jururejo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508624": {
+    "nama": "SD Negeri Kandangan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508945": {
+    "nama": "SD Negeri Karangasri 1",
+    "jenjang": "SD/MI"
+  },
+  "20508943": {
+    "nama": "SD Negeri Karangasri 3",
+    "jenjang": "SD/MI"
+  },
+  "20508920": {
+    "nama": "SD Negeri Karangtengah 1",
+    "jenjang": "SD/MI"
+  },
+  "20508922": {
+    "nama": "SD Negeri Karangtengah 4",
+    "jenjang": "SD/MI"
+  },
+  "20508357": {
+    "nama": "SD Negeri Karangtengah Prandon 1",
+    "jenjang": "SD/MI"
+  },
+  "20508338": {
+    "nama": "SD Negeri Karangtengah Prandon 2",
+    "jenjang": "SD/MI"
+  },
+  "20508917": {
+    "nama": "SD Negeri Kartoharjo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508364": {
+    "nama": "SD Negeri Kerek",
+    "jenjang": "SD/MI"
+  },
+  "20508359": {
+    "nama": "SD Negeri Ketanggi 2",
+    "jenjang": "SD/MI"
+  },
+  "20508347": {
+    "nama": "SD Negeri Mangunharjo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508346": {
+    "nama": "SD Negeri Mangunharjo 3",
+    "jenjang": "SD/MI"
+  },
+  "20508344": {
+    "nama": "SD Negeri Mangunharjo 4",
+    "jenjang": "SD/MI"
+  },
+  "20508414": {
+    "nama": "SD Negeri Margomulyo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508413": {
+    "nama": "SD Negeri Margomulyo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508394": {
+    "nama": "SD Negeri Ngawi Purba 2",
+    "jenjang": "SD/MI"
+  },
+  "20508266": {
+    "nama": "SD Negeri Pelem 2 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "20508649": {
+    "nama": "SD Negeri Watualang 1",
+    "jenjang": "SD/MI"
+  },
+  "20508647": {
+    "nama": "SD Negeri Watualang 3",
+    "jenjang": "SD/MI"
+  },
+  "20554778": {
+    "nama": "SDIT Harapan Ummat",
+    "jenjang": "SD/MI"
+  },
+  "69985721": {
+    "nama": "SMP Luqman AL Hakim",
+    "jenjang": "SMP/MTs"
+  },
+  "20508461": {
+    "nama": "SMP Maarif Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508455": {
+    "nama": "SMP Muhammadiyah 5 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508544": {
+    "nama": "SMP Negeri 1 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508501": {
+    "nama": "SMP Negeri 2 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508519": {
+    "nama": "SMP Negeri 3 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508514": {
+    "nama": "SMP Negeri 4 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508512": {
+    "nama": "SMP Negeri 5 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508510": {
+    "nama": "SMP Negeri 6 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "69985988": {
+    "nama": "SMP Syafaatul ULUM Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "70043951": {
+    "nama": "SMP Tahfidzul Quran Madinatul Huffadz",
+    "jenjang": "SMP/MTs"
+  },
+  "69992898": {
+    "nama": "SMP Tahfizh AL Qolam",
+    "jenjang": "SMP/MTs"
+  },
+  "69985788": {
+    "nama": "SMP Wahidiyah Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "69945402": {
+    "nama": "Smpit Harapan UMAT",
+    "jenjang": "SMP/MTs"
+  },
+  "69772946": {
+    "nama": "SMPS Islam Al-hijrah",
+    "jenjang": "SMP/MTs"
+  },
+  "60717910": {
+    "nama": "MI AL Fatah Ngasinan",
+    "jenjang": "SD/MI"
+  },
+  "60717908": {
+    "nama": "MI AL Islam Pehnangka",
+    "jenjang": "SD/MI"
+  },
+  "60717920": {
+    "nama": "MI AS Salam Sidorejo",
+    "jenjang": "SD/MI"
+  },
+  "60717918": {
+    "nama": "MI FIE Sabilil Muttaqien Tempurejo",
+    "jenjang": "SD/MI"
+  },
+  "60717913": {
+    "nama": "MI Islamiyah Babadan",
+    "jenjang": "SD/MI"
+  },
+  "60717914": {
+    "nama": "MI Islamiyah DAWU Paron",
+    "jenjang": "SD/MI"
+  },
+  "60717905": {
+    "nama": "MI Islamiyah Kedungjambu",
+    "jenjang": "SD/MI"
+  },
+  "69983031": {
+    "nama": "MI Mamba`ul Hikmah",
+    "jenjang": "SD/MI"
+  },
+  "60717909": {
+    "nama": "MI Muhammadiyah Gentong",
+    "jenjang": "SD/MI"
+  },
+  "60717911": {
+    "nama": "MI PSM Al-amin Sumberagung",
+    "jenjang": "SD/MI"
+  },
+  "60717919": {
+    "nama": "MI PSM Bendo Barat",
+    "jenjang": "SD/MI"
+  },
+  "60717912": {
+    "nama": "MI PSM Kedungputri",
+    "jenjang": "SD/MI"
+  },
+  "60717916": {
+    "nama": "MI PSM Ngale",
+    "jenjang": "SD/MI"
+  },
+  "60717907": {
+    "nama": "MI PSM Paron",
+    "jenjang": "SD/MI"
+  },
+  "60717906": {
+    "nama": "MI PSM Sambipasar",
+    "jenjang": "SD/MI"
+  },
+  "60717915": {
+    "nama": "MI PSM Sulursewu",
+    "jenjang": "SD/MI"
+  },
+  "60717917": {
+    "nama": "MI Salafiyah Kedungbanteng",
+    "jenjang": "SD/MI"
+  },
+  "60717903": {
+    "nama": "MIN 5 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "60717904": {
+    "nama": "MIN 8 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "20582560": {
+    "nama": "MTS FIE Sabilil Muttaqien",
+    "jenjang": "SMP/MTs"
+  },
+  "20582561": {
+    "nama": "MTS Karya Pembangunan Paron",
+    "jenjang": "SMP/MTs"
+  },
+  "60729666": {
+    "nama": "MTS Mamba`ul Hikmah",
+    "jenjang": "SMP/MTs"
+  },
+  "69986897": {
+    "nama": "MTSN 11 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20582559": {
+    "nama": "MTSN 4 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20582558": {
+    "nama": "MTSN 5 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20573108": {
+    "nama": "SD Muhammadiyah 1 Paron",
+    "jenjang": "SD/MI"
+  },
+  "20508664": {
+    "nama": "SD Negeri Babadan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508662": {
+    "nama": "SD Negeri Babadan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508660": {
+    "nama": "SD Negeri Babadan 3",
+    "jenjang": "SD/MI"
+  },
+  "20508730": {
+    "nama": "SD Negeri DAWU 2",
+    "jenjang": "SD/MI"
+  },
+  "20509060": {
+    "nama": "SD Negeri Gelung 1",
+    "jenjang": "SD/MI"
+  },
+  "20509058": {
+    "nama": "SD Negeri Gelung 3",
+    "jenjang": "SD/MI"
+  },
+  "20509056": {
+    "nama": "SD Negeri Gelung 5",
+    "jenjang": "SD/MI"
+  },
+  "20509032": {
+    "nama": "SD Negeri Gentong 1",
+    "jenjang": "SD/MI"
+  },
+  "20509076": {
+    "nama": "SD Negeri Jambangan 1",
+    "jenjang": "SD/MI"
+  },
+  "20509073": {
+    "nama": "SD Negeri Jambangan 4",
+    "jenjang": "SD/MI"
+  },
+  "20509084": {
+    "nama": "SD Negeri Jeblogan 2",
+    "jenjang": "SD/MI"
+  },
+  "20509083": {
+    "nama": "SD Negeri Jeblogan 3",
+    "jenjang": "SD/MI"
+  },
+  "20509004": {
+    "nama": "SD Negeri Kebon 1",
+    "jenjang": "SD/MI"
+  },
+  "20508967": {
+    "nama": "SD Negeri Kedungputri 1",
+    "jenjang": "SD/MI"
+  },
+  "20508968": {
+    "nama": "SD Negeri Kedungputri 2",
+    "jenjang": "SD/MI"
+  },
+  "20508980": {
+    "nama": "SD Negeri Kedungputri 4",
+    "jenjang": "SD/MI"
+  },
+  "20508979": {
+    "nama": "SD Negeri Kedungputri 5",
+    "jenjang": "SD/MI"
+  },
+  "20508427": {
+    "nama": "SD Negeri Ngale 2",
+    "jenjang": "SD/MI"
+  },
+  "20508426": {
+    "nama": "SD Negeri Ngale 3",
+    "jenjang": "SD/MI"
+  },
+  "20508411": {
+    "nama": "SD Negeri Ngale 4",
+    "jenjang": "SD/MI"
+  },
+  "20508252": {
+    "nama": "SD Negeri Paron 1",
+    "jenjang": "SD/MI"
+  },
+  "20508251": {
+    "nama": "SD Negeri Paron 2",
+    "jenjang": "SD/MI"
+  },
+  "20508317": {
+    "nama": "SD Negeri Semen 1",
+    "jenjang": "SD/MI"
+  },
+  "20508316": {
+    "nama": "SD Negeri Semen 2",
+    "jenjang": "SD/MI"
+  },
+  "20508300": {
+    "nama": "SD Negeri Semen 4",
+    "jenjang": "SD/MI"
+  },
+  "20508285": {
+    "nama": "SD Negeri Semen 5",
+    "jenjang": "SD/MI"
+  },
+  "20508284": {
+    "nama": "SD Negeri Semen 6",
+    "jenjang": "SD/MI"
+  },
+  "20508581": {
+    "nama": "SD Negeri Sirigan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508580": {
+    "nama": "SD Negeri Sirigan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508568": {
+    "nama": "SD Negeri Teguhan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508566": {
+    "nama": "SD Negeri Teguhan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508565": {
+    "nama": "SD Negeri Teguhan 3",
+    "jenjang": "SD/MI"
+  },
+  "20508549": {
+    "nama": "SD Negeri Tempuran 1",
+    "jenjang": "SD/MI"
+  },
+  "20508643": {
+    "nama": "SD Negeri Tempuran 3",
+    "jenjang": "SD/MI"
+  },
+  "20508642": {
+    "nama": "SD Negeri Tempuran 4",
+    "jenjang": "SD/MI"
+  },
+  "20508641": {
+    "nama": "SD Negeri Tempuran 5",
+    "jenjang": "SD/MI"
+  },
+  "20508640": {
+    "nama": "SD Negeri Tempuran 6",
+    "jenjang": "SD/MI"
+  },
+  "20554782": {
+    "nama": "SDIT AL Kiram",
+    "jenjang": "SD/MI"
+  },
+  "69971069": {
+    "nama": "SDIT Ar-rohmah",
+    "jenjang": "SD/MI"
+  },
+  "20555404": {
+    "nama": "SMP AL Azhar Paron",
+    "jenjang": "SMP/MTs"
+  },
+  "20508454": {
+    "nama": "SMP Al-islam Pehnangka Paron",
+    "jenjang": "SMP/MTs"
+  },
+  "20508540": {
+    "nama": "SMP Negeri 1 Paron",
+    "jenjang": "SMP/MTs"
+  },
+  "20508498": {
+    "nama": "SMP Negeri 2 Paron",
+    "jenjang": "SMP/MTs"
+  },
+  "20508517": {
+    "nama": "SMP Negeri 3 Paron",
+    "jenjang": "SMP/MTs"
+  },
+  "60717857": {
+    "nama": "MI AL Fajar Kedunggalar",
+    "jenjang": "SD/MI"
+  },
+  "60717858": {
+    "nama": "MI AL Fatah Blembem",
+    "jenjang": "SD/MI"
+  },
+  "60717867": {
+    "nama": "MI Darussalam Kedunggalar",
+    "jenjang": "SD/MI"
+  },
+  "60717856": {
+    "nama": "MI FIE Sabilil Muttaqien Ngarengan",
+    "jenjang": "SD/MI"
+  },
+  "60717860": {
+    "nama": "MI Islamiyah Kedungwaru",
+    "jenjang": "SD/MI"
+  },
+  "69977725": {
+    "nama": "MI MA`arif Pelang LOR",
+    "jenjang": "SD/MI"
+  },
+  "60717868": {
+    "nama": "MI Mambaul Hasanah Kedunggalar",
+    "jenjang": "SD/MI"
+  },
+  "60717865": {
+    "nama": "MI Miftahul HUDA Wonokerto",
+    "jenjang": "SD/MI"
+  },
+  "60717861": {
+    "nama": "MI Muawanah Tawang",
+    "jenjang": "SD/MI"
+  },
+  "60717864": {
+    "nama": "MI Muqorrobiyah Pelangkidul",
+    "jenjang": "SD/MI"
+  },
+  "60717863": {
+    "nama": "MI Nurul HUDA Katikan",
+    "jenjang": "SD/MI"
+  },
+  "60717862": {
+    "nama": "MI Nurul Islam Katikan",
+    "jenjang": "SD/MI"
+  },
+  "60717866": {
+    "nama": "MI PSM Salak",
+    "jenjang": "SD/MI"
+  },
+  "60717859": {
+    "nama": "MI Sabilarrosyad",
+    "jenjang": "SD/MI"
+  },
+  "60717855": {
+    "nama": "MIN 14 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "20582543": {
+    "nama": "MTS Darussalam Kedunggalar",
+    "jenjang": "SMP/MTs"
+  },
+  "69932038": {
+    "nama": "MTS Negara Kedunggalar",
+    "jenjang": "SMP/MTs"
+  },
+  "20582544": {
+    "nama": "MTS SATU ATAP AL Murtadho",
+    "jenjang": "SMP/MTs"
+  },
+  "60729667": {
+    "nama": "MTS Terpadu AL Firdaus",
+    "jenjang": "SMP/MTs"
+  },
+  "20582542": {
+    "nama": "MTSN 6 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20570499": {
+    "nama": "SD AL Azhar",
+    "jenjang": "SD/MI"
+  },
+  "20554775": {
+    "nama": "SD Muhammadiyah 1 Kedunggalar",
+    "jenjang": "SD/MI"
+  },
+  "20508681": {
+    "nama": "SD Negeri Bangunrejo Kidul 1",
+    "jenjang": "SD/MI"
+  },
+  "20508680": {
+    "nama": "SD Negeri Bangunrejo Kidul 2",
+    "jenjang": "SD/MI"
+  },
+  "20539263": {
+    "nama": "SD Negeri Bangunrejo Kidul 3",
+    "jenjang": "SD/MI"
+  },
+  "20508679": {
+    "nama": "SD Negeri Bangunrejo Kidul 4",
+    "jenjang": "SD/MI"
+  },
+  "20539280": {
+    "nama": "SD Negeri Bangunrejo Kidul 5",
+    "jenjang": "SD/MI"
+  },
+  "20508675": {
+    "nama": "SD Negeri Bangunrejo Kidul 7",
+    "jenjang": "SD/MI"
+  },
+  "20508659": {
+    "nama": "SD Negeri Bangunrejo Kidul 8",
+    "jenjang": "SD/MI"
+  },
+  "20508768": {
+    "nama": "SD Negeri Bangunrejo Kidul 9",
+    "jenjang": "SD/MI"
+  },
+  "20508766": {
+    "nama": "SD Negeri Begal 1",
+    "jenjang": "SD/MI"
+  },
+  "20509055": {
+    "nama": "SD Negeri Gemarang 1",
+    "jenjang": "SD/MI"
+  },
+  "20509039": {
+    "nama": "SD Negeri Gemarang 3",
+    "jenjang": "SD/MI"
+  },
+  "20509038": {
+    "nama": "SD Negeri Gemarang 4",
+    "jenjang": "SD/MI"
+  },
+  "20509023": {
+    "nama": "SD Negeri Gemarang 5",
+    "jenjang": "SD/MI"
+  },
+  "20509022": {
+    "nama": "SD Negeri Gemarang 6",
+    "jenjang": "SD/MI"
+  },
+  "20509021": {
+    "nama": "SD Negeri Gemarang 7",
+    "jenjang": "SD/MI"
+  },
+  "20509069": {
+    "nama": "SD Negeri JATI Gembol 1",
+    "jenjang": "SD/MI"
+  },
+  "20509068": {
+    "nama": "SD Negeri JATI Gembol 2",
+    "jenjang": "SD/MI"
+  },
+  "20509079": {
+    "nama": "SD Negeri JATI Gembol 5",
+    "jenjang": "SD/MI"
+  },
+  "20509066": {
+    "nama": "SD Negeri Jenggrik 1",
+    "jenjang": "SD/MI"
+  },
+  "20508954": {
+    "nama": "SD Negeri Jenggrik 2",
+    "jenjang": "SD/MI"
+  },
+  "20508939": {
+    "nama": "SD Negeri Jenggrik 3",
+    "jenjang": "SD/MI"
+  },
+  "20508938": {
+    "nama": "SD Negeri Jenggrik 4",
+    "jenjang": "SD/MI"
+  },
+  "20508936": {
+    "nama": "SD Negeri Jenggrik 6",
+    "jenjang": "SD/MI"
+  },
+  "20508990": {
+    "nama": "SD Negeri Katikan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508989": {
+    "nama": "SD Negeri Katikan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508988": {
+    "nama": "SD Negeri Katikan 3",
+    "jenjang": "SD/MI"
+  },
+  "20508995": {
+    "nama": "SD Negeri KAWU 1",
+    "jenjang": "SD/MI"
+  },
+  "20509009": {
+    "nama": "SD Negeri KAWU 3",
+    "jenjang": "SD/MI"
+  },
+  "20509008": {
+    "nama": "SD Negeri KAWU 4",
+    "jenjang": "SD/MI"
+  },
+  "20509002": {
+    "nama": "SD Negeri Kedunggalar 1",
+    "jenjang": "SD/MI"
+  },
+  "20508998": {
+    "nama": "SD Negeri Kedunggalar 3",
+    "jenjang": "SD/MI"
+  },
+  "20508997": {
+    "nama": "SD Negeri Kedunggalar 4",
+    "jenjang": "SD/MI"
+  },
+  "20508982": {
+    "nama": "SD Negeri Kedunggalar 5",
+    "jenjang": "SD/MI"
+  },
+  "20508965": {
+    "nama": "SD Negeri Kedunggalar 8",
+    "jenjang": "SD/MI"
+  },
+  "20508272": {
+    "nama": "SD Negeri Pelang Kidul 1",
+    "jenjang": "SD/MI"
+  },
+  "20508260": {
+    "nama": "SD Negeri Pelang Kidul 2",
+    "jenjang": "SD/MI"
+  },
+  "20508271": {
+    "nama": "SD Negeri Pelang LOR 1",
+    "jenjang": "SD/MI"
+  },
+  "20508270": {
+    "nama": "SD Negeri Pelang LOR 2",
+    "jenjang": "SD/MI"
+  },
+  "20508268": {
+    "nama": "SD Negeri Pelang LOR 4",
+    "jenjang": "SD/MI"
+  },
+  "20508261": {
+    "nama": "SD Negeri Pelangkidul 3",
+    "jenjang": "SD/MI"
+  },
+  "20508606": {
+    "nama": "SD Negeri Wonokerto 1",
+    "jenjang": "SD/MI"
+  },
+  "20508619": {
+    "nama": "SD Negeri Wonokerto 4",
+    "jenjang": "SD/MI"
+  },
+  "20508629": {
+    "nama": "SD Negeri Wonorejo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508536": {
+    "nama": "SMP Negeri 1 Kedunggalar",
+    "jenjang": "SMP/MTs"
+  },
+  "20508505": {
+    "nama": "SMP Negeri 2 Kedunggalar",
+    "jenjang": "SMP/MTs"
+  },
+  "20547268": {
+    "nama": "SMP Negeri 3 Kedunggalar",
+    "jenjang": "SMP/MTs"
+  },
+  "60717923": {
+    "nama": "MI Darul ILMI PITU",
+    "jenjang": "SD/MI"
+  },
+  "60717922": {
+    "nama": "MI Guppi Ngancar",
+    "jenjang": "SD/MI"
+  },
+  "60717921": {
+    "nama": "MI PSM Karanggeneng",
+    "jenjang": "SD/MI"
+  },
+  "69816280": {
+    "nama": "MTS Maarif",
+    "jenjang": "SMP/MTs"
+  },
+  "20508751": {
+    "nama": "SD Negeri Bangunrejo LOR 1",
+    "jenjang": "SD/MI"
+  },
+  "20508749": {
+    "nama": "SD Negeri Bangunrejo LOR 3",
+    "jenjang": "SD/MI"
+  },
+  "20508748": {
+    "nama": "SD Negeri Bangunrejo LOR 4",
+    "jenjang": "SD/MI"
+  },
+  "20508745": {
+    "nama": "SD Negeri Banjarbanggi 1",
+    "jenjang": "SD/MI"
+  },
+  "20508744": {
+    "nama": "SD Negeri Banjarbanggi 2",
+    "jenjang": "SD/MI"
+  },
+  "20508727": {
+    "nama": "SD Negeri Cantel",
+    "jenjang": "SD/MI"
+  },
+  "20509042": {
+    "nama": "SD Negeri Dumplengan 1",
+    "jenjang": "SD/MI"
+  },
+  "20509041": {
+    "nama": "SD Negeri Dumplengan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508953": {
+    "nama": "SD Negeri Kalang 1",
+    "jenjang": "SD/MI"
+  },
+  "20508952": {
+    "nama": "SD Negeri Kalang 2",
+    "jenjang": "SD/MI"
+  },
+  "20508910": {
+    "nama": "SD Negeri Karanggeneng 1",
+    "jenjang": "SD/MI"
+  },
+  "20508410": {
+    "nama": "SD Negeri Ngancar 1",
+    "jenjang": "SD/MI"
+  },
+  "20508255": {
+    "nama": "SD Negeri Papungan 1",
+    "jenjang": "SD/MI"
+  },
+  "20539272": {
+    "nama": "SD Negeri Papungan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508263": {
+    "nama": "SD Negeri PITU 1",
+    "jenjang": "SD/MI"
+  },
+  "20508262": {
+    "nama": "SD Negeri PITU 2",
+    "jenjang": "SD/MI"
+  },
+  "20508247": {
+    "nama": "SD Negeri PITU 3",
+    "jenjang": "SD/MI"
+  },
+  "20508321": {
+    "nama": "SD Negeri Selopuro 1",
+    "jenjang": "SD/MI"
+  },
+  "20508320": {
+    "nama": "SD Negeri Selopuro 2",
+    "jenjang": "SD/MI"
+  },
+  "20508464": {
+    "nama": "SMP Karya Pembangunan PITU",
+    "jenjang": "SMP/MTs"
+  },
+  "20508495": {
+    "nama": "SMP Negeri 1 PITU",
+    "jenjang": "SMP/MTs"
+  },
+  "20508497": {
+    "nama": "SMP Negeri 2 PITU",
+    "jenjang": "SMP/MTs"
+  },
+  "20554799": {
+    "nama": "SMP Negeri 3 PITU",
+    "jenjang": "SMP/MTs"
+  },
+  "60717940": {
+    "nama": "MI AL Falah Sekarputih",
+    "jenjang": "SD/MI"
+  },
+  "60717939": {
+    "nama": "MI AL MA`arif Sidolaju",
+    "jenjang": "SD/MI"
+  },
+  "69881908": {
+    "nama": "MI Ar-rahman Widodaren",
+    "jenjang": "SD/MI"
+  },
+  "69881907": {
+    "nama": "MI ASH Sholikhin",
+    "jenjang": "SD/MI"
+  },
+  "69881906": {
+    "nama": "MI Birul Walidain",
+    "jenjang": "SD/MI"
+  },
+  "60717932": {
+    "nama": "MI Islamiyah Muhammadiyah Walikukun",
+    "jenjang": "SD/MI"
+  },
+  "60717936": {
+    "nama": "MI MA`hadul Muta`allimin Katerban",
+    "jenjang": "SD/MI"
+  },
+  "60717935": {
+    "nama": "MI Mambaul HUDA",
+    "jenjang": "SD/MI"
+  },
+  "60717938": {
+    "nama": "MI Muhammadiyah Kayutrejo",
+    "jenjang": "SD/MI"
+  },
+  "60717934": {
+    "nama": "MI Muhammadiyah Kedunggudel",
+    "jenjang": "SD/MI"
+  },
+  "60717937": {
+    "nama": "MI Muhammadiyah Sekaralas",
+    "jenjang": "SD/MI"
+  },
+  "60717933": {
+    "nama": "MI Muhammadiyah Tempurrejo",
+    "jenjang": "SD/MI"
+  },
+  "60717931": {
+    "nama": "MI PSM An-nur Gebang",
+    "jenjang": "SD/MI"
+  },
+  "20582567": {
+    "nama": "MTS Islamiyah Widodaren",
+    "jenjang": "SMP/MTs"
+  },
+  "20582568": {
+    "nama": "MTS MA`hadul Muta`allimin",
+    "jenjang": "SMP/MTs"
+  },
+  "20582566": {
+    "nama": "MTS Muhammadiyah Tempurrejo",
+    "jenjang": "SMP/MTs"
+  },
+  "20508670": {
+    "nama": "SD K Santa Maria",
+    "jenjang": "SD/MI"
+  },
+  "20508755": {
+    "nama": "SD Negeri Banyubiru 02",
+    "jenjang": "SD/MI"
+  },
+  "20508756": {
+    "nama": "SD Negeri Banyubiru 03",
+    "jenjang": "SD/MI"
+  },
+  "20508754": {
+    "nama": "SD Negeri Banyubiru 1",
+    "jenjang": "SD/MI"
+  },
+  "20509015": {
+    "nama": "SD Negeri Gendingan 01",
+    "jenjang": "SD/MI"
+  },
+  "20509013": {
+    "nama": "SD Negeri Gendingan 03",
+    "jenjang": "SD/MI"
+  },
+  "20509024": {
+    "nama": "SD Negeri Gendingan 04",
+    "jenjang": "SD/MI"
+  },
+  "20509014": {
+    "nama": "SD Negeri Gendingan 2",
+    "jenjang": "SD/MI"
+  },
+  "20509025": {
+    "nama": "SD Negeri Gendingan 5",
+    "jenjang": "SD/MI"
+  },
+  "20508928": {
+    "nama": "SD Negeri Karangbanyu 01",
+    "jenjang": "SD/MI"
+  },
+  "20508912": {
+    "nama": "SD Negeri Karangbanyu 03",
+    "jenjang": "SD/MI"
+  },
+  "20508911": {
+    "nama": "SD Negeri Karangbanyu 04",
+    "jenjang": "SD/MI"
+  },
+  "20508987": {
+    "nama": "SD Negeri Kauman 01",
+    "jenjang": "SD/MI"
+  },
+  "20508983": {
+    "nama": "SD Negeri Kauman 04",
+    "jenjang": "SD/MI"
+  },
+  "20508984": {
+    "nama": "SD Negeri Kauman 2",
+    "jenjang": "SD/MI"
+  },
+  "20509007": {
+    "nama": "SD Negeri Kayutrejo 01",
+    "jenjang": "SD/MI"
+  },
+  "20509005": {
+    "nama": "SD Negeri Kayutrejo 03",
+    "jenjang": "SD/MI"
+  },
+  "20508964": {
+    "nama": "SD Negeri Kedunggudel 01",
+    "jenjang": "SD/MI"
+  },
+  "20508963": {
+    "nama": "SD Negeri Kedunggudel 2",
+    "jenjang": "SD/MI"
+  },
+  "20508315": {
+    "nama": "SD Negeri Sekaralas 01",
+    "jenjang": "SD/MI"
+  },
+  "20508311": {
+    "nama": "SD Negeri Sekaralas 02",
+    "jenjang": "SD/MI"
+  },
+  "20508314": {
+    "nama": "SD Negeri Sekaralas 03",
+    "jenjang": "SD/MI"
+  },
+  "20508324": {
+    "nama": "SD Negeri Sekarputih 01",
+    "jenjang": "SD/MI"
+  },
+  "20508323": {
+    "nama": "SD Negeri Sekarputih 02",
+    "jenjang": "SD/MI"
+  },
+  "20508275": {
+    "nama": "SD Negeri Sidolaju 01",
+    "jenjang": "SD/MI"
+  },
+  "20508286": {
+    "nama": "SD Negeri Sidolaju 02",
+    "jenjang": "SD/MI"
+  },
+  "20508287": {
+    "nama": "SD Negeri Sidolaju 03",
+    "jenjang": "SD/MI"
+  },
+  "20508288": {
+    "nama": "SD Negeri Sidolaju 04",
+    "jenjang": "SD/MI"
+  },
+  "20508299": {
+    "nama": "SD Negeri Sidolaju 05",
+    "jenjang": "SD/MI"
+  },
+  "20508297": {
+    "nama": "SD Negeri Sidolaju 07",
+    "jenjang": "SD/MI"
+  },
+  "20508296": {
+    "nama": "SD Negeri Sidolaju 08",
+    "jenjang": "SD/MI"
+  },
+  "20508632": {
+    "nama": "SD Negeri Widodaren 01",
+    "jenjang": "SD/MI"
+  },
+  "20508614": {
+    "nama": "SD Negeri Widodaren 03",
+    "jenjang": "SD/MI"
+  },
+  "20508612": {
+    "nama": "SD Negeri Widodaren 04",
+    "jenjang": "SD/MI"
+  },
+  "20508610": {
+    "nama": "SD Negeri Widodaren 05",
+    "jenjang": "SD/MI"
+  },
+  "20508608": {
+    "nama": "SD Negeri Widodaren 06",
+    "jenjang": "SD/MI"
+  },
+  "20508607": {
+    "nama": "SD Negeri Widodaren 08",
+    "jenjang": "SD/MI"
+  },
+  "69981468": {
+    "nama": "SDIT ALAM Nurul Islam DUA",
+    "jenjang": "SD/MI"
+  },
+  "69907647": {
+    "nama": "SDIT An-nur",
+    "jenjang": "SD/MI"
+  },
+  "20508453": {
+    "nama": "SMP Islam MA Hadul MUTA Allimin",
+    "jenjang": "SMP/MTs"
+  },
+  "20508466": {
+    "nama": "SMP Islamiyah Widodaren",
+    "jenjang": "SMP/MTs"
+  },
+  "20554810": {
+    "nama": "SMP MA ARIF Widodaren",
+    "jenjang": "SMP/MTs"
+  },
+  "20508458": {
+    "nama": "SMP Muhammadiyah 3 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20508538": {
+    "nama": "SMP Negeri 1 Widodaren",
+    "jenjang": "SMP/MTs"
+  },
+  "20508507": {
+    "nama": "SMP Negeri 2 Widodaren",
+    "jenjang": "SMP/MTs"
+  },
+  "20508516": {
+    "nama": "SMP Negeri 3 Widodaren",
+    "jenjang": "SMP/MTs"
+  },
+  "20508511": {
+    "nama": "SMP Negeri 4 Widodaren",
+    "jenjang": "SMP/MTs"
+  },
+  "69985789": {
+    "nama": "SMP Nurul Burhan",
+    "jenjang": "SMP/MTs"
+  },
+  "70016056": {
+    "nama": "SMP Syarifatul ULUM",
+    "jenjang": "SMP/MTs"
+  },
+  "60717886": {
+    "nama": "MI AL HUDA Pengkol",
+    "jenjang": "SD/MI"
+  },
+  "60717887": {
+    "nama": "MI Awaliyah Bulakgadungan",
+    "jenjang": "SD/MI"
+  },
+  "60717884": {
+    "nama": "MI Awaliyah Kedungharjo",
+    "jenjang": "SD/MI"
+  },
+  "60717883": {
+    "nama": "MI Hudallil Muttaqien",
+    "jenjang": "SD/MI"
+  },
+  "60717885": {
+    "nama": "MI MA`arif Tempursari",
+    "jenjang": "SD/MI"
+  },
+  "60717888": {
+    "nama": "MI Nurussalam",
+    "jenjang": "SD/MI"
+  },
+  "60717882": {
+    "nama": "MIN 7 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "20582551": {
+    "nama": "MTS MA`arif Tempursari",
+    "jenjang": "SMP/MTs"
+  },
+  "69983256": {
+    "nama": "MTS Miftahul Jannah",
+    "jenjang": "SMP/MTs"
+  },
+  "20582550": {
+    "nama": "MTSN 10 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "69946119": {
+    "nama": "SD Muhammadiyah 01 Mantingan",
+    "jenjang": "SD/MI"
+  },
+  "20539265": {
+    "nama": "SD Negeri Jatimulyo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508960": {
+    "nama": "SD Negeri Kedungharjo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508962": {
+    "nama": "SD Negeri Kedungharjo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508419": {
+    "nama": "SD Negeri Mantingan 2",
+    "jenjang": "SD/MI"
+  },
+  "20508418": {
+    "nama": "SD Negeri Mantingan 3",
+    "jenjang": "SD/MI"
+  },
+  "20508417": {
+    "nama": "SD Negeri Mantingan 4",
+    "jenjang": "SD/MI"
+  },
+  "20508416": {
+    "nama": "SD Negeri Mantingan 5",
+    "jenjang": "SD/MI"
+  },
+  "20508415": {
+    "nama": "SD Negeri Mantingan 6",
+    "jenjang": "SD/MI"
+  },
+  "20508405": {
+    "nama": "SD Negeri Pakah 2",
+    "jenjang": "SD/MI"
+  },
+  "20508404": {
+    "nama": "SD Negeri Pakah 3",
+    "jenjang": "SD/MI"
+  },
+  "20508265": {
+    "nama": "SD Negeri Pengkol 1",
+    "jenjang": "SD/MI"
+  },
+  "20508264": {
+    "nama": "SD Negeri Pengkol 2",
+    "jenjang": "SD/MI"
+  },
+  "20508310": {
+    "nama": "SD Negeri Sambirejo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508309": {
+    "nama": "SD Negeri Sambirejo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508306": {
+    "nama": "SD Negeri Sambirejo 5",
+    "jenjang": "SD/MI"
+  },
+  "20508553": {
+    "nama": "SD Negeri Tambakboyo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508551": {
+    "nama": "SD Negeri Tambakboyo 3",
+    "jenjang": "SD/MI"
+  },
+  "20508545": {
+    "nama": "SMP Negeri 1 Mantingan",
+    "jenjang": "SMP/MTs"
+  },
+  "20554863": {
+    "nama": "SMP Negeri 2 Mantingan",
+    "jenjang": "SMP/MTs"
+  },
+  "69896559": {
+    "nama": "SMP Pesantren Temulus",
+    "jenjang": "SMP/MTs"
+  },
+  "70050892": {
+    "nama": "SMP Tahfidz AL Ikhlas Mantingan",
+    "jenjang": "SMP/MTs"
+  },
+  "69754104": {
+    "nama": "SMPS Muhammadiyah 6 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "60717851": {
+    "nama": "MI Misbahul Adhim",
+    "jenjang": "SD/MI"
+  },
+  "60717852": {
+    "nama": "MI Muhammadiyah Pandean",
+    "jenjang": "SD/MI"
+  },
+  "60717850": {
+    "nama": "MI Nurul IMAN",
+    "jenjang": "SD/MI"
+  },
+  "70028111": {
+    "nama": "SD Muhammadiyah 1 Karanganyar Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "20508683": {
+    "nama": "SD Negeri Bangunrejo 1",
+    "jenjang": "SD/MI"
+  },
+  "20509020": {
+    "nama": "SD Negeri Gembol 01",
+    "jenjang": "SD/MI"
+  },
+  "20509019": {
+    "nama": "SD Negeri Gembol 03",
+    "jenjang": "SD/MI"
+  },
+  "20509018": {
+    "nama": "SD Negeri Gembol 04",
+    "jenjang": "SD/MI"
+  },
+  "20508946": {
+    "nama": "SD Negeri Karanganyar 04",
+    "jenjang": "SD/MI"
+  },
+  "20508919": {
+    "nama": "SD Negeri Karanganyar 05",
+    "jenjang": "SD/MI"
+  },
+  "20508948": {
+    "nama": "SD Negeri Karanganyar 2",
+    "jenjang": "SD/MI"
+  },
+  "20508947": {
+    "nama": "SD Negeri Karanganyar 3",
+    "jenjang": "SD/MI"
+  },
+  "20508435": {
+    "nama": "SD Negeri Mengger 02",
+    "jenjang": "SD/MI"
+  },
+  "20508400": {
+    "nama": "SD Negeri Pandean 03",
+    "jenjang": "SD/MI"
+  },
+  "20508399": {
+    "nama": "SD Negeri Pandean 04",
+    "jenjang": "SD/MI"
+  },
+  "20508384": {
+    "nama": "SD Negeri Pandean 05",
+    "jenjang": "SD/MI"
+  },
+  "20508273": {
+    "nama": "SD Negeri Pandean 06",
+    "jenjang": "SD/MI"
+  },
+  "20539271": {
+    "nama": "SD Negeri Pandean 07",
+    "jenjang": "SD/MI"
+  },
+  "20508401": {
+    "nama": "SD Negeri Pandean 2",
+    "jenjang": "SD/MI"
+  },
+  "20508326": {
+    "nama": "SD Negeri Sekarjati 01",
+    "jenjang": "SD/MI"
+  },
+  "20508325": {
+    "nama": "SD Negeri Sekarjati 02",
+    "jenjang": "SD/MI"
+  },
+  "20508603": {
+    "nama": "SD Negeri Sriwedari 01",
+    "jenjang": "SD/MI"
+  },
+  "20508592": {
+    "nama": "SD Negeri Sriwedari 02",
+    "jenjang": "SD/MI"
+  },
+  "20508502": {
+    "nama": "SMP Negeri 1 Karanganyar",
+    "jenjang": "SMP/MTs"
+  },
+  "20508513": {
+    "nama": "SMP Negeri 2 Karanganyar",
+    "jenjang": "SMP/MTs"
+  },
+  "20539278": {
+    "nama": "SMP Negeri 3 Karanganyar",
+    "jenjang": "SMP/MTs"
+  },
+  "20554804": {
+    "nama": "SMP Negeri 4 Karanganyar",
+    "jenjang": "SMP/MTs"
+  },
+  "60717843": {
+    "nama": "MI AL- Islam Tegalrejo",
+    "jenjang": "SD/MI"
+  },
+  "60717844": {
+    "nama": "MI Islamiyah Gerih",
+    "jenjang": "SD/MI"
+  },
+  "60717842": {
+    "nama": "MI Islamiyah Widodaren Gerih",
+    "jenjang": "SD/MI"
+  },
+  "69883396": {
+    "nama": "MI Unggulan Miftahul HUDA",
+    "jenjang": "SD/MI"
+  },
+  "60717841": {
+    "nama": "MIN 4 Ngawi",
+    "jenjang": "SD/MI"
+  },
+  "20582534": {
+    "nama": "MTS Al-islam Tegalrejo",
+    "jenjang": "SMP/MTs"
+  },
+  "70059230": {
+    "nama": "MTS Nurul Jadid Sejati",
+    "jenjang": "SMP/MTs"
+  },
+  "20582533": {
+    "nama": "MTSN 1 Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "69991596": {
+    "nama": "SD Aisyiyah Gerih",
+    "jenjang": "SD/MI"
+  },
+  "20509030": {
+    "nama": "SD Negeri Gerih 1",
+    "jenjang": "SD/MI"
+  },
+  "20509029": {
+    "nama": "SD Negeri Gerih 2",
+    "jenjang": "SD/MI"
+  },
+  "20509028": {
+    "nama": "SD Negeri Gerih 3",
+    "jenjang": "SD/MI"
+  },
+  "20509027": {
+    "nama": "SD Negeri Gerih 4",
+    "jenjang": "SD/MI"
+  },
+  "20509011": {
+    "nama": "SD Negeri Gerih 5",
+    "jenjang": "SD/MI"
+  },
+  "20509093": {
+    "nama": "SD Negeri Gerih 6",
+    "jenjang": "SD/MI"
+  },
+  "20509104": {
+    "nama": "SD Negeri Gerih 7",
+    "jenjang": "SD/MI"
+  },
+  "20509107": {
+    "nama": "SD Negeri Guyung 1",
+    "jenjang": "SD/MI"
+  },
+  "20509116": {
+    "nama": "SD Negeri Guyung 2",
+    "jenjang": "SD/MI"
+  },
+  "20509117": {
+    "nama": "SD Negeri Guyung 3",
+    "jenjang": "SD/MI"
+  },
+  "20509118": {
+    "nama": "SD Negeri Guyung 4",
+    "jenjang": "SD/MI"
+  },
+  "20508367": {
+    "nama": "SD Negeri Keraskulon 1",
+    "jenjang": "SD/MI"
+  },
+  "20508366": {
+    "nama": "SD Negeri Keraskulon 2",
+    "jenjang": "SD/MI"
+  },
+  "20508368": {
+    "nama": "SD Negeri Keraskulon 3",
+    "jenjang": "SD/MI"
+  },
+  "20508242": {
+    "nama": "SD Negeri Randusongo 1",
+    "jenjang": "SD/MI"
+  },
+  "20508241": {
+    "nama": "SD Negeri Randusongo 2",
+    "jenjang": "SD/MI"
+  },
+  "20508240": {
+    "nama": "SD Negeri Randusongo 3",
+    "jenjang": "SD/MI"
+  },
+  "20508631": {
+    "nama": "SD Negeri Widodaren 1",
+    "jenjang": "SD/MI"
+  },
+  "20508615": {
+    "nama": "SD Negeri Widodaren 2",
+    "jenjang": "SD/MI"
+  },
+  "20508613": {
+    "nama": "SD Negeri Widodaren 3",
+    "jenjang": "SD/MI"
+  },
+  "20508611": {
+    "nama": "SD Negeri Widodaren 4",
+    "jenjang": "SD/MI"
+  },
+  "20508515": {
+    "nama": "SMP Negeri 1 Gerih",
+    "jenjang": "SMP/MTs"
+  },
+  "20508462": {
+    "nama": "SMPK Wijaya Widodaren Gerih Ngawi",
+    "jenjang": "SMP/MTs"
+  },
+  "20582541": {
+    "nama": "MTS Jabal Nurrohman",
+    "jenjang": "SMP/MTs"
+  },
+  "20508717": {
+    "nama": "SD Negeri Cangakan 1",
+    "jenjang": "SD/MI"
+  },
+  "20508716": {
+    "nama": "SD Negeri Cangakan 2 Kasreman",
+    "jenjang": "SD/MI"
+  },
+  "20509094": {
+    "nama": "SD Negeri Gunungsari 1",
+    "jenjang": "SD/MI"
+  },
+  "20509105": {
+    "nama": "SD Negeri Gunungsari 2",
+    "jenjang": "SD/MI"
+  },
+  "20509106": {
+    "nama": "SD Negeri Gunungsari 3 Kasreman",
+    "jenjang": "SD/MI"
+  },
+  "20509086": {
+    "nama": "SD Negeri Jatirejo 2 Kasreman",
+    "jenjang": "SD/MI"
+  },
+  "20508893": {
+    "nama": "SD Negeri Karangmalang 1 Kasreman",
+    "jenjang": "SD/MI"
+  },
+  "20508892": {
+    "nama": "SD Negeri Karangmalang 2 Kasreman",
+    "jenjang": "SD/MI"
+  },
+  "20508891": {
+    "nama": "SD Negeri Kasreman 1 Kasreman",
+    "jenjang": "SD/MI"
+  },
+  "20508993": {
+    "nama": "SD Negeri Kasreman 2 Kasreman",
+    "jenjang": "SD/MI"
+  },
+  "20508371": {
+    "nama": "SD Negeri Kiyonten 1 Kasreman",
+    "jenjang": "SD/MI"
+  },
+  "20508381": {
+    "nama": "SD Negeri Kiyonten 3 Kasreman",
+    "jenjang": "SD/MI"
+  },
+  "20508330": {
+    "nama": "SD Negeri Legokulon 1 Kasreman",
+    "jenjang": "SD/MI"
+  },
+  "20508329": {
+    "nama": "SD Negeri Legokulon 2 Kasreman",
+    "jenjang": "SD/MI"
+  },
+  "20508569": {
+    "nama": "SD Negeri Tawun 2 Kasreman",
+    "jenjang": "SD/MI"
+  },
+  "20508499": {
+    "nama": "SMP Negeri 1 Kasreman",
+    "jenjang": "SMP/MTs"
+  },
+  "20554805": {
+    "nama": "SMP Negeri 2 Kasreman",
+    "jenjang": "SMP/MTs"
+  },
+  "20508482": {
+    "nama": "SMAN 1 SINE",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20554956": {
+    "nama": "SMKN 1 SINE",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20554783": {
+    "nama": "SMKS PGRI 9 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584317": {
+    "nama": "MAN 4 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69976860": {
+    "nama": "SLBN Dr. Radjiman Wedyodiningrat",
+    "jenjang": "TK/PAUD"
+  },
+  "20508481": {
+    "nama": "SMAN 1 Ngrambe",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508451": {
+    "nama": "SMKS Panti Pamardi SIWI 1 Ngrambe",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508450": {
+    "nama": "SMKS Panti Pamardi SIWI 2 Ngrambe",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584313": {
+    "nama": "MA MA`arif Jogorogo",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508472": {
+    "nama": "SMAN 1 Jogorogo",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508477": {
+    "nama": "SMAS Karya Pembangunan Jogorogo",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508491": {
+    "nama": "SMKS PGRI 8 Jogorogo Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584307": {
+    "nama": "MA AL Barokah Kendal",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584308": {
+    "nama": "MA Al-hidayah Kendal",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584310": {
+    "nama": "MA Darul ULUM Kendal",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584318": {
+    "nama": "MA Nurul Azhar Kendal",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69787254": {
+    "nama": "MA Sunan Kalijogo",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508469": {
+    "nama": "SMAN 1 Kendal",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20554958": {
+    "nama": "SMKN 1 Kendal",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508492": {
+    "nama": "SMAN 2 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508473": {
+    "nama": "SMAS PGRI 1 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508489": {
+    "nama": "SMKN 1 Geneng",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69754103": {
+    "nama": "SMKS Kesehatan Bakti Indonesia Medika",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508449": {
+    "nama": "SMKS PGRI 2 Geneng",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508446": {
+    "nama": "SMKS PGRI 4 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508443": {
+    "nama": "SMKS PGRI 6 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20539276": {
+    "nama": "SMAN 1 Kwadungan",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20539315": {
+    "nama": "SMAS Karya Pembangunan Kwadungan",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "70024773": {
+    "nama": "SMK Miftahus Sa`adah",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584312": {
+    "nama": "MA Hidayatul UMAM",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584314": {
+    "nama": "MA Miftahul Lubab",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508471": {
+    "nama": "SMAN 1 Karangjati",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20551808": {
+    "nama": "SMKS AL Amnaniyah Karangjati",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584309": {
+    "nama": "MA Al-karomah",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69977859": {
+    "nama": "MA WALI Songo",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20554787": {
+    "nama": "SMKN 1 Bringin",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69774782": {
+    "nama": "SMKS AL Jauhar Bringin",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508668": {
+    "nama": "SLB Negeri 1 Sambiroto Ngawi",
+    "jenjang": "TK/PAUD"
+  },
+  "69963554": {
+    "nama": "MA AL Hijrah",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584316": {
+    "nama": "MAN 1 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "70004940": {
+    "nama": "SLB Beranda Istimewa Grudo",
+    "jenjang": "TK/PAUD"
+  },
+  "20554779": {
+    "nama": "SLB Negeri 1 Ngawi",
+    "jenjang": "TK/PAUD"
+  },
+  "20508480": {
+    "nama": "SMAN 1 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20539314": {
+    "nama": "SMAS Karya Pembangunan Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508476": {
+    "nama": "SMAS MA ARIF Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508475": {
+    "nama": "SMAS Muhammadiyah 1 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69964375": {
+    "nama": "SMK Modern Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508468": {
+    "nama": "SMKN 1 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508467": {
+    "nama": "SMKN 2 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69754100": {
+    "nama": "SMKS Kesehatan Rahani Husada",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508484": {
+    "nama": "SMKS Muhammadiyah 1 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508448": {
+    "nama": "SMKS PGRI 1 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508440": {
+    "nama": "SMKS Trisakti Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69886301": {
+    "nama": "MA Al-ishlah",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69886302": {
+    "nama": "MA FIE Sabilil Muttaqien",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584319": {
+    "nama": "MAN 2 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69900606": {
+    "nama": "SMA Mambaul Hikmah",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508478": {
+    "nama": "SMAS Karya Pembangunan Paron",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69900190": {
+    "nama": "SMK Al-islam",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "70007966": {
+    "nama": "SMK Arbai Qohhar",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508486": {
+    "nama": "SMK Karya Pembangunan 1 Paron",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20554785": {
+    "nama": "SMKN 1 Paron",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584311": {
+    "nama": "MA Darussalam Kedunggalar",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "70027031": {
+    "nama": "MA Terpadu Jannatul Firdaus",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508470": {
+    "nama": "SMAN 1 Kedunggalar",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508494": {
+    "nama": "SMAS Karya Pembangunan Kedunggalar",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69976611": {
+    "nama": "SMK PSM 1 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69949193": {
+    "nama": "SMK Terpadu Jannatul Firdaus",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508487": {
+    "nama": "SMKS Gajah MADA Kedunggalar",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20570951": {
+    "nama": "SMKS Nagara Kedunggalar Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508441": {
+    "nama": "SMKS PSM 1 Kedunggalar",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20554786": {
+    "nama": "SMKN 1 PITU",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "70027630": {
+    "nama": "MA MA`arif TUGU",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584315": {
+    "nama": "MA Muhammadiyah Tempurrejo",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "70027629": {
+    "nama": "MA PLUS MA`hadul Muta`allimin",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584320": {
+    "nama": "MA Syarifatul `ulum",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508493": {
+    "nama": "SMAN 1 Widodaren",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508474": {
+    "nama": "SMAS Muhammadiyah 2 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69942246": {
+    "nama": "SMK Raudhatul Jannah",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20539316": {
+    "nama": "SMKS Islamiyah Widodaren",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508447": {
+    "nama": "SMKS PGRI 3 Walikukun Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508452": {
+    "nama": "SMKS Wiyata Dharma Walikukun",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "70059254": {
+    "nama": "MA Miftahul Jannah",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69983555": {
+    "nama": "MA Pesantren Temulus",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20584321": {
+    "nama": "MAN 3 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "69944020": {
+    "nama": "SMK Pesantren Temulus",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508483": {
+    "nama": "SMKS Muhammadiyah 2 Ngawi",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20554788": {
+    "nama": "SMKN 1 Karanganyar",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "70010094": {
+    "nama": "MA Nurul Jadid Sejati",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "70053509": {
+    "nama": "SLB Bunda Mulia Gerih",
+    "jenjang": "TK/PAUD"
+  },
+  "20554957": {
+    "nama": "SMKN 1 Gerih",
+    "jenjang": "SMA/SMK/MA"
+  },
+  "20508490": {
+    "nama": "SMKN 1 Kasreman",
+    "jenjang": "SMA/SMK/MA"
   }
 };
 
 export const DAFTAR_SEKOLAH_NGAWI: SekolahItem[] = [
-  // List array sekolah: { nama, jenjang, npsn }
   {
     "nama": "BA Aisyiyah Jagir",
     "jenjang": "TK/PAUD",
@@ -8811,5 +12246,4300 @@ export const DAFTAR_SEKOLAH_NGAWI: SekolahItem[] = [
     "nama": "TK Islam Terpadu Raden Syahid XI",
     "jenjang": "TK/PAUD",
     "npsn": "69954975"
+  },
+  {
+    "nama": "MI Muhammadiyah Jagir",
+    "jenjang": "SD/MI",
+    "npsn": "60717928"
+  },
+  {
+    "nama": "MI Muhammadiyah Nglencong",
+    "jenjang": "SD/MI",
+    "npsn": "60717930"
+  },
+  {
+    "nama": "MI Muhammadiyah Ngrendeng",
+    "jenjang": "SD/MI",
+    "npsn": "60717929"
+  },
+  {
+    "nama": "MI Yaspi 2 Ketanggung",
+    "jenjang": "SD/MI",
+    "npsn": "60717925"
+  },
+  {
+    "nama": "MI Yaspi 3 Pocol",
+    "jenjang": "SD/MI",
+    "npsn": "60727017"
+  },
+  {
+    "nama": "MI Yaspi 6 Bayemrejo",
+    "jenjang": "SD/MI",
+    "npsn": "60717926"
+  },
+  {
+    "nama": "MI Yaspi 7 Sumbersari",
+    "jenjang": "SD/MI",
+    "npsn": "60717927"
+  },
+  {
+    "nama": "MIN 12 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717924"
+  },
+  {
+    "nama": "MTS AL Irsyad AL Islamiyyah",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582564"
+  },
+  {
+    "nama": "MTS Yaspi SINE",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582565"
+  },
+  {
+    "nama": "MTSN 7 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582563"
+  },
+  {
+    "nama": "SD Muhammadiyah 1 SINE",
+    "jenjang": "SD/MI",
+    "npsn": "20555403"
+  },
+  {
+    "nama": "SD Negeri Gendol",
+    "jenjang": "SD/MI",
+    "npsn": "20539267"
+  },
+  {
+    "nama": "SD Negeri Girikerto 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509101"
+  },
+  {
+    "nama": "SD Negeri Girikerto 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509100"
+  },
+  {
+    "nama": "SD Negeri Hargosari 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509113"
+  },
+  {
+    "nama": "SD Negeri Hargosari 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509112"
+  },
+  {
+    "nama": "SD Negeri Jagir 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509110"
+  },
+  {
+    "nama": "SD Negeri Jagir 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509109"
+  },
+  {
+    "nama": "SD Negeri Jagir 3",
+    "jenjang": "SD/MI",
+    "npsn": "20509108"
+  },
+  {
+    "nama": "SD Negeri Jagir 4",
+    "jenjang": "SD/MI",
+    "npsn": "20509092"
+  },
+  {
+    "nama": "SD Negeri Kauman 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508986"
+  },
+  {
+    "nama": "SD Negeri Ketanggung 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508358"
+  },
+  {
+    "nama": "SD Negeri Kuniran 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508337"
+  },
+  {
+    "nama": "SD Negeri Kuniran 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508336"
+  },
+  {
+    "nama": "SD Negeri Kuniran 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508335"
+  },
+  {
+    "nama": "SD Negeri Ngrendeng 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508397"
+  },
+  {
+    "nama": "SD Negeri Pandansari",
+    "jenjang": "SD/MI",
+    "npsn": "20508403"
+  },
+  {
+    "nama": "SD Negeri Pocol",
+    "jenjang": "SD/MI",
+    "npsn": "20508224"
+  },
+  {
+    "nama": "SD Negeri SINE 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508584"
+  },
+  {
+    "nama": "SD Negeri SINE 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508582"
+  },
+  {
+    "nama": "SD Negeri Sumberejo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508578"
+  },
+  {
+    "nama": "SD Negeri Sumbersari 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508560"
+  },
+  {
+    "nama": "SD Negeri Sumbersari 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508561"
+  },
+  {
+    "nama": "SD Negeri Tulakan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508635"
+  },
+  {
+    "nama": "SD Negeri Tulakan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508634"
+  },
+  {
+    "nama": "SD Negeri Tulakan 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508633"
+  },
+  {
+    "nama": "SD Negeri Tulakan 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508644"
+  },
+  {
+    "nama": "SD Negeri Tulakan 6",
+    "jenjang": "SD/MI",
+    "npsn": "20508646"
+  },
+  {
+    "nama": "SD Negeri Wonosari 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508627"
+  },
+  {
+    "nama": "SD Negeri Wonosari 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508626"
+  },
+  {
+    "nama": "SDIT AL Ihsan SINE",
+    "jenjang": "SD/MI",
+    "npsn": "20566401"
+  },
+  {
+    "nama": "SDIT AL Islam SINE",
+    "jenjang": "SD/MI",
+    "npsn": "20577221"
+  },
+  {
+    "nama": "SMP Muhammadiyah 2 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508459"
+  },
+  {
+    "nama": "SMP Muhammadiyah 4 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508457"
+  },
+  {
+    "nama": "SMP Negeri 1 SINE",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508539"
+  },
+  {
+    "nama": "SMP Negeri 2 SINE",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508496"
+  },
+  {
+    "nama": "SMP Negeri 3 SINE",
+    "jenjang": "SMP/MTs",
+    "npsn": "20554802"
+  },
+  {
+    "nama": "MI Muhammadiyah Cepoko",
+    "jenjang": "SD/MI",
+    "npsn": "60717896"
+  },
+  {
+    "nama": "MI Muhammadiyah Pucangan",
+    "jenjang": "SD/MI",
+    "npsn": "60717894"
+  },
+  {
+    "nama": "MI Muhammadiyah Tawangrejo",
+    "jenjang": "SD/MI",
+    "npsn": "60717897"
+  },
+  {
+    "nama": "MI PSM Gedoro",
+    "jenjang": "SD/MI",
+    "npsn": "60717895"
+  },
+  {
+    "nama": "MI PSM Hargomulyo",
+    "jenjang": "SD/MI",
+    "npsn": "60717899"
+  },
+  {
+    "nama": "MI PSM Nglaran",
+    "jenjang": "SD/MI",
+    "npsn": "60717900"
+  },
+  {
+    "nama": "MI PSM Wakah",
+    "jenjang": "SD/MI",
+    "npsn": "60717898"
+  },
+  {
+    "nama": "MIN 11 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717893"
+  },
+  {
+    "nama": "MTS Darul Hikmah",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582555"
+  },
+  {
+    "nama": "MTSN 8 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582554"
+  },
+  {
+    "nama": "SD IT AL Mukminun",
+    "jenjang": "SD/MI",
+    "npsn": "20508671"
+  },
+  {
+    "nama": "SD Muhammadiyah 1 Ngrambe",
+    "jenjang": "SD/MI",
+    "npsn": "20573190"
+  },
+  {
+    "nama": "SD Negeri Babadan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508665"
+  },
+  {
+    "nama": "SD Negeri Babadan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20539262"
+  },
+  {
+    "nama": "SD Negeri Cepoko 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508729"
+  },
+  {
+    "nama": "SD Negeri Cepoko 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508739"
+  },
+  {
+    "nama": "SD Negeri Cepoko 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508738"
+  },
+  {
+    "nama": "SD Negeri Giriharjo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509103"
+  },
+  {
+    "nama": "SD Negeri Giriharjo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509102"
+  },
+  {
+    "nama": "SD Negeri Hargomulyo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509120"
+  },
+  {
+    "nama": "SD Negeri Hargomulyo 4",
+    "jenjang": "SD/MI",
+    "npsn": "20509114"
+  },
+  {
+    "nama": "SD Negeri Krandegan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508373"
+  },
+  {
+    "nama": "SD Negeri Krandegan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508372"
+  },
+  {
+    "nama": "SD Negeri Manisharjo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508328"
+  },
+  {
+    "nama": "SD Negeri Manisharjo 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508422"
+  },
+  {
+    "nama": "SD Negeri Manisharjo 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508421"
+  },
+  {
+    "nama": "SD Negeri Mendiro 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508425"
+  },
+  {
+    "nama": "SD Negeri Ngrambe 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508391"
+  },
+  {
+    "nama": "SD Negeri Ngrambe 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508390"
+  },
+  {
+    "nama": "SD Negeri Ngrambe 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508389"
+  },
+  {
+    "nama": "SD Negeri Pucangan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508223"
+  },
+  {
+    "nama": "SD Negeri Pucangan 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508232"
+  },
+  {
+    "nama": "SD Negeri Sambirejo",
+    "jenjang": "SD/MI",
+    "npsn": "20554874"
+  },
+  {
+    "nama": "SD Negeri Setono 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508283"
+  },
+  {
+    "nama": "SD Negeri Setono 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508282"
+  },
+  {
+    "nama": "SD Negeri Setono 5",
+    "jenjang": "SD/MI",
+    "npsn": "20508279"
+  },
+  {
+    "nama": "SD Negeri Sidomulyo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508295"
+  },
+  {
+    "nama": "SD Negeri Tawangrejo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508572"
+  },
+  {
+    "nama": "SD Negeri Tawangrejo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508571"
+  },
+  {
+    "nama": "SD Negeri Wakah 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508655"
+  },
+  {
+    "nama": "SD Negeri Wakah 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508654"
+  },
+  {
+    "nama": "SDIT MTA Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "70058139"
+  },
+  {
+    "nama": "SMP Muhammadiyah 1 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508460"
+  },
+  {
+    "nama": "SMP Negeri 1 Ngrambe",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508543"
+  },
+  {
+    "nama": "SMP Negeri 2 Ngrambe",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508500"
+  },
+  {
+    "nama": "SMP Negeri 3 Ngrambe",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508518"
+  },
+  {
+    "nama": "MI AL Fatah Gerit",
+    "jenjang": "SD/MI",
+    "npsn": "60717847"
+  },
+  {
+    "nama": "MI Islamiyah Genggong",
+    "jenjang": "SD/MI",
+    "npsn": "60717846"
+  },
+  {
+    "nama": "MI Salafiyah Ngijo",
+    "jenjang": "SD/MI",
+    "npsn": "60717849"
+  },
+  {
+    "nama": "MI Salafiyah Tanjungsari",
+    "jenjang": "SD/MI",
+    "npsn": "60717848"
+  },
+  {
+    "nama": "MIN 9 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717845"
+  },
+  {
+    "nama": "MIS Ashabu Suffah",
+    "jenjang": "SD/MI",
+    "npsn": "69983030"
+  },
+  {
+    "nama": "MTS Persiapan",
+    "jenjang": "SMP/MTs",
+    "npsn": "60729665"
+  },
+  {
+    "nama": "MTS SA PP Daarul Mutaallimin",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582537"
+  },
+  {
+    "nama": "MTS Walisongo",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582536"
+  },
+  {
+    "nama": "MTSN 9 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582535"
+  },
+  {
+    "nama": "MTSS AL Khodijah",
+    "jenjang": "SMP/MTs",
+    "npsn": "69983096"
+  },
+  {
+    "nama": "SD Muhammadiyah 1 Jogorogo",
+    "jenjang": "SD/MI",
+    "npsn": "20554708"
+  },
+  {
+    "nama": "SD Negeri Brubuh 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508721"
+  },
+  {
+    "nama": "SD Negeri Dawung 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508715"
+  },
+  {
+    "nama": "SD Negeri Dawung 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508879"
+  },
+  {
+    "nama": "SD Negeri Dawung 3",
+    "jenjang": "SD/MI",
+    "npsn": "20509065"
+  },
+  {
+    "nama": "SD Negeri Girimulyo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509099"
+  },
+  {
+    "nama": "SD Negeri Girimulyo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509098"
+  },
+  {
+    "nama": "SD Negeri Jaten 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509072"
+  },
+  {
+    "nama": "SD Negeri Jaten 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509071"
+  },
+  {
+    "nama": "SD Negeri Jogorogo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508935"
+  },
+  {
+    "nama": "SD Negeri Jogorogo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508934"
+  },
+  {
+    "nama": "SD Negeri Jogorogo 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508933"
+  },
+  {
+    "nama": "SD Negeri Jogorogo 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508932"
+  },
+  {
+    "nama": "SD Negeri Jogorogo 6",
+    "jenjang": "SD/MI",
+    "npsn": "20508930"
+  },
+  {
+    "nama": "SD Negeri Kletekan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508378"
+  },
+  {
+    "nama": "SD Negeri Kletekan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508377"
+  },
+  {
+    "nama": "SD Negeri Macanan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508354"
+  },
+  {
+    "nama": "SD Negeri Macanan 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508352"
+  },
+  {
+    "nama": "SD Negeri Ngrayudan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508387"
+  },
+  {
+    "nama": "SD Negeri Ngrayudan 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508385"
+  },
+  {
+    "nama": "SD Negeri SOCO 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508579"
+  },
+  {
+    "nama": "SD Negeri SOCO 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508590"
+  },
+  {
+    "nama": "SD Negeri Talang 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508556"
+  },
+  {
+    "nama": "SD Negeri Talang 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508554"
+  },
+  {
+    "nama": "SD Negeri Tanjungsari 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508575"
+  },
+  {
+    "nama": "SD Negeri Tanjungsari 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508573"
+  },
+  {
+    "nama": "SD Negeri Umbulrejo",
+    "jenjang": "SD/MI",
+    "npsn": "20508656"
+  },
+  {
+    "nama": "SMP AL Falah Jogorogo Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "70036817"
+  },
+  {
+    "nama": "SMP Negeri 1 Jogorogo",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508534"
+  },
+  {
+    "nama": "SMP Negeri 2 Jogorogo",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508521"
+  },
+  {
+    "nama": "SMP NUR Yusuf",
+    "jenjang": "SMP/MTs",
+    "npsn": "20573416"
+  },
+  {
+    "nama": "SMP PGRI Jogorogo",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508531"
+  },
+  {
+    "nama": "MI AL Mujahidin",
+    "jenjang": "SD/MI",
+    "npsn": "60717878"
+  },
+  {
+    "nama": "MI Al-hidayah",
+    "jenjang": "SD/MI",
+    "npsn": "60717879"
+  },
+  {
+    "nama": "MI Darul ULUM",
+    "jenjang": "SD/MI",
+    "npsn": "60717880"
+  },
+  {
+    "nama": "MI Islamiyah 1 Majasem",
+    "jenjang": "SD/MI",
+    "npsn": "60717873"
+  },
+  {
+    "nama": "MI Islamiyah 2 Majasem",
+    "jenjang": "SD/MI",
+    "npsn": "60717874"
+  },
+  {
+    "nama": "MI Muawwanah Ngijo",
+    "jenjang": "SD/MI",
+    "npsn": "60717877"
+  },
+  {
+    "nama": "MI Mubtadiin Islam",
+    "jenjang": "SD/MI",
+    "npsn": "60717876"
+  },
+  {
+    "nama": "MI PSM Jerukgulung",
+    "jenjang": "SD/MI",
+    "npsn": "60717872"
+  },
+  {
+    "nama": "MI PSM Jetak",
+    "jenjang": "SD/MI",
+    "npsn": "60717875"
+  },
+  {
+    "nama": "MI Salafiyah Tanon",
+    "jenjang": "SD/MI",
+    "npsn": "60717871"
+  },
+  {
+    "nama": "MIN 1 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717870"
+  },
+  {
+    "nama": "MIN 3 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717869"
+  },
+  {
+    "nama": "MTS AL Hidayah Karanggupito",
+    "jenjang": "SMP/MTs",
+    "npsn": "69881687"
+  },
+  {
+    "nama": "MTS Al-barokah",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582545"
+  },
+  {
+    "nama": "MTS Al-hidayah Kendal",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582547"
+  },
+  {
+    "nama": "MTS Darul `ulum",
+    "jenjang": "SMP/MTs",
+    "npsn": "69977779"
+  },
+  {
+    "nama": "MTS Darul ULUM Kendal",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582548"
+  },
+  {
+    "nama": "MTS MA`arif",
+    "jenjang": "SMP/MTs",
+    "npsn": "69882358"
+  },
+  {
+    "nama": "MTSN 13 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "69986899"
+  },
+  {
+    "nama": "MTSS Sunan Kalijogo",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582546"
+  },
+  {
+    "nama": "SD Muhammadiyah 1 Kendal",
+    "jenjang": "SD/MI",
+    "npsn": "69990855"
+  },
+  {
+    "nama": "SD Negeri Dadapan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508737"
+  },
+  {
+    "nama": "SD Negeri Dadapan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508736"
+  },
+  {
+    "nama": "SD Negeri Gayam 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509063"
+  },
+  {
+    "nama": "SD Negeri Gayam 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509062"
+  },
+  {
+    "nama": "SD Negeri Gayam 3",
+    "jenjang": "SD/MI",
+    "npsn": "20509061"
+  },
+  {
+    "nama": "SD Negeri Karanggupito 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508896"
+  },
+  {
+    "nama": "SD Negeri Karanggupito 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508899"
+  },
+  {
+    "nama": "SD Negeri Karanggupito 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508898"
+  },
+  {
+    "nama": "SD Negeri Karanggupito 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508897"
+  },
+  {
+    "nama": "SD Negeri Karangrejo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508913"
+  },
+  {
+    "nama": "SD Negeri Karangrejo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508914"
+  },
+  {
+    "nama": "SD Negeri Karangrejo 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508915"
+  },
+  {
+    "nama": "SD Negeri Kendal 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508978"
+  },
+  {
+    "nama": "SD Negeri Kendal 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508977"
+  },
+  {
+    "nama": "SD Negeri Majasem 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508351"
+  },
+  {
+    "nama": "SD Negeri Majasem 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508350"
+  },
+  {
+    "nama": "SD Negeri Majasem 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508349"
+  },
+  {
+    "nama": "SD Negeri Patalan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508250"
+  },
+  {
+    "nama": "SD Negeri Patalan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508249"
+  },
+  {
+    "nama": "SD Negeri Patalan 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508248"
+  },
+  {
+    "nama": "SD Negeri Ploso 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508228"
+  },
+  {
+    "nama": "SD Negeri Ploso 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508227"
+  },
+  {
+    "nama": "SD Negeri Sidorejo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508292"
+  },
+  {
+    "nama": "SD Negeri Sidorejo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508289"
+  },
+  {
+    "nama": "SD Negeri SIMO 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508586"
+  },
+  {
+    "nama": "SD Negeri SIMO 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508585"
+  },
+  {
+    "nama": "SMP Negeri 1 Kendal",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508547"
+  },
+  {
+    "nama": "SMP Negeri 2 Kendal",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508504"
+  },
+  {
+    "nama": "SMP Negeri 3 Kendal",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508509"
+  },
+  {
+    "nama": "MI Al-haqqi",
+    "jenjang": "SD/MI",
+    "npsn": "69881903"
+  },
+  {
+    "nama": "MI AR Risalah",
+    "jenjang": "SD/MI",
+    "npsn": "69963418"
+  },
+  {
+    "nama": "MI Hidayatul Mubtadiin Dempel",
+    "jenjang": "SD/MI",
+    "npsn": "60717839"
+  },
+  {
+    "nama": "MI PSM Nglencong",
+    "jenjang": "SD/MI",
+    "npsn": "60717840"
+  },
+  {
+    "nama": "MI PSM Satriyan",
+    "jenjang": "SD/MI",
+    "npsn": "60717838"
+  },
+  {
+    "nama": "MIN 2 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717837"
+  },
+  {
+    "nama": "MTS Kalijogo",
+    "jenjang": "SMP/MTs",
+    "npsn": "70023688"
+  },
+  {
+    "nama": "MTSN 12 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "69986898"
+  },
+  {
+    "nama": "SD Negeri Baderan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508686"
+  },
+  {
+    "nama": "SD Negeri Dempel 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509050"
+  },
+  {
+    "nama": "SD Negeri Dempel 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509049"
+  },
+  {
+    "nama": "SD Negeri Dempel 3",
+    "jenjang": "SD/MI",
+    "npsn": "20509048"
+  },
+  {
+    "nama": "SD Negeri Geneng 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509035"
+  },
+  {
+    "nama": "SD Negeri Geneng 3",
+    "jenjang": "SD/MI",
+    "npsn": "20509034"
+  },
+  {
+    "nama": "SD Negeri Geneng 4",
+    "jenjang": "SD/MI",
+    "npsn": "20509033"
+  },
+  {
+    "nama": "SD Negeri Kasreman 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508916"
+  },
+  {
+    "nama": "SD Negeri Kasreman 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508992"
+  },
+  {
+    "nama": "SD Negeri Keniten 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508974"
+  },
+  {
+    "nama": "SD Negeri Keniten 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508973"
+  },
+  {
+    "nama": "SD Negeri Keraswetan",
+    "jenjang": "SD/MI",
+    "npsn": "20508365"
+  },
+  {
+    "nama": "SD Negeri Kersikan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508363"
+  },
+  {
+    "nama": "SD Negeri Kersikan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508362"
+  },
+  {
+    "nama": "SD Negeri Kersoharjo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508360"
+  },
+  {
+    "nama": "SD Negeri Klampisan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508380"
+  },
+  {
+    "nama": "SD Negeri Klampisan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508379"
+  },
+  {
+    "nama": "SD Negeri Klitik 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508375"
+  },
+  {
+    "nama": "SD Negeri Klitik 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508374"
+  },
+  {
+    "nama": "SD Negeri Sidorejo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508293"
+  },
+  {
+    "nama": "SD Negeri Sidorejo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508290"
+  },
+  {
+    "nama": "SD Negeri Sidorejo 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508438"
+  },
+  {
+    "nama": "SD Negeri Tambakromo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508550"
+  },
+  {
+    "nama": "SD Negeri Tambakromo 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508576"
+  },
+  {
+    "nama": "SD Negeri Tepas 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508637"
+  },
+  {
+    "nama": "SD PLUS Darussalam",
+    "jenjang": "SD/MI",
+    "npsn": "20575898"
+  },
+  {
+    "nama": "SMP Negeri 1 Geneng",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508523"
+  },
+  {
+    "nama": "SMP Negeri 2 Geneng",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508522"
+  },
+  {
+    "nama": "MI Fathul HUDA Sumengko",
+    "jenjang": "SD/MI",
+    "npsn": "69994783"
+  },
+  {
+    "nama": "MI Miftahus Sa Adah",
+    "jenjang": "SD/MI",
+    "npsn": "69881904"
+  },
+  {
+    "nama": "MIN 10 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717881"
+  },
+  {
+    "nama": "MTS AL Fatah",
+    "jenjang": "SMP/MTs",
+    "npsn": "70027469"
+  },
+  {
+    "nama": "MTS PSM Tirak",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582549"
+  },
+  {
+    "nama": "SD Negeri Banget 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508685"
+  },
+  {
+    "nama": "SD Negeri Banget 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508684"
+  },
+  {
+    "nama": "SD Negeri Budug",
+    "jenjang": "SD/MI",
+    "npsn": "20508720"
+  },
+  {
+    "nama": "SD Negeri Dinden 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509044"
+  },
+  {
+    "nama": "SD Negeri Dinden 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509043"
+  },
+  {
+    "nama": "SD Negeri Jenangan",
+    "jenjang": "SD/MI",
+    "npsn": "20509082"
+  },
+  {
+    "nama": "SD Negeri Karangsono 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508926"
+  },
+  {
+    "nama": "SD Negeri Karangsono 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508925"
+  },
+  {
+    "nama": "SD Negeri Karangsono 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508924"
+  },
+  {
+    "nama": "SD Negeri Kendung",
+    "jenjang": "SD/MI",
+    "npsn": "20508975"
+  },
+  {
+    "nama": "SD Negeri Kwadungan",
+    "jenjang": "SD/MI",
+    "npsn": "20508334"
+  },
+  {
+    "nama": "SD Negeri Mojomanis 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508431"
+  },
+  {
+    "nama": "SD Negeri Pojok 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508220"
+  },
+  {
+    "nama": "SD Negeri Purwosari 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508244"
+  },
+  {
+    "nama": "SD Negeri Purwosari 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508243"
+  },
+  {
+    "nama": "SD Negeri SIMO",
+    "jenjang": "SD/MI",
+    "npsn": "20508587"
+  },
+  {
+    "nama": "SD Negeri Sumengko",
+    "jenjang": "SD/MI",
+    "npsn": "20508559"
+  },
+  {
+    "nama": "SD Negeri Tirak",
+    "jenjang": "SD/MI",
+    "npsn": "20508636"
+  },
+  {
+    "nama": "SD Negeri Warukkalong 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508653"
+  },
+  {
+    "nama": "SD Negeri Warukkalong 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508652"
+  },
+  {
+    "nama": "SMP Miftahus Saadah",
+    "jenjang": "SMP/MTs",
+    "npsn": "69988878"
+  },
+  {
+    "nama": "SMP Negeri 1 Kwadungan",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508546"
+  },
+  {
+    "nama": "SMP Negeri 2 Kwadungan",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508503"
+  },
+  {
+    "nama": "MI Al-amnaniyah Paras",
+    "jenjang": "SD/MI",
+    "npsn": "69853582"
+  },
+  {
+    "nama": "MI Terpadu Nurul Islam",
+    "jenjang": "SD/MI",
+    "npsn": "69927941"
+  },
+  {
+    "nama": "MIN 13 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717902"
+  },
+  {
+    "nama": "MTS Nahdlatul Ulama",
+    "jenjang": "SMP/MTs",
+    "npsn": "70029394"
+  },
+  {
+    "nama": "MTSN 2 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582557"
+  },
+  {
+    "nama": "SD Negeri Babadan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508663"
+  },
+  {
+    "nama": "SD Negeri Gandri 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509064"
+  },
+  {
+    "nama": "SD Negeri Gandri I",
+    "jenjang": "SD/MI",
+    "npsn": "20509053"
+  },
+  {
+    "nama": "SD Negeri Ngompro I",
+    "jenjang": "SD/MI",
+    "npsn": "20508393"
+  },
+  {
+    "nama": "SD Negeri Ngompro II",
+    "jenjang": "SD/MI",
+    "npsn": "20508392"
+  },
+  {
+    "nama": "SD Negeri Pangkur I",
+    "jenjang": "SD/MI",
+    "npsn": "20508258"
+  },
+  {
+    "nama": "SD Negeri Pangkur III",
+    "jenjang": "SD/MI",
+    "npsn": "20508256"
+  },
+  {
+    "nama": "SD Negeri Paras 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508253"
+  },
+  {
+    "nama": "SD Negeri Pleset I",
+    "jenjang": "SD/MI",
+    "npsn": "20508230"
+  },
+  {
+    "nama": "SD Negeri Pleset II",
+    "jenjang": "SD/MI",
+    "npsn": "20508229"
+  },
+  {
+    "nama": "SD Negeri Pohkonyal",
+    "jenjang": "SD/MI",
+    "npsn": "20508218"
+  },
+  {
+    "nama": "SD Negeri Sumber",
+    "jenjang": "SD/MI",
+    "npsn": "20508598"
+  },
+  {
+    "nama": "SD Negeri Waruk Tengah 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508650"
+  },
+  {
+    "nama": "SD Negeri Waruktengah I",
+    "jenjang": "SD/MI",
+    "npsn": "20508651"
+  },
+  {
+    "nama": "SMP Negeri 1 Pangkur",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508541"
+  },
+  {
+    "nama": "MI Islamiyah Ringinanom",
+    "jenjang": "SD/MI",
+    "npsn": "60717853"
+  },
+  {
+    "nama": "MIS AL Hidayah Sidokerto",
+    "jenjang": "SD/MI",
+    "npsn": "60717854"
+  },
+  {
+    "nama": "MTS KP Karangjati",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582538"
+  },
+  {
+    "nama": "MTS Miftahul Lubab",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582539"
+  },
+  {
+    "nama": "MTSS Al-hidayah",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582540"
+  },
+  {
+    "nama": "SD Islam AL Amnaniyah Karangjati",
+    "jenjang": "SD/MI",
+    "npsn": "20557627"
+  },
+  {
+    "nama": "SD Muhammadiyah 1 Karangjati",
+    "jenjang": "SD/MI",
+    "npsn": "20574960"
+  },
+  {
+    "nama": "SD Negeri Brangol 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508741"
+  },
+  {
+    "nama": "SD Negeri Campurasri 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508718"
+  },
+  {
+    "nama": "SD Negeri Campurasri 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508719"
+  },
+  {
+    "nama": "SD Negeri Danguk",
+    "jenjang": "SD/MI",
+    "npsn": "20539264"
+  },
+  {
+    "nama": "SD Negeri Gempol 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509017"
+  },
+  {
+    "nama": "SD Negeri Gempol 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509016"
+  },
+  {
+    "nama": "SD Negeri Jatipuro 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509089"
+  },
+  {
+    "nama": "SD Negeri Jatipuro 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509088"
+  },
+  {
+    "nama": "SD Negeri Jatipuro 3",
+    "jenjang": "SD/MI",
+    "npsn": "20509090"
+  },
+  {
+    "nama": "SD Negeri Karangjati 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508895"
+  },
+  {
+    "nama": "SD Negeri Karangjati 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508894"
+  },
+  {
+    "nama": "SD Negeri Kedungmiri",
+    "jenjang": "SD/MI",
+    "npsn": "20508958"
+  },
+  {
+    "nama": "SD Negeri Legundi 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508343"
+  },
+  {
+    "nama": "SD Negeri Legundi 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508342"
+  },
+  {
+    "nama": "SD Negeri Ploso LOR 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508226"
+  },
+  {
+    "nama": "SD Negeri Puhti 2",
+    "jenjang": "SD/MI",
+    "npsn": "20539270"
+  },
+  {
+    "nama": "SD Negeri Rejomulyo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508239"
+  },
+  {
+    "nama": "SD Negeri Rejomulyo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508238"
+  },
+  {
+    "nama": "SD Negeri Rejuno 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508237"
+  },
+  {
+    "nama": "SD Negeri Rejuno 5",
+    "jenjang": "SD/MI",
+    "npsn": "20508246"
+  },
+  {
+    "nama": "SD Negeri Ringinanom",
+    "jenjang": "SD/MI",
+    "npsn": "20508312"
+  },
+  {
+    "nama": "SD Negeri SAWO 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508302"
+  },
+  {
+    "nama": "SD Negeri Sembung 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508319"
+  },
+  {
+    "nama": "SD Negeri Sembung 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508318"
+  },
+  {
+    "nama": "SD Negeri Sidokerto 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508276"
+  },
+  {
+    "nama": "SD Negeri Sidokerto 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508277"
+  },
+  {
+    "nama": "SD Negeri Sidorejo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508291"
+  },
+  {
+    "nama": "SD Negeri Sidorejo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508274"
+  },
+  {
+    "nama": "SDI AL Amnaniyah Puhti Karangjati",
+    "jenjang": "SD/MI",
+    "npsn": "20508687"
+  },
+  {
+    "nama": "SDIT AL IMAM Asy-syafii",
+    "jenjang": "SD/MI",
+    "npsn": "20574962"
+  },
+  {
+    "nama": "SMP AL Amnaniyah Karangjati",
+    "jenjang": "SMP/MTs",
+    "npsn": "20557628"
+  },
+  {
+    "nama": "SMP Negeri 1 Karangjati",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508535"
+  },
+  {
+    "nama": "SMP Negeri 2 Karangjati",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508506"
+  },
+  {
+    "nama": "SMP Negeri 3 Karangjati",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508508"
+  },
+  {
+    "nama": "SMP PGRI Karangjati",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508548"
+  },
+  {
+    "nama": "MI Al Karomah",
+    "jenjang": "SD/MI",
+    "npsn": "69819611"
+  },
+  {
+    "nama": "MI AL Yusufiyah",
+    "jenjang": "SD/MI",
+    "npsn": "60717836"
+  },
+  {
+    "nama": "MI Darussalam",
+    "jenjang": "SD/MI",
+    "npsn": "60717835"
+  },
+  {
+    "nama": "MI Islamiyah Legowetan",
+    "jenjang": "SD/MI",
+    "npsn": "60717834"
+  },
+  {
+    "nama": "MTS Al-karomah",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582531"
+  },
+  {
+    "nama": "MTS Walisongo Sumberbening",
+    "jenjang": "SMP/MTs",
+    "npsn": "69787299"
+  },
+  {
+    "nama": "SD Negeri Bringin 01",
+    "jenjang": "SD/MI",
+    "npsn": "20508725"
+  },
+  {
+    "nama": "SD Negeri Bringin 02",
+    "jenjang": "SD/MI",
+    "npsn": "20508724"
+  },
+  {
+    "nama": "SD Negeri Bringin 03",
+    "jenjang": "SD/MI",
+    "npsn": "20508723"
+  },
+  {
+    "nama": "SD Negeri Dampit 01",
+    "jenjang": "SD/MI",
+    "npsn": "20508735"
+  },
+  {
+    "nama": "SD Negeri Dampit 03",
+    "jenjang": "SD/MI",
+    "npsn": "20508734"
+  },
+  {
+    "nama": "SD Negeri DERO 01",
+    "jenjang": "SD/MI",
+    "npsn": "20509047"
+  },
+  {
+    "nama": "SD Negeri DERO 03",
+    "jenjang": "SD/MI",
+    "npsn": "20509045"
+  },
+  {
+    "nama": "SD Negeri Gandong 01",
+    "jenjang": "SD/MI",
+    "npsn": "20509040"
+  },
+  {
+    "nama": "SD Negeri Gandong 3",
+    "jenjang": "SD/MI",
+    "npsn": "20509052"
+  },
+  {
+    "nama": "SD Negeri Kenongorejo 01",
+    "jenjang": "SD/MI",
+    "npsn": "20508971"
+  },
+  {
+    "nama": "SD Negeri Kenongorejo 05",
+    "jenjang": "SD/MI",
+    "npsn": "20508383"
+  },
+  {
+    "nama": "SD Negeri Kenongorejo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508970"
+  },
+  {
+    "nama": "SD Negeri Krompol 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508356"
+  },
+  {
+    "nama": "SD Negeri Krompol 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508340"
+  },
+  {
+    "nama": "SD Negeri Legowetan",
+    "jenjang": "SD/MI",
+    "npsn": "20508341"
+  },
+  {
+    "nama": "SD Negeri MOJO 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508434"
+  },
+  {
+    "nama": "SD Negeri MOJO 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508433"
+  },
+  {
+    "nama": "SD Negeri Sumberbening 05",
+    "jenjang": "SD/MI",
+    "npsn": "20508593"
+  },
+  {
+    "nama": "SD Negeri Sumberbening 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508597"
+  },
+  {
+    "nama": "SD Negeri Sumberbening 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508595"
+  },
+  {
+    "nama": "SD Negeri Sumberbening 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508594"
+  },
+  {
+    "nama": "SD Negeri Suruh 01",
+    "jenjang": "SD/MI",
+    "npsn": "20508558"
+  },
+  {
+    "nama": "SMP Negeri 1 Bringin",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508524"
+  },
+  {
+    "nama": "SMP Negeri 2 Bringin",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508537"
+  },
+  {
+    "nama": "MI Fathul Ulum",
+    "jenjang": "SD/MI",
+    "npsn": "69881905"
+  },
+  {
+    "nama": "MI Muhammadiyah Kwadungan LOR",
+    "jenjang": "SD/MI",
+    "npsn": "60717901"
+  },
+  {
+    "nama": "MI Roudlotus Salamah",
+    "jenjang": "SD/MI",
+    "npsn": "69853581"
+  },
+  {
+    "nama": "MTS Guppi Padas",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582556"
+  },
+  {
+    "nama": "SD Muhammadiyah 1 Padas",
+    "jenjang": "SD/MI",
+    "npsn": "69948432"
+  },
+  {
+    "nama": "SD Negeri Banjaransari 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508746"
+  },
+  {
+    "nama": "SD Negeri Bendo I",
+    "jenjang": "SD/MI",
+    "npsn": "20508764"
+  },
+  {
+    "nama": "SD Negeri Bendo II",
+    "jenjang": "SD/MI",
+    "npsn": "20508763"
+  },
+  {
+    "nama": "SD Negeri Bintoyo",
+    "jenjang": "SD/MI",
+    "npsn": "20508742"
+  },
+  {
+    "nama": "SD Negeri Kedungprahu 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508956"
+  },
+  {
+    "nama": "SD Negeri Kwadungan LOR",
+    "jenjang": "SD/MI",
+    "npsn": "20508331"
+  },
+  {
+    "nama": "SD Negeri Munggut 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508430"
+  },
+  {
+    "nama": "SD Negeri Munggut II",
+    "jenjang": "SD/MI",
+    "npsn": "20508429"
+  },
+  {
+    "nama": "SD Negeri Pacing I",
+    "jenjang": "SD/MI",
+    "npsn": "20508398"
+  },
+  {
+    "nama": "SD Negeri Pacing II",
+    "jenjang": "SD/MI",
+    "npsn": "20508409"
+  },
+  {
+    "nama": "SD Negeri Padas I",
+    "jenjang": "SD/MI",
+    "npsn": "20508408"
+  },
+  {
+    "nama": "SD Negeri Padas II",
+    "jenjang": "SD/MI",
+    "npsn": "20508407"
+  },
+  {
+    "nama": "SD Negeri Sambiroto 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508303"
+  },
+  {
+    "nama": "SD Negeri Sambiroto I",
+    "jenjang": "SD/MI",
+    "npsn": "20508304"
+  },
+  {
+    "nama": "SD Negeri Sukowiyono 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508599"
+  },
+  {
+    "nama": "SD Negeri Sukowiyono I",
+    "jenjang": "SD/MI",
+    "npsn": "20508602"
+  },
+  {
+    "nama": "SD Negeri Tambakromo I",
+    "jenjang": "SD/MI",
+    "npsn": "20508562"
+  },
+  {
+    "nama": "SD Negeri Tambakromo II",
+    "jenjang": "SD/MI",
+    "npsn": "20508564"
+  },
+  {
+    "nama": "SD Negeri Tungkulrejo",
+    "jenjang": "SD/MI",
+    "npsn": "20508657"
+  },
+  {
+    "nama": "SDI Fathul HUDA Bendo",
+    "jenjang": "SD/MI",
+    "npsn": "69900208"
+  },
+  {
+    "nama": "SMP Islam Fathul HUDA Bendo",
+    "jenjang": "SMP/MTs",
+    "npsn": "70037305"
+  },
+  {
+    "nama": "SMP Negeri 1 Padas",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508542"
+  },
+  {
+    "nama": "MI AL Falah Beran",
+    "jenjang": "SD/MI",
+    "npsn": "60717891"
+  },
+  {
+    "nama": "MI AL Hijrah 01",
+    "jenjang": "SD/MI",
+    "npsn": "69983029"
+  },
+  {
+    "nama": "MI AN NOOR Karangasri",
+    "jenjang": "SD/MI",
+    "npsn": "60729507"
+  },
+  {
+    "nama": "MI Muhammadiyah Kartoharjo",
+    "jenjang": "SD/MI",
+    "npsn": "60717892"
+  },
+  {
+    "nama": "MI NUSA Bakti",
+    "jenjang": "SD/MI",
+    "npsn": "70034629"
+  },
+  {
+    "nama": "MI PSM Watualang",
+    "jenjang": "SD/MI",
+    "npsn": "60717890"
+  },
+  {
+    "nama": "MI Tahfidz Madinatul Huffadz",
+    "jenjang": "SD/MI",
+    "npsn": "69993390"
+  },
+  {
+    "nama": "MIN 6 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717889"
+  },
+  {
+    "nama": "Mistahfidz Ash-habul Kahfi",
+    "jenjang": "SD/MI",
+    "npsn": "69927942"
+  },
+  {
+    "nama": "MTS PSA An-noor",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582553"
+  },
+  {
+    "nama": "MTSN 3 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582552"
+  },
+  {
+    "nama": "SD Islam AL Qolam",
+    "jenjang": "SD/MI",
+    "npsn": "69934102"
+  },
+  {
+    "nama": "SD Katolik Santo Yosef",
+    "jenjang": "SD/MI",
+    "npsn": "20508669"
+  },
+  {
+    "nama": "SD Luqman AL Hakim",
+    "jenjang": "SD/MI",
+    "npsn": "20554776"
+  },
+  {
+    "nama": "SD Muhammadiyah 1 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "20508688"
+  },
+  {
+    "nama": "SD Negeri Banyuurip",
+    "jenjang": "SD/MI",
+    "npsn": "20508767"
+  },
+  {
+    "nama": "SD Negeri Beran 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508759"
+  },
+  {
+    "nama": "SD Negeri Beran 5",
+    "jenjang": "SD/MI",
+    "npsn": "20508758"
+  },
+  {
+    "nama": "SD Negeri Beran 6",
+    "jenjang": "SD/MI",
+    "npsn": "20508757"
+  },
+  {
+    "nama": "SD Negeri Grudo 3 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "20509096"
+  },
+  {
+    "nama": "SD Negeri Grudo 4",
+    "jenjang": "SD/MI",
+    "npsn": "20509095"
+  },
+  {
+    "nama": "SD Negeri Jururejo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508940"
+  },
+  {
+    "nama": "SD Negeri Kandangan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508624"
+  },
+  {
+    "nama": "SD Negeri Karangasri 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508945"
+  },
+  {
+    "nama": "SD Negeri Karangasri 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508943"
+  },
+  {
+    "nama": "SD Negeri Karangtengah 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508920"
+  },
+  {
+    "nama": "SD Negeri Karangtengah 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508922"
+  },
+  {
+    "nama": "SD Negeri Karangtengah Prandon 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508357"
+  },
+  {
+    "nama": "SD Negeri Karangtengah Prandon 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508338"
+  },
+  {
+    "nama": "SD Negeri Kartoharjo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508917"
+  },
+  {
+    "nama": "SD Negeri Kerek",
+    "jenjang": "SD/MI",
+    "npsn": "20508364"
+  },
+  {
+    "nama": "SD Negeri Ketanggi 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508359"
+  },
+  {
+    "nama": "SD Negeri Mangunharjo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508347"
+  },
+  {
+    "nama": "SD Negeri Mangunharjo 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508346"
+  },
+  {
+    "nama": "SD Negeri Mangunharjo 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508344"
+  },
+  {
+    "nama": "SD Negeri Margomulyo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508414"
+  },
+  {
+    "nama": "SD Negeri Margomulyo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508413"
+  },
+  {
+    "nama": "SD Negeri Ngawi Purba 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508394"
+  },
+  {
+    "nama": "SD Negeri Pelem 2 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "20508266"
+  },
+  {
+    "nama": "SD Negeri Watualang 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508649"
+  },
+  {
+    "nama": "SD Negeri Watualang 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508647"
+  },
+  {
+    "nama": "SDIT Harapan Ummat",
+    "jenjang": "SD/MI",
+    "npsn": "20554778"
+  },
+  {
+    "nama": "SMP Luqman AL Hakim",
+    "jenjang": "SMP/MTs",
+    "npsn": "69985721"
+  },
+  {
+    "nama": "SMP Maarif Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508461"
+  },
+  {
+    "nama": "SMP Muhammadiyah 5 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508455"
+  },
+  {
+    "nama": "SMP Negeri 1 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508544"
+  },
+  {
+    "nama": "SMP Negeri 2 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508501"
+  },
+  {
+    "nama": "SMP Negeri 3 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508519"
+  },
+  {
+    "nama": "SMP Negeri 4 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508514"
+  },
+  {
+    "nama": "SMP Negeri 5 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508512"
+  },
+  {
+    "nama": "SMP Negeri 6 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508510"
+  },
+  {
+    "nama": "SMP Syafaatul ULUM Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "69985988"
+  },
+  {
+    "nama": "SMP Tahfidzul Quran Madinatul Huffadz",
+    "jenjang": "SMP/MTs",
+    "npsn": "70043951"
+  },
+  {
+    "nama": "SMP Tahfizh AL Qolam",
+    "jenjang": "SMP/MTs",
+    "npsn": "69992898"
+  },
+  {
+    "nama": "SMP Wahidiyah Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "69985788"
+  },
+  {
+    "nama": "Smpit Harapan UMAT",
+    "jenjang": "SMP/MTs",
+    "npsn": "69945402"
+  },
+  {
+    "nama": "SMPS Islam Al-hijrah",
+    "jenjang": "SMP/MTs",
+    "npsn": "69772946"
+  },
+  {
+    "nama": "MI AL Fatah Ngasinan",
+    "jenjang": "SD/MI",
+    "npsn": "60717910"
+  },
+  {
+    "nama": "MI AL Islam Pehnangka",
+    "jenjang": "SD/MI",
+    "npsn": "60717908"
+  },
+  {
+    "nama": "MI AS Salam Sidorejo",
+    "jenjang": "SD/MI",
+    "npsn": "60717920"
+  },
+  {
+    "nama": "MI FIE Sabilil Muttaqien Tempurejo",
+    "jenjang": "SD/MI",
+    "npsn": "60717918"
+  },
+  {
+    "nama": "MI Islamiyah Babadan",
+    "jenjang": "SD/MI",
+    "npsn": "60717913"
+  },
+  {
+    "nama": "MI Islamiyah DAWU Paron",
+    "jenjang": "SD/MI",
+    "npsn": "60717914"
+  },
+  {
+    "nama": "MI Islamiyah Kedungjambu",
+    "jenjang": "SD/MI",
+    "npsn": "60717905"
+  },
+  {
+    "nama": "MI Mamba`ul Hikmah",
+    "jenjang": "SD/MI",
+    "npsn": "69983031"
+  },
+  {
+    "nama": "MI Muhammadiyah Gentong",
+    "jenjang": "SD/MI",
+    "npsn": "60717909"
+  },
+  {
+    "nama": "MI PSM Al-amin Sumberagung",
+    "jenjang": "SD/MI",
+    "npsn": "60717911"
+  },
+  {
+    "nama": "MI PSM Bendo Barat",
+    "jenjang": "SD/MI",
+    "npsn": "60717919"
+  },
+  {
+    "nama": "MI PSM Kedungputri",
+    "jenjang": "SD/MI",
+    "npsn": "60717912"
+  },
+  {
+    "nama": "MI PSM Ngale",
+    "jenjang": "SD/MI",
+    "npsn": "60717916"
+  },
+  {
+    "nama": "MI PSM Paron",
+    "jenjang": "SD/MI",
+    "npsn": "60717907"
+  },
+  {
+    "nama": "MI PSM Sambipasar",
+    "jenjang": "SD/MI",
+    "npsn": "60717906"
+  },
+  {
+    "nama": "MI PSM Sulursewu",
+    "jenjang": "SD/MI",
+    "npsn": "60717915"
+  },
+  {
+    "nama": "MI Salafiyah Kedungbanteng",
+    "jenjang": "SD/MI",
+    "npsn": "60717917"
+  },
+  {
+    "nama": "MIN 5 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717903"
+  },
+  {
+    "nama": "MIN 8 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717904"
+  },
+  {
+    "nama": "MTS FIE Sabilil Muttaqien",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582560"
+  },
+  {
+    "nama": "MTS Karya Pembangunan Paron",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582561"
+  },
+  {
+    "nama": "MTS Mamba`ul Hikmah",
+    "jenjang": "SMP/MTs",
+    "npsn": "60729666"
+  },
+  {
+    "nama": "MTSN 11 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "69986897"
+  },
+  {
+    "nama": "MTSN 4 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582559"
+  },
+  {
+    "nama": "MTSN 5 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582558"
+  },
+  {
+    "nama": "SD Muhammadiyah 1 Paron",
+    "jenjang": "SD/MI",
+    "npsn": "20573108"
+  },
+  {
+    "nama": "SD Negeri Babadan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508664"
+  },
+  {
+    "nama": "SD Negeri Babadan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508662"
+  },
+  {
+    "nama": "SD Negeri Babadan 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508660"
+  },
+  {
+    "nama": "SD Negeri DAWU 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508730"
+  },
+  {
+    "nama": "SD Negeri Gelung 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509060"
+  },
+  {
+    "nama": "SD Negeri Gelung 3",
+    "jenjang": "SD/MI",
+    "npsn": "20509058"
+  },
+  {
+    "nama": "SD Negeri Gelung 5",
+    "jenjang": "SD/MI",
+    "npsn": "20509056"
+  },
+  {
+    "nama": "SD Negeri Gentong 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509032"
+  },
+  {
+    "nama": "SD Negeri Jambangan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509076"
+  },
+  {
+    "nama": "SD Negeri Jambangan 4",
+    "jenjang": "SD/MI",
+    "npsn": "20509073"
+  },
+  {
+    "nama": "SD Negeri Jeblogan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509084"
+  },
+  {
+    "nama": "SD Negeri Jeblogan 3",
+    "jenjang": "SD/MI",
+    "npsn": "20509083"
+  },
+  {
+    "nama": "SD Negeri Kebon 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509004"
+  },
+  {
+    "nama": "SD Negeri Kedungputri 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508967"
+  },
+  {
+    "nama": "SD Negeri Kedungputri 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508968"
+  },
+  {
+    "nama": "SD Negeri Kedungputri 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508980"
+  },
+  {
+    "nama": "SD Negeri Kedungputri 5",
+    "jenjang": "SD/MI",
+    "npsn": "20508979"
+  },
+  {
+    "nama": "SD Negeri Ngale 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508427"
+  },
+  {
+    "nama": "SD Negeri Ngale 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508426"
+  },
+  {
+    "nama": "SD Negeri Ngale 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508411"
+  },
+  {
+    "nama": "SD Negeri Paron 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508252"
+  },
+  {
+    "nama": "SD Negeri Paron 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508251"
+  },
+  {
+    "nama": "SD Negeri Semen 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508317"
+  },
+  {
+    "nama": "SD Negeri Semen 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508316"
+  },
+  {
+    "nama": "SD Negeri Semen 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508300"
+  },
+  {
+    "nama": "SD Negeri Semen 5",
+    "jenjang": "SD/MI",
+    "npsn": "20508285"
+  },
+  {
+    "nama": "SD Negeri Semen 6",
+    "jenjang": "SD/MI",
+    "npsn": "20508284"
+  },
+  {
+    "nama": "SD Negeri Sirigan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508581"
+  },
+  {
+    "nama": "SD Negeri Sirigan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508580"
+  },
+  {
+    "nama": "SD Negeri Teguhan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508568"
+  },
+  {
+    "nama": "SD Negeri Teguhan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508566"
+  },
+  {
+    "nama": "SD Negeri Teguhan 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508565"
+  },
+  {
+    "nama": "SD Negeri Tempuran 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508549"
+  },
+  {
+    "nama": "SD Negeri Tempuran 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508643"
+  },
+  {
+    "nama": "SD Negeri Tempuran 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508642"
+  },
+  {
+    "nama": "SD Negeri Tempuran 5",
+    "jenjang": "SD/MI",
+    "npsn": "20508641"
+  },
+  {
+    "nama": "SD Negeri Tempuran 6",
+    "jenjang": "SD/MI",
+    "npsn": "20508640"
+  },
+  {
+    "nama": "SDIT AL Kiram",
+    "jenjang": "SD/MI",
+    "npsn": "20554782"
+  },
+  {
+    "nama": "SDIT Ar-rohmah",
+    "jenjang": "SD/MI",
+    "npsn": "69971069"
+  },
+  {
+    "nama": "SMP AL Azhar Paron",
+    "jenjang": "SMP/MTs",
+    "npsn": "20555404"
+  },
+  {
+    "nama": "SMP Al-islam Pehnangka Paron",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508454"
+  },
+  {
+    "nama": "SMP Negeri 1 Paron",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508540"
+  },
+  {
+    "nama": "SMP Negeri 2 Paron",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508498"
+  },
+  {
+    "nama": "SMP Negeri 3 Paron",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508517"
+  },
+  {
+    "nama": "MI AL Fajar Kedunggalar",
+    "jenjang": "SD/MI",
+    "npsn": "60717857"
+  },
+  {
+    "nama": "MI AL Fatah Blembem",
+    "jenjang": "SD/MI",
+    "npsn": "60717858"
+  },
+  {
+    "nama": "MI Darussalam Kedunggalar",
+    "jenjang": "SD/MI",
+    "npsn": "60717867"
+  },
+  {
+    "nama": "MI FIE Sabilil Muttaqien Ngarengan",
+    "jenjang": "SD/MI",
+    "npsn": "60717856"
+  },
+  {
+    "nama": "MI Islamiyah Kedungwaru",
+    "jenjang": "SD/MI",
+    "npsn": "60717860"
+  },
+  {
+    "nama": "MI MA`arif Pelang LOR",
+    "jenjang": "SD/MI",
+    "npsn": "69977725"
+  },
+  {
+    "nama": "MI Mambaul Hasanah Kedunggalar",
+    "jenjang": "SD/MI",
+    "npsn": "60717868"
+  },
+  {
+    "nama": "MI Miftahul HUDA Wonokerto",
+    "jenjang": "SD/MI",
+    "npsn": "60717865"
+  },
+  {
+    "nama": "MI Muawanah Tawang",
+    "jenjang": "SD/MI",
+    "npsn": "60717861"
+  },
+  {
+    "nama": "MI Muqorrobiyah Pelangkidul",
+    "jenjang": "SD/MI",
+    "npsn": "60717864"
+  },
+  {
+    "nama": "MI Nurul HUDA Katikan",
+    "jenjang": "SD/MI",
+    "npsn": "60717863"
+  },
+  {
+    "nama": "MI Nurul Islam Katikan",
+    "jenjang": "SD/MI",
+    "npsn": "60717862"
+  },
+  {
+    "nama": "MI PSM Salak",
+    "jenjang": "SD/MI",
+    "npsn": "60717866"
+  },
+  {
+    "nama": "MI Sabilarrosyad",
+    "jenjang": "SD/MI",
+    "npsn": "60717859"
+  },
+  {
+    "nama": "MIN 14 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717855"
+  },
+  {
+    "nama": "MTS Darussalam Kedunggalar",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582543"
+  },
+  {
+    "nama": "MTS Negara Kedunggalar",
+    "jenjang": "SMP/MTs",
+    "npsn": "69932038"
+  },
+  {
+    "nama": "MTS SATU ATAP AL Murtadho",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582544"
+  },
+  {
+    "nama": "MTS Terpadu AL Firdaus",
+    "jenjang": "SMP/MTs",
+    "npsn": "60729667"
+  },
+  {
+    "nama": "MTSN 6 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582542"
+  },
+  {
+    "nama": "SD AL Azhar",
+    "jenjang": "SD/MI",
+    "npsn": "20570499"
+  },
+  {
+    "nama": "SD Muhammadiyah 1 Kedunggalar",
+    "jenjang": "SD/MI",
+    "npsn": "20554775"
+  },
+  {
+    "nama": "SD Negeri Bangunrejo Kidul 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508681"
+  },
+  {
+    "nama": "SD Negeri Bangunrejo Kidul 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508680"
+  },
+  {
+    "nama": "SD Negeri Bangunrejo Kidul 3",
+    "jenjang": "SD/MI",
+    "npsn": "20539263"
+  },
+  {
+    "nama": "SD Negeri Bangunrejo Kidul 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508679"
+  },
+  {
+    "nama": "SD Negeri Bangunrejo Kidul 5",
+    "jenjang": "SD/MI",
+    "npsn": "20539280"
+  },
+  {
+    "nama": "SD Negeri Bangunrejo Kidul 7",
+    "jenjang": "SD/MI",
+    "npsn": "20508675"
+  },
+  {
+    "nama": "SD Negeri Bangunrejo Kidul 8",
+    "jenjang": "SD/MI",
+    "npsn": "20508659"
+  },
+  {
+    "nama": "SD Negeri Bangunrejo Kidul 9",
+    "jenjang": "SD/MI",
+    "npsn": "20508768"
+  },
+  {
+    "nama": "SD Negeri Begal 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508766"
+  },
+  {
+    "nama": "SD Negeri Gemarang 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509055"
+  },
+  {
+    "nama": "SD Negeri Gemarang 3",
+    "jenjang": "SD/MI",
+    "npsn": "20509039"
+  },
+  {
+    "nama": "SD Negeri Gemarang 4",
+    "jenjang": "SD/MI",
+    "npsn": "20509038"
+  },
+  {
+    "nama": "SD Negeri Gemarang 5",
+    "jenjang": "SD/MI",
+    "npsn": "20509023"
+  },
+  {
+    "nama": "SD Negeri Gemarang 6",
+    "jenjang": "SD/MI",
+    "npsn": "20509022"
+  },
+  {
+    "nama": "SD Negeri Gemarang 7",
+    "jenjang": "SD/MI",
+    "npsn": "20509021"
+  },
+  {
+    "nama": "SD Negeri JATI Gembol 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509069"
+  },
+  {
+    "nama": "SD Negeri JATI Gembol 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509068"
+  },
+  {
+    "nama": "SD Negeri JATI Gembol 5",
+    "jenjang": "SD/MI",
+    "npsn": "20509079"
+  },
+  {
+    "nama": "SD Negeri Jenggrik 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509066"
+  },
+  {
+    "nama": "SD Negeri Jenggrik 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508954"
+  },
+  {
+    "nama": "SD Negeri Jenggrik 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508939"
+  },
+  {
+    "nama": "SD Negeri Jenggrik 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508938"
+  },
+  {
+    "nama": "SD Negeri Jenggrik 6",
+    "jenjang": "SD/MI",
+    "npsn": "20508936"
+  },
+  {
+    "nama": "SD Negeri Katikan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508990"
+  },
+  {
+    "nama": "SD Negeri Katikan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508989"
+  },
+  {
+    "nama": "SD Negeri Katikan 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508988"
+  },
+  {
+    "nama": "SD Negeri KAWU 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508995"
+  },
+  {
+    "nama": "SD Negeri KAWU 3",
+    "jenjang": "SD/MI",
+    "npsn": "20509009"
+  },
+  {
+    "nama": "SD Negeri KAWU 4",
+    "jenjang": "SD/MI",
+    "npsn": "20509008"
+  },
+  {
+    "nama": "SD Negeri Kedunggalar 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509002"
+  },
+  {
+    "nama": "SD Negeri Kedunggalar 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508998"
+  },
+  {
+    "nama": "SD Negeri Kedunggalar 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508997"
+  },
+  {
+    "nama": "SD Negeri Kedunggalar 5",
+    "jenjang": "SD/MI",
+    "npsn": "20508982"
+  },
+  {
+    "nama": "SD Negeri Kedunggalar 8",
+    "jenjang": "SD/MI",
+    "npsn": "20508965"
+  },
+  {
+    "nama": "SD Negeri Pelang Kidul 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508272"
+  },
+  {
+    "nama": "SD Negeri Pelang Kidul 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508260"
+  },
+  {
+    "nama": "SD Negeri Pelang LOR 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508271"
+  },
+  {
+    "nama": "SD Negeri Pelang LOR 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508270"
+  },
+  {
+    "nama": "SD Negeri Pelang LOR 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508268"
+  },
+  {
+    "nama": "SD Negeri Pelangkidul 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508261"
+  },
+  {
+    "nama": "SD Negeri Wonokerto 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508606"
+  },
+  {
+    "nama": "SD Negeri Wonokerto 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508619"
+  },
+  {
+    "nama": "SD Negeri Wonorejo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508629"
+  },
+  {
+    "nama": "SMP Negeri 1 Kedunggalar",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508536"
+  },
+  {
+    "nama": "SMP Negeri 2 Kedunggalar",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508505"
+  },
+  {
+    "nama": "SMP Negeri 3 Kedunggalar",
+    "jenjang": "SMP/MTs",
+    "npsn": "20547268"
+  },
+  {
+    "nama": "MI Darul ILMI PITU",
+    "jenjang": "SD/MI",
+    "npsn": "60717923"
+  },
+  {
+    "nama": "MI Guppi Ngancar",
+    "jenjang": "SD/MI",
+    "npsn": "60717922"
+  },
+  {
+    "nama": "MI PSM Karanggeneng",
+    "jenjang": "SD/MI",
+    "npsn": "60717921"
+  },
+  {
+    "nama": "MTS Maarif",
+    "jenjang": "SMP/MTs",
+    "npsn": "69816280"
+  },
+  {
+    "nama": "SD Negeri Bangunrejo LOR 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508751"
+  },
+  {
+    "nama": "SD Negeri Bangunrejo LOR 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508749"
+  },
+  {
+    "nama": "SD Negeri Bangunrejo LOR 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508748"
+  },
+  {
+    "nama": "SD Negeri Banjarbanggi 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508745"
+  },
+  {
+    "nama": "SD Negeri Banjarbanggi 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508744"
+  },
+  {
+    "nama": "SD Negeri Cantel",
+    "jenjang": "SD/MI",
+    "npsn": "20508727"
+  },
+  {
+    "nama": "SD Negeri Dumplengan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509042"
+  },
+  {
+    "nama": "SD Negeri Dumplengan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509041"
+  },
+  {
+    "nama": "SD Negeri Kalang 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508953"
+  },
+  {
+    "nama": "SD Negeri Kalang 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508952"
+  },
+  {
+    "nama": "SD Negeri Karanggeneng 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508910"
+  },
+  {
+    "nama": "SD Negeri Ngancar 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508410"
+  },
+  {
+    "nama": "SD Negeri Papungan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508255"
+  },
+  {
+    "nama": "SD Negeri Papungan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20539272"
+  },
+  {
+    "nama": "SD Negeri PITU 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508263"
+  },
+  {
+    "nama": "SD Negeri PITU 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508262"
+  },
+  {
+    "nama": "SD Negeri PITU 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508247"
+  },
+  {
+    "nama": "SD Negeri Selopuro 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508321"
+  },
+  {
+    "nama": "SD Negeri Selopuro 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508320"
+  },
+  {
+    "nama": "SMP Karya Pembangunan PITU",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508464"
+  },
+  {
+    "nama": "SMP Negeri 1 PITU",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508495"
+  },
+  {
+    "nama": "SMP Negeri 2 PITU",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508497"
+  },
+  {
+    "nama": "SMP Negeri 3 PITU",
+    "jenjang": "SMP/MTs",
+    "npsn": "20554799"
+  },
+  {
+    "nama": "MI AL Falah Sekarputih",
+    "jenjang": "SD/MI",
+    "npsn": "60717940"
+  },
+  {
+    "nama": "MI AL MA`arif Sidolaju",
+    "jenjang": "SD/MI",
+    "npsn": "60717939"
+  },
+  {
+    "nama": "MI Ar-rahman Widodaren",
+    "jenjang": "SD/MI",
+    "npsn": "69881908"
+  },
+  {
+    "nama": "MI ASH Sholikhin",
+    "jenjang": "SD/MI",
+    "npsn": "69881907"
+  },
+  {
+    "nama": "MI Birul Walidain",
+    "jenjang": "SD/MI",
+    "npsn": "69881906"
+  },
+  {
+    "nama": "MI Islamiyah Muhammadiyah Walikukun",
+    "jenjang": "SD/MI",
+    "npsn": "60717932"
+  },
+  {
+    "nama": "MI MA`hadul Muta`allimin Katerban",
+    "jenjang": "SD/MI",
+    "npsn": "60717936"
+  },
+  {
+    "nama": "MI Mambaul HUDA",
+    "jenjang": "SD/MI",
+    "npsn": "60717935"
+  },
+  {
+    "nama": "MI Muhammadiyah Kayutrejo",
+    "jenjang": "SD/MI",
+    "npsn": "60717938"
+  },
+  {
+    "nama": "MI Muhammadiyah Kedunggudel",
+    "jenjang": "SD/MI",
+    "npsn": "60717934"
+  },
+  {
+    "nama": "MI Muhammadiyah Sekaralas",
+    "jenjang": "SD/MI",
+    "npsn": "60717937"
+  },
+  {
+    "nama": "MI Muhammadiyah Tempurrejo",
+    "jenjang": "SD/MI",
+    "npsn": "60717933"
+  },
+  {
+    "nama": "MI PSM An-nur Gebang",
+    "jenjang": "SD/MI",
+    "npsn": "60717931"
+  },
+  {
+    "nama": "MTS Islamiyah Widodaren",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582567"
+  },
+  {
+    "nama": "MTS MA`hadul Muta`allimin",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582568"
+  },
+  {
+    "nama": "MTS Muhammadiyah Tempurrejo",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582566"
+  },
+  {
+    "nama": "SD K Santa Maria",
+    "jenjang": "SD/MI",
+    "npsn": "20508670"
+  },
+  {
+    "nama": "SD Negeri Banyubiru 02",
+    "jenjang": "SD/MI",
+    "npsn": "20508755"
+  },
+  {
+    "nama": "SD Negeri Banyubiru 03",
+    "jenjang": "SD/MI",
+    "npsn": "20508756"
+  },
+  {
+    "nama": "SD Negeri Banyubiru 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508754"
+  },
+  {
+    "nama": "SD Negeri Gendingan 01",
+    "jenjang": "SD/MI",
+    "npsn": "20509015"
+  },
+  {
+    "nama": "SD Negeri Gendingan 03",
+    "jenjang": "SD/MI",
+    "npsn": "20509013"
+  },
+  {
+    "nama": "SD Negeri Gendingan 04",
+    "jenjang": "SD/MI",
+    "npsn": "20509024"
+  },
+  {
+    "nama": "SD Negeri Gendingan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509014"
+  },
+  {
+    "nama": "SD Negeri Gendingan 5",
+    "jenjang": "SD/MI",
+    "npsn": "20509025"
+  },
+  {
+    "nama": "SD Negeri Karangbanyu 01",
+    "jenjang": "SD/MI",
+    "npsn": "20508928"
+  },
+  {
+    "nama": "SD Negeri Karangbanyu 03",
+    "jenjang": "SD/MI",
+    "npsn": "20508912"
+  },
+  {
+    "nama": "SD Negeri Karangbanyu 04",
+    "jenjang": "SD/MI",
+    "npsn": "20508911"
+  },
+  {
+    "nama": "SD Negeri Kauman 01",
+    "jenjang": "SD/MI",
+    "npsn": "20508987"
+  },
+  {
+    "nama": "SD Negeri Kauman 04",
+    "jenjang": "SD/MI",
+    "npsn": "20508983"
+  },
+  {
+    "nama": "SD Negeri Kauman 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508984"
+  },
+  {
+    "nama": "SD Negeri Kayutrejo 01",
+    "jenjang": "SD/MI",
+    "npsn": "20509007"
+  },
+  {
+    "nama": "SD Negeri Kayutrejo 03",
+    "jenjang": "SD/MI",
+    "npsn": "20509005"
+  },
+  {
+    "nama": "SD Negeri Kedunggudel 01",
+    "jenjang": "SD/MI",
+    "npsn": "20508964"
+  },
+  {
+    "nama": "SD Negeri Kedunggudel 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508963"
+  },
+  {
+    "nama": "SD Negeri Sekaralas 01",
+    "jenjang": "SD/MI",
+    "npsn": "20508315"
+  },
+  {
+    "nama": "SD Negeri Sekaralas 02",
+    "jenjang": "SD/MI",
+    "npsn": "20508311"
+  },
+  {
+    "nama": "SD Negeri Sekaralas 03",
+    "jenjang": "SD/MI",
+    "npsn": "20508314"
+  },
+  {
+    "nama": "SD Negeri Sekarputih 01",
+    "jenjang": "SD/MI",
+    "npsn": "20508324"
+  },
+  {
+    "nama": "SD Negeri Sekarputih 02",
+    "jenjang": "SD/MI",
+    "npsn": "20508323"
+  },
+  {
+    "nama": "SD Negeri Sidolaju 01",
+    "jenjang": "SD/MI",
+    "npsn": "20508275"
+  },
+  {
+    "nama": "SD Negeri Sidolaju 02",
+    "jenjang": "SD/MI",
+    "npsn": "20508286"
+  },
+  {
+    "nama": "SD Negeri Sidolaju 03",
+    "jenjang": "SD/MI",
+    "npsn": "20508287"
+  },
+  {
+    "nama": "SD Negeri Sidolaju 04",
+    "jenjang": "SD/MI",
+    "npsn": "20508288"
+  },
+  {
+    "nama": "SD Negeri Sidolaju 05",
+    "jenjang": "SD/MI",
+    "npsn": "20508299"
+  },
+  {
+    "nama": "SD Negeri Sidolaju 07",
+    "jenjang": "SD/MI",
+    "npsn": "20508297"
+  },
+  {
+    "nama": "SD Negeri Sidolaju 08",
+    "jenjang": "SD/MI",
+    "npsn": "20508296"
+  },
+  {
+    "nama": "SD Negeri Widodaren 01",
+    "jenjang": "SD/MI",
+    "npsn": "20508632"
+  },
+  {
+    "nama": "SD Negeri Widodaren 03",
+    "jenjang": "SD/MI",
+    "npsn": "20508614"
+  },
+  {
+    "nama": "SD Negeri Widodaren 04",
+    "jenjang": "SD/MI",
+    "npsn": "20508612"
+  },
+  {
+    "nama": "SD Negeri Widodaren 05",
+    "jenjang": "SD/MI",
+    "npsn": "20508610"
+  },
+  {
+    "nama": "SD Negeri Widodaren 06",
+    "jenjang": "SD/MI",
+    "npsn": "20508608"
+  },
+  {
+    "nama": "SD Negeri Widodaren 08",
+    "jenjang": "SD/MI",
+    "npsn": "20508607"
+  },
+  {
+    "nama": "SDIT ALAM Nurul Islam DUA",
+    "jenjang": "SD/MI",
+    "npsn": "69981468"
+  },
+  {
+    "nama": "SDIT An-nur",
+    "jenjang": "SD/MI",
+    "npsn": "69907647"
+  },
+  {
+    "nama": "SMP Islam MA Hadul MUTA Allimin",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508453"
+  },
+  {
+    "nama": "SMP Islamiyah Widodaren",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508466"
+  },
+  {
+    "nama": "SMP MA ARIF Widodaren",
+    "jenjang": "SMP/MTs",
+    "npsn": "20554810"
+  },
+  {
+    "nama": "SMP Muhammadiyah 3 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508458"
+  },
+  {
+    "nama": "SMP Negeri 1 Widodaren",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508538"
+  },
+  {
+    "nama": "SMP Negeri 2 Widodaren",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508507"
+  },
+  {
+    "nama": "SMP Negeri 3 Widodaren",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508516"
+  },
+  {
+    "nama": "SMP Negeri 4 Widodaren",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508511"
+  },
+  {
+    "nama": "SMP Nurul Burhan",
+    "jenjang": "SMP/MTs",
+    "npsn": "69985789"
+  },
+  {
+    "nama": "SMP Syarifatul ULUM",
+    "jenjang": "SMP/MTs",
+    "npsn": "70016056"
+  },
+  {
+    "nama": "MI AL HUDA Pengkol",
+    "jenjang": "SD/MI",
+    "npsn": "60717886"
+  },
+  {
+    "nama": "MI Awaliyah Bulakgadungan",
+    "jenjang": "SD/MI",
+    "npsn": "60717887"
+  },
+  {
+    "nama": "MI Awaliyah Kedungharjo",
+    "jenjang": "SD/MI",
+    "npsn": "60717884"
+  },
+  {
+    "nama": "MI Hudallil Muttaqien",
+    "jenjang": "SD/MI",
+    "npsn": "60717883"
+  },
+  {
+    "nama": "MI MA`arif Tempursari",
+    "jenjang": "SD/MI",
+    "npsn": "60717885"
+  },
+  {
+    "nama": "MI Nurussalam",
+    "jenjang": "SD/MI",
+    "npsn": "60717888"
+  },
+  {
+    "nama": "MIN 7 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717882"
+  },
+  {
+    "nama": "MTS MA`arif Tempursari",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582551"
+  },
+  {
+    "nama": "MTS Miftahul Jannah",
+    "jenjang": "SMP/MTs",
+    "npsn": "69983256"
+  },
+  {
+    "nama": "MTSN 10 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582550"
+  },
+  {
+    "nama": "SD Muhammadiyah 01 Mantingan",
+    "jenjang": "SD/MI",
+    "npsn": "69946119"
+  },
+  {
+    "nama": "SD Negeri Jatimulyo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20539265"
+  },
+  {
+    "nama": "SD Negeri Kedungharjo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508960"
+  },
+  {
+    "nama": "SD Negeri Kedungharjo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508962"
+  },
+  {
+    "nama": "SD Negeri Mantingan 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508419"
+  },
+  {
+    "nama": "SD Negeri Mantingan 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508418"
+  },
+  {
+    "nama": "SD Negeri Mantingan 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508417"
+  },
+  {
+    "nama": "SD Negeri Mantingan 5",
+    "jenjang": "SD/MI",
+    "npsn": "20508416"
+  },
+  {
+    "nama": "SD Negeri Mantingan 6",
+    "jenjang": "SD/MI",
+    "npsn": "20508415"
+  },
+  {
+    "nama": "SD Negeri Pakah 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508405"
+  },
+  {
+    "nama": "SD Negeri Pakah 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508404"
+  },
+  {
+    "nama": "SD Negeri Pengkol 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508265"
+  },
+  {
+    "nama": "SD Negeri Pengkol 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508264"
+  },
+  {
+    "nama": "SD Negeri Sambirejo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508310"
+  },
+  {
+    "nama": "SD Negeri Sambirejo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508309"
+  },
+  {
+    "nama": "SD Negeri Sambirejo 5",
+    "jenjang": "SD/MI",
+    "npsn": "20508306"
+  },
+  {
+    "nama": "SD Negeri Tambakboyo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508553"
+  },
+  {
+    "nama": "SD Negeri Tambakboyo 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508551"
+  },
+  {
+    "nama": "SMP Negeri 1 Mantingan",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508545"
+  },
+  {
+    "nama": "SMP Negeri 2 Mantingan",
+    "jenjang": "SMP/MTs",
+    "npsn": "20554863"
+  },
+  {
+    "nama": "SMP Pesantren Temulus",
+    "jenjang": "SMP/MTs",
+    "npsn": "69896559"
+  },
+  {
+    "nama": "SMP Tahfidz AL Ikhlas Mantingan",
+    "jenjang": "SMP/MTs",
+    "npsn": "70050892"
+  },
+  {
+    "nama": "SMPS Muhammadiyah 6 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "69754104"
+  },
+  {
+    "nama": "MI Misbahul Adhim",
+    "jenjang": "SD/MI",
+    "npsn": "60717851"
+  },
+  {
+    "nama": "MI Muhammadiyah Pandean",
+    "jenjang": "SD/MI",
+    "npsn": "60717852"
+  },
+  {
+    "nama": "MI Nurul IMAN",
+    "jenjang": "SD/MI",
+    "npsn": "60717850"
+  },
+  {
+    "nama": "SD Muhammadiyah 1 Karanganyar Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "70028111"
+  },
+  {
+    "nama": "SD Negeri Bangunrejo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508683"
+  },
+  {
+    "nama": "SD Negeri Gembol 01",
+    "jenjang": "SD/MI",
+    "npsn": "20509020"
+  },
+  {
+    "nama": "SD Negeri Gembol 03",
+    "jenjang": "SD/MI",
+    "npsn": "20509019"
+  },
+  {
+    "nama": "SD Negeri Gembol 04",
+    "jenjang": "SD/MI",
+    "npsn": "20509018"
+  },
+  {
+    "nama": "SD Negeri Karanganyar 04",
+    "jenjang": "SD/MI",
+    "npsn": "20508946"
+  },
+  {
+    "nama": "SD Negeri Karanganyar 05",
+    "jenjang": "SD/MI",
+    "npsn": "20508919"
+  },
+  {
+    "nama": "SD Negeri Karanganyar 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508948"
+  },
+  {
+    "nama": "SD Negeri Karanganyar 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508947"
+  },
+  {
+    "nama": "SD Negeri Mengger 02",
+    "jenjang": "SD/MI",
+    "npsn": "20508435"
+  },
+  {
+    "nama": "SD Negeri Pandean 03",
+    "jenjang": "SD/MI",
+    "npsn": "20508400"
+  },
+  {
+    "nama": "SD Negeri Pandean 04",
+    "jenjang": "SD/MI",
+    "npsn": "20508399"
+  },
+  {
+    "nama": "SD Negeri Pandean 05",
+    "jenjang": "SD/MI",
+    "npsn": "20508384"
+  },
+  {
+    "nama": "SD Negeri Pandean 06",
+    "jenjang": "SD/MI",
+    "npsn": "20508273"
+  },
+  {
+    "nama": "SD Negeri Pandean 07",
+    "jenjang": "SD/MI",
+    "npsn": "20539271"
+  },
+  {
+    "nama": "SD Negeri Pandean 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508401"
+  },
+  {
+    "nama": "SD Negeri Sekarjati 01",
+    "jenjang": "SD/MI",
+    "npsn": "20508326"
+  },
+  {
+    "nama": "SD Negeri Sekarjati 02",
+    "jenjang": "SD/MI",
+    "npsn": "20508325"
+  },
+  {
+    "nama": "SD Negeri Sriwedari 01",
+    "jenjang": "SD/MI",
+    "npsn": "20508603"
+  },
+  {
+    "nama": "SD Negeri Sriwedari 02",
+    "jenjang": "SD/MI",
+    "npsn": "20508592"
+  },
+  {
+    "nama": "SMP Negeri 1 Karanganyar",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508502"
+  },
+  {
+    "nama": "SMP Negeri 2 Karanganyar",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508513"
+  },
+  {
+    "nama": "SMP Negeri 3 Karanganyar",
+    "jenjang": "SMP/MTs",
+    "npsn": "20539278"
+  },
+  {
+    "nama": "SMP Negeri 4 Karanganyar",
+    "jenjang": "SMP/MTs",
+    "npsn": "20554804"
+  },
+  {
+    "nama": "MI AL- Islam Tegalrejo",
+    "jenjang": "SD/MI",
+    "npsn": "60717843"
+  },
+  {
+    "nama": "MI Islamiyah Gerih",
+    "jenjang": "SD/MI",
+    "npsn": "60717844"
+  },
+  {
+    "nama": "MI Islamiyah Widodaren Gerih",
+    "jenjang": "SD/MI",
+    "npsn": "60717842"
+  },
+  {
+    "nama": "MI Unggulan Miftahul HUDA",
+    "jenjang": "SD/MI",
+    "npsn": "69883396"
+  },
+  {
+    "nama": "MIN 4 Ngawi",
+    "jenjang": "SD/MI",
+    "npsn": "60717841"
+  },
+  {
+    "nama": "MTS Al-islam Tegalrejo",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582534"
+  },
+  {
+    "nama": "MTS Nurul Jadid Sejati",
+    "jenjang": "SMP/MTs",
+    "npsn": "70059230"
+  },
+  {
+    "nama": "MTSN 1 Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582533"
+  },
+  {
+    "nama": "SD Aisyiyah Gerih",
+    "jenjang": "SD/MI",
+    "npsn": "69991596"
+  },
+  {
+    "nama": "SD Negeri Gerih 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509030"
+  },
+  {
+    "nama": "SD Negeri Gerih 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509029"
+  },
+  {
+    "nama": "SD Negeri Gerih 3",
+    "jenjang": "SD/MI",
+    "npsn": "20509028"
+  },
+  {
+    "nama": "SD Negeri Gerih 4",
+    "jenjang": "SD/MI",
+    "npsn": "20509027"
+  },
+  {
+    "nama": "SD Negeri Gerih 5",
+    "jenjang": "SD/MI",
+    "npsn": "20509011"
+  },
+  {
+    "nama": "SD Negeri Gerih 6",
+    "jenjang": "SD/MI",
+    "npsn": "20509093"
+  },
+  {
+    "nama": "SD Negeri Gerih 7",
+    "jenjang": "SD/MI",
+    "npsn": "20509104"
+  },
+  {
+    "nama": "SD Negeri Guyung 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509107"
+  },
+  {
+    "nama": "SD Negeri Guyung 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509116"
+  },
+  {
+    "nama": "SD Negeri Guyung 3",
+    "jenjang": "SD/MI",
+    "npsn": "20509117"
+  },
+  {
+    "nama": "SD Negeri Guyung 4",
+    "jenjang": "SD/MI",
+    "npsn": "20509118"
+  },
+  {
+    "nama": "SD Negeri Keraskulon 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508367"
+  },
+  {
+    "nama": "SD Negeri Keraskulon 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508366"
+  },
+  {
+    "nama": "SD Negeri Keraskulon 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508368"
+  },
+  {
+    "nama": "SD Negeri Randusongo 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508242"
+  },
+  {
+    "nama": "SD Negeri Randusongo 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508241"
+  },
+  {
+    "nama": "SD Negeri Randusongo 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508240"
+  },
+  {
+    "nama": "SD Negeri Widodaren 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508631"
+  },
+  {
+    "nama": "SD Negeri Widodaren 2",
+    "jenjang": "SD/MI",
+    "npsn": "20508615"
+  },
+  {
+    "nama": "SD Negeri Widodaren 3",
+    "jenjang": "SD/MI",
+    "npsn": "20508613"
+  },
+  {
+    "nama": "SD Negeri Widodaren 4",
+    "jenjang": "SD/MI",
+    "npsn": "20508611"
+  },
+  {
+    "nama": "SMP Negeri 1 Gerih",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508515"
+  },
+  {
+    "nama": "SMPK Wijaya Widodaren Gerih Ngawi",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508462"
+  },
+  {
+    "nama": "MTS Jabal Nurrohman",
+    "jenjang": "SMP/MTs",
+    "npsn": "20582541"
+  },
+  {
+    "nama": "SD Negeri Cangakan 1",
+    "jenjang": "SD/MI",
+    "npsn": "20508717"
+  },
+  {
+    "nama": "SD Negeri Cangakan 2 Kasreman",
+    "jenjang": "SD/MI",
+    "npsn": "20508716"
+  },
+  {
+    "nama": "SD Negeri Gunungsari 1",
+    "jenjang": "SD/MI",
+    "npsn": "20509094"
+  },
+  {
+    "nama": "SD Negeri Gunungsari 2",
+    "jenjang": "SD/MI",
+    "npsn": "20509105"
+  },
+  {
+    "nama": "SD Negeri Gunungsari 3 Kasreman",
+    "jenjang": "SD/MI",
+    "npsn": "20509106"
+  },
+  {
+    "nama": "SD Negeri Jatirejo 2 Kasreman",
+    "jenjang": "SD/MI",
+    "npsn": "20509086"
+  },
+  {
+    "nama": "SD Negeri Karangmalang 1 Kasreman",
+    "jenjang": "SD/MI",
+    "npsn": "20508893"
+  },
+  {
+    "nama": "SD Negeri Karangmalang 2 Kasreman",
+    "jenjang": "SD/MI",
+    "npsn": "20508892"
+  },
+  {
+    "nama": "SD Negeri Kasreman 1 Kasreman",
+    "jenjang": "SD/MI",
+    "npsn": "20508891"
+  },
+  {
+    "nama": "SD Negeri Kasreman 2 Kasreman",
+    "jenjang": "SD/MI",
+    "npsn": "20508993"
+  },
+  {
+    "nama": "SD Negeri Kiyonten 1 Kasreman",
+    "jenjang": "SD/MI",
+    "npsn": "20508371"
+  },
+  {
+    "nama": "SD Negeri Kiyonten 3 Kasreman",
+    "jenjang": "SD/MI",
+    "npsn": "20508381"
+  },
+  {
+    "nama": "SD Negeri Legokulon 1 Kasreman",
+    "jenjang": "SD/MI",
+    "npsn": "20508330"
+  },
+  {
+    "nama": "SD Negeri Legokulon 2 Kasreman",
+    "jenjang": "SD/MI",
+    "npsn": "20508329"
+  },
+  {
+    "nama": "SD Negeri Tawun 2 Kasreman",
+    "jenjang": "SD/MI",
+    "npsn": "20508569"
+  },
+  {
+    "nama": "SMP Negeri 1 Kasreman",
+    "jenjang": "SMP/MTs",
+    "npsn": "20508499"
+  },
+  {
+    "nama": "SMP Negeri 2 Kasreman",
+    "jenjang": "SMP/MTs",
+    "npsn": "20554805"
+  },
+  {
+    "nama": "SMAN 1 SINE",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508482"
+  },
+  {
+    "nama": "SMKN 1 SINE",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20554956"
+  },
+  {
+    "nama": "SMKS PGRI 9 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20554783"
+  },
+  {
+    "nama": "MAN 4 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584317"
+  },
+  {
+    "nama": "SLBN Dr. Radjiman Wedyodiningrat",
+    "jenjang": "TK/PAUD",
+    "npsn": "69976860"
+  },
+  {
+    "nama": "SMAN 1 Ngrambe",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508481"
+  },
+  {
+    "nama": "SMKS Panti Pamardi SIWI 1 Ngrambe",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508451"
+  },
+  {
+    "nama": "SMKS Panti Pamardi SIWI 2 Ngrambe",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508450"
+  },
+  {
+    "nama": "MA MA`arif Jogorogo",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584313"
+  },
+  {
+    "nama": "SMAN 1 Jogorogo",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508472"
+  },
+  {
+    "nama": "SMAS Karya Pembangunan Jogorogo",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508477"
+  },
+  {
+    "nama": "SMKS PGRI 8 Jogorogo Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508491"
+  },
+  {
+    "nama": "MA AL Barokah Kendal",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584307"
+  },
+  {
+    "nama": "MA Al-hidayah Kendal",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584308"
+  },
+  {
+    "nama": "MA Darul ULUM Kendal",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584310"
+  },
+  {
+    "nama": "MA Nurul Azhar Kendal",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584318"
+  },
+  {
+    "nama": "MA Sunan Kalijogo",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69787254"
+  },
+  {
+    "nama": "SMAN 1 Kendal",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508469"
+  },
+  {
+    "nama": "SMKN 1 Kendal",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20554958"
+  },
+  {
+    "nama": "SMAN 2 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508492"
+  },
+  {
+    "nama": "SMAS PGRI 1 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508473"
+  },
+  {
+    "nama": "SMKN 1 Geneng",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508489"
+  },
+  {
+    "nama": "SMKS Kesehatan Bakti Indonesia Medika",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69754103"
+  },
+  {
+    "nama": "SMKS PGRI 2 Geneng",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508449"
+  },
+  {
+    "nama": "SMKS PGRI 4 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508446"
+  },
+  {
+    "nama": "SMKS PGRI 6 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508443"
+  },
+  {
+    "nama": "SMAN 1 Kwadungan",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20539276"
+  },
+  {
+    "nama": "SMAS Karya Pembangunan Kwadungan",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20539315"
+  },
+  {
+    "nama": "SMK Miftahus Sa`adah",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "70024773"
+  },
+  {
+    "nama": "MA Hidayatul UMAM",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584312"
+  },
+  {
+    "nama": "MA Miftahul Lubab",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584314"
+  },
+  {
+    "nama": "SMAN 1 Karangjati",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508471"
+  },
+  {
+    "nama": "SMKS AL Amnaniyah Karangjati",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20551808"
+  },
+  {
+    "nama": "MA Al-karomah",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584309"
+  },
+  {
+    "nama": "MA WALI Songo",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69977859"
+  },
+  {
+    "nama": "SMKN 1 Bringin",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20554787"
+  },
+  {
+    "nama": "SMKS AL Jauhar Bringin",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69774782"
+  },
+  {
+    "nama": "SLB Negeri 1 Sambiroto Ngawi",
+    "jenjang": "TK/PAUD",
+    "npsn": "20508668"
+  },
+  {
+    "nama": "MA AL Hijrah",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69963554"
+  },
+  {
+    "nama": "MAN 1 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584316"
+  },
+  {
+    "nama": "SLB Beranda Istimewa Grudo",
+    "jenjang": "TK/PAUD",
+    "npsn": "70004940"
+  },
+  {
+    "nama": "SLB Negeri 1 Ngawi",
+    "jenjang": "TK/PAUD",
+    "npsn": "20554779"
+  },
+  {
+    "nama": "SMAN 1 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508480"
+  },
+  {
+    "nama": "SMAS Karya Pembangunan Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20539314"
+  },
+  {
+    "nama": "SMAS MA ARIF Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508476"
+  },
+  {
+    "nama": "SMAS Muhammadiyah 1 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508475"
+  },
+  {
+    "nama": "SMK Modern Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69964375"
+  },
+  {
+    "nama": "SMKN 1 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508468"
+  },
+  {
+    "nama": "SMKN 2 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508467"
+  },
+  {
+    "nama": "SMKS Kesehatan Rahani Husada",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69754100"
+  },
+  {
+    "nama": "SMKS Muhammadiyah 1 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508484"
+  },
+  {
+    "nama": "SMKS PGRI 1 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508448"
+  },
+  {
+    "nama": "SMKS Trisakti Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508440"
+  },
+  {
+    "nama": "MA Al-ishlah",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69886301"
+  },
+  {
+    "nama": "MA FIE Sabilil Muttaqien",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69886302"
+  },
+  {
+    "nama": "MAN 2 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584319"
+  },
+  {
+    "nama": "SMA Mambaul Hikmah",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69900606"
+  },
+  {
+    "nama": "SMAS Karya Pembangunan Paron",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508478"
+  },
+  {
+    "nama": "SMK Al-islam",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69900190"
+  },
+  {
+    "nama": "SMK Arbai Qohhar",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "70007966"
+  },
+  {
+    "nama": "SMK Karya Pembangunan 1 Paron",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508486"
+  },
+  {
+    "nama": "SMKN 1 Paron",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20554785"
+  },
+  {
+    "nama": "MA Darussalam Kedunggalar",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584311"
+  },
+  {
+    "nama": "MA Terpadu Jannatul Firdaus",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "70027031"
+  },
+  {
+    "nama": "SMAN 1 Kedunggalar",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508470"
+  },
+  {
+    "nama": "SMAS Karya Pembangunan Kedunggalar",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508494"
+  },
+  {
+    "nama": "SMK PSM 1 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69976611"
+  },
+  {
+    "nama": "SMK Terpadu Jannatul Firdaus",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69949193"
+  },
+  {
+    "nama": "SMKS Gajah MADA Kedunggalar",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508487"
+  },
+  {
+    "nama": "SMKS Nagara Kedunggalar Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20570951"
+  },
+  {
+    "nama": "SMKS PSM 1 Kedunggalar",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508441"
+  },
+  {
+    "nama": "SMKN 1 PITU",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20554786"
+  },
+  {
+    "nama": "MA MA`arif TUGU",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "70027630"
+  },
+  {
+    "nama": "MA Muhammadiyah Tempurrejo",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584315"
+  },
+  {
+    "nama": "MA PLUS MA`hadul Muta`allimin",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "70027629"
+  },
+  {
+    "nama": "MA Syarifatul `ulum",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584320"
+  },
+  {
+    "nama": "SMAN 1 Widodaren",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508493"
+  },
+  {
+    "nama": "SMAS Muhammadiyah 2 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508474"
+  },
+  {
+    "nama": "SMK Raudhatul Jannah",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69942246"
+  },
+  {
+    "nama": "SMKS Islamiyah Widodaren",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20539316"
+  },
+  {
+    "nama": "SMKS PGRI 3 Walikukun Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508447"
+  },
+  {
+    "nama": "SMKS Wiyata Dharma Walikukun",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508452"
+  },
+  {
+    "nama": "MA Miftahul Jannah",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "70059254"
+  },
+  {
+    "nama": "MA Pesantren Temulus",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69983555"
+  },
+  {
+    "nama": "MAN 3 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20584321"
+  },
+  {
+    "nama": "SMK Pesantren Temulus",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "69944020"
+  },
+  {
+    "nama": "SMKS Muhammadiyah 2 Ngawi",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508483"
+  },
+  {
+    "nama": "SMKN 1 Karanganyar",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20554788"
+  },
+  {
+    "nama": "MA Nurul Jadid Sejati",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "70010094"
+  },
+  {
+    "nama": "SLB Bunda Mulia Gerih",
+    "jenjang": "TK/PAUD",
+    "npsn": "70053509"
+  },
+  {
+    "nama": "SMKN 1 Gerih",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20554957"
+  },
+  {
+    "nama": "SMKN 1 Kasreman",
+    "jenjang": "SMA/SMK/MA",
+    "npsn": "20508490"
   }
 ];
