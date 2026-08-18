@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { sendBatchReportEmail, TicketItem } from "@/lib/email-service";
-import { SYSTEM_PROMPT } from "@/lib/rag/prompt";
+import { SYSTEM_PROMPT, buildUserPrompt } from "@/lib/rag/prompt";
 
 export const runtime = "nodejs";
 
@@ -100,15 +100,21 @@ export async function POST(request: NextRequest) {
     }
 
     // =========================================================================
-    // 3. CHAT AI UTAMA (Super Cepat & Terproteksi Guardrails Mutlak)
+    // 3. CHAT AI UTAMA (Super Cepat & Ramah Menawan)
     // =========================================================================
     if (!message) {
       return NextResponse.json({ error: "Pesan teks wajib diisi." }, { status: 400 });
     }
 
+    const formattedPrompt = buildUserPrompt({
+      userMessage: message,
+      history: history,
+      retrievedDocuments: [],
+    });
+
     let aiReply = "";
 
-    // Prioritas 1: Qwen Turbo (Sangat Cepat & Responsif)
+    // Prioritas 1: Qwen Turbo (Kilat & Akurat)
     const qwenApiKey = process.env.QWEN_API_KEY;
     if (qwenApiKey) {
       try {
@@ -121,8 +127,7 @@ export async function POST(request: NextRequest) {
           model: "qwen-turbo",
           messages: [
             { role: "system", content: SYSTEM_PROMPT },
-            ...history.map((h: any) => ({ role: h.role || "user", content: h.content || h.message || "" })),
-            { role: "user", content: message },
+            { role: "user", content: formattedPrompt },
           ],
           temperature: 0.1,
           max_tokens: 1000,
@@ -150,8 +155,7 @@ export async function POST(request: NextRequest) {
         model: process.env.DEEPSEEK_MODEL || "deepseek-chat",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          ...history.map((h: any) => ({ role: h.role || "user", content: h.content || h.message || "" })),
-          { role: "user", content: message },
+          { role: "user", content: formattedPrompt },
         ],
         temperature: 0.1,
         max_tokens: 1000,
