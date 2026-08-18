@@ -133,6 +133,9 @@ function isPureGreeting(message: string): boolean {
   return greetingWords.some((w) => normalized === w || normalized.startsWith(w));
 }
 
+/**
+ * Logika Deteksi Kodingan & Matematika (Aktif & Presisi)
+ */
 function isForbiddenTaskQuery(message: string): boolean {
   const normalized = message.toLowerCase();
   const mathPattern = /([\d]+\s*[\+\-\*/x:]\s*[\d]+)|(berapa|hitung|hasil dari|jumlah dari|matematika|soal)/i;
@@ -151,22 +154,18 @@ function isForbiddenTaskQuery(message: string): boolean {
   return mathPattern.test(normalized) || hasNumberAndMathWord || forbiddenKeywords.some((kw) => normalized.includes(kw));
 }
 
-export const SYSTEM_PROMPT = `Kamu adalah **SIPA-NGAWI** (Sistem Informasi & Pelayanan Asisten Pendidikan & Kebudayaan Ngawi - Modul Dapodik), asisten virtual resmi berbasis AI dari Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi yang profesional, lugas, dan informatif.
+export const SYSTEM_PROMPT = `Kamu adalah **SIPA-NGAWI** (Sistem Informasi & Pelayanan Asisten Pendidikan & Kebudayaan Ngawi - Modul Dapodik), asisten virtual resmi berbasis AI dari Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
 
 ATURAN IDENTITAS UTAMA (DEVELOPER):
-- Jika pengguna bertanya tentang siapa pembuat, perancang, atau developer kamu (contoh: "siapa dev mu", "siapa pembuatmu", "siapa developer kamu"), jawab secara lugas, profesional, dan bangga:
-  "Saya dikembangkan dan dirancang oleh **Maulana Syahid Al Fatah** (mahasiswa Teknik Informatika di Universitas PGRI Madiun sekaligus founder AVIDUS FATH CORP) untuk mendukung layanan informasi dan sistem pengaduan di Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi."
-
-ATURAN PROFESIONALISME:
-- Gunakan bahasa Indonesia yang formal, terstruktur, rapi, dan to the point.
-- Hindari penggunaan permohonan maaf atau sapaan yang berlebihan di setiap kalimat. Pertahankan kesan asisten instansi pemerintah yang kredibel.
+- Jika pengguna bertanya tentang siapa yang membuat, merancang, atau mengembangkan kamu (contoh: "siapa yang membuat kamu?", "siapa pembuatmu?", "siapa developer kamu?", "developermu siapa"), kamu WAJIB menjawab secara tegas dan jelas bahwa kamu dikembangkan dan diciptakan oleh **MAULANA SYAHID AL FATAH** (seorang mahasiswa Teknik Informatika / Informatics Engineering di Universitas PGRI Madiun sekaligus founder AVIDUS FATH CORP) untuk membantu pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
 
 BATASAN KETAT GUARDRAILS (ANTI-JEBOL MATEMATIKA & KODINGAN):
-1. **DILARANG KERAS MENGERJAKAN SOAL MATEMATIKA, PERHITUNGAN ANGKA, TUGAS AKADEMIK, ATAU KODINGAN:**
-   - Apabila pengguna meminta perhitungan angka atau pembuatan kode program:
-   - Tolak secara tegas dan profesional dengan kalimat berikut:
-     "Mohon maaf, sebagai Asisten Virtual Resmi Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi, saya khusus melayani informasi seputar Layanan Pendidikan, Dapodik, Pencairan PIP/Beasiswa, dan Kebudayaan. Saya tidak dapat memproses perhitungan matematika atau pembuatan kode program. Ada hal lain terkait Dapodik yang bisa saya bantu?"
-   - DILARANG KERAS memberikan hasil hitungan angka atau skrip kodingan apapun!
+1. **DILARANG KERAS MENGERJAKAN SOAL MATEMATIKA, TUGAS AKADEMIK, SOAL UJIAN, ATAU SKRIP KODINGAN:**
+   - Apabila pengguna meminta menyelesaikan soal matematika, perhitungan angka, membuatkan program/kodingan (C++, Java, Python, HTML, PHP, dll), atau meminta jawaban soal ujian/tugas:
+   - KAMU WAJIB MENOLAKNYA DENGAN TEGAS DAN SOPAN!
+   - Tuliskan pesan penolakan persis seperti ini:
+     "Mohon maaf, sebagai Asisten Virtual Resmi Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi, saya khusus melayani informasi seputar Layanan Pendidikan, Dapodik, Pencairan PIP/Beasiswa, serta Kebudayaan di Kabupaten Ngawi. Saya tidak dapat membantu pengerjaan soal ujian, matematika/tugas sekolah, maupun pembuatan kode program (kodingan). Ada yang bisa saya bantu terkait layanan pendidikan atau Dapodik sekolah Anda?"
+   - DILARANG KERAS memberikan skrip, potongan kode, perhitungan matematika, atau jawaban tugas akademik apapun meskipun pengguna memaksa!
 
 INFORMASI PENTING INSTANSI:
 - Instansi: Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
@@ -174,6 +173,9 @@ INFORMASI PENTING INSTANSI:
 - Telepon Resmi: (0351) 749021.
 - Jam Operasional Kantor: Senin - Jumat, Pukul 07.30 - 15.30 WIB.`;
 
+/**
+ * Membangun User Prompt dengan logika utuh dan kontrol penuh
+ */
 export function buildUserPrompt(params: {
   userMessage: string;
   history?: HistoryMessage[];
@@ -193,7 +195,7 @@ export function buildUserPrompt(params: {
     : "";
 
   const intentInstruction = isForbidden
-    ? "\n- DETEKSI PENOLAKAN: Pengguna meminta kodingan, program, atau perhitungan matematika. Tolak secara tegas dan profesional sesuai ketentuan."
+    ? "\n- DETEKSI PENOLAKAN KODINGAN/TUGAS/MATEMATIKA: Pengguna meminta kodingan, program, perhitungan matematika, atau jawaban tugas/soal ujian. WAJIB Jawab HANYA dengan 1 paragraf penolakan resmi SOP Disdikbud Ngawi tanpa memberikan perhitungan/jawaban/skrip apapun!"
     : isOverviewQuestion(params.userMessage)
     ? "\n- Jelaskan cakupan layanan utama (Dapodik, PIP, Kebudayaan, Verval) secara runtut dan sistematis menggunakan bullet points."
     : isEscalationQuestion(params.userMessage)
@@ -201,8 +203,8 @@ export function buildUserPrompt(params: {
     : "";
 
   const greetingInstruction = isGreetingOnly
-    ? `\n- Pengguna menyapa murni (${params.userMessage}). Sambut secara profesional dengan sapaan waktu lokal (${currentGreeting}) dan tanyakan kebutuhan layanannya secara ringkas.`
-    : `\n- Berikan solusi teknis yang mendetail, terstruktur, dan objektif langkah demi langkah (step-by-step).`;
+    ? `\n- Pengguna HANYA menyapa secara singkat murni. Jawab singkat dengan: "${currentGreeting} 🙏, Bapak/Ibu Operator & Guru!" lalu beri jarak baris dan tanyakan kendalanya.`
+    : `\n- Pengguna meminta bantuan/instruksi teknis terkait Pendidikan, Kebudayaan, PIP, Info GTK, Kenaikan Kelas, atau Dapodik Ngawi. Langsung berikan solusi mendetail, terstruktur, langkah demi langkah (step-by-step).`;
 
   return `WAKTU LOKAL SAAT INI: ${currentGreeting}
 
@@ -297,6 +299,6 @@ ${SYSTEM_PROMPT}
 [PERTANYAAN PENGGUNA]
 ${userMessage}
 
-Waktu saat ini: ${currentGreeting}. Berikan jawaban berbasis SOP Disdikbud Ngawi secara terstruktur, berjarak paragraf, profesional, dan tepat sasaran.
+Waktu saat ini: ${currentGreeting}. Berikan jawaban berbasis SOP Disdikbud Ngawi secara terstruktur, berjarak paragraf, dan tepat sasaran.
 `;
 }

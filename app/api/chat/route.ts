@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     }
 
     // =========================================================================
-    // 3. CHAT AI UTAMA (Super Cepat & Ramah Menawan)
+    // 3. CHAT AI UTAMA
     // =========================================================================
     if (!message) {
       return NextResponse.json({ error: "Pesan teks wajib diisi." }, { status: 400 });
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
 
     let aiReply = "";
 
-    // Prioritas 1: Qwen Turbo (Kilat & Akurat)
+    // Prioritas 1: Qwen Turbo
     const qwenApiKey = process.env.QWEN_API_KEY;
     if (qwenApiKey) {
       try {
