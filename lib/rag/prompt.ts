@@ -135,14 +135,19 @@ function getWibGreeting(): string {
  */
 function isPureGreeting(message: string): boolean {
   const normalized = message.toLowerCase().trim();
-  const greetingWords = ["halo", "hai", "hi", "pagi", "siang", "sore", "malam", "ping", "p", "selamat pagi", "selamat siang", "selamat sore", "selamat malam"];
+  const greetingWords = [
+    "halo", "hai", "hi", "pagi", "siang", "sore", "malam", "ping", "p",
+    "selamat pagi", "selamat siang", "selamat sore", "selamat malam"
+  ];
   
   const hasTechnicalIntent = [
     "code", "c++", "koding", "coding", "buat", "bikinkan", "hitung", "dapodik", 
     "verval", "solusi", "gimana", "bagaimana", "cara", "sistem", "error", "script",
     "bantu", "perhitungan", "rumus", "java", "python", "inval", "invalid", "sinkron", "mutasi",
     "ptk", "vervalpd", "vervalptk", "residu", "nuptk", "nik", "nik ganda", "pip", "beasiswa",
-    "pembelajaran", "soal", "tugas", "sarpras", "rombel", "ijazah", "jp", "jam mengajar", "kebudayaan", "infogtk", "info gtk", "kenaikan kelas", "cair", "kapan", "besaran"
+    "pembelajaran", "soal", "tugas", "sarpras", "rombel", "ijazah", "jp", "jam mengajar",
+    "kebudayaan", "infogtk", "info gtk", "kenaikan kelas", "cair", "kapan", "besaran",
+    "dev", "developer", "pembuat"
   ].some((keyword) => normalized.includes(keyword));
 
   if (hasTechnicalIntent) return false;
@@ -151,23 +156,44 @@ function isPureGreeting(message: string): boolean {
 }
 
 /**
+ * Deteksi Khusus Pertanyaan Siapa Pembuat / Developer
+ */
+export function isDeveloperQuery(message: string): boolean {
+  const normalized = message.toLowerCase();
+  const devPhrases = [
+    "siapa dev",
+    "siapa developer",
+    "pembuatmu",
+    "pembuat kamu",
+    "siapa yang buat",
+    "siapa yang bikin",
+    "siapa pembuat",
+    "created by",
+    "developer kamu",
+    "dev mu",
+    "developermu",
+    "siapa developermu",
+    "siapa penciptamu"
+  ];
+  return devPhrases.some((phrase) => normalized.includes(phrase));
+}
+
+/**
  * System Prompt Utama untuk pembentukan persona AI SIPA-NGAWI.
  */
 export const SYSTEM_PROMPT = `Kamu adalah **SIPA-NGAWI** (Sistem Informasi & Pelayanan Asisten Pendidikan & Kebudayaan Ngawi - Modul Dapodik), asisten virtual resmi berbasis AI dari Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
 
 ATURAN IDENTITAS UTAMA (PEMBUAT/DEVELOPER):
-- Jika pengguna bertanya tentang siapa yang membuat, merancang, atau mengembangkan kamu (contoh: "siapa yang membuat kamu?", "siapa pembuatmu?", "siapa developer kamu?"), kamu WAJIB menjawab secara tegas dan jelas:
+- Jika pengguna bertanya tentang siapa yang membuat, merancang, atau mengembangkan kamu (contoh: "siapa yang membuat kamu?", "siapa pembuatmu?", "siapa developer kamu?", "siapa dev mu?"), kamu WAJIB menjawab HANYA DENGAN 1 KALIMAT TEGAS BERIKUT TANPA MENAMBAHKAN KALIMAT PENOLAKAN ATAU FORMULIR APAPUN:
   "Saya dikembangkan dan dibuat oleh **MAULANA SYAHID AL FATAH** untuk membantu pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi."
-- DILARANG KERAS memicu pendaftaran/formulir pengaduan resmi saat menjawab pertanyaan identitas developer ini.
 
 BATASAN KETAT GUARDRAILS (ANTI-HALUSINASI & ANTI-JEBOL):
 1. **DILARANG MEMBERIKAN TANGGAL KAKU JIKA TANGGAL TERSEBUT DILAKUKAN BERKALA/DINAMIS:**
    - Untuk pertanyaan seperti jadwal Info GTK, pencairan PIP, atau jadwal TPG, WAJIB menjelaskan mekanismenya secara umum dan menyampaikan bahwa jadwal tepat mengacu pada Surat Edaran (SE) / Pengumuman Resmi instansi terkait.
    - DILARANG mengarang tombol, fitur, atau menu di aplikasi yang sebenarnya tidak ada.
-2. **DILARANG KERAS MENGERJAKAN SOAL MATEMATIKA, TUGAS AKADEMIK, SOAL UJIAN, ATAU SKRIP KODINGAN:**
-   - Apabila pengguna meminta menyelesaikan soal matematika murni, membuatkan program/kodingan (seperti C++, Java, Python, HTML, PHP, Javascript, dll.), meminta jawaban soal ujian/PR, atau meminta penyelesaian tugas pelajaran:
-   - KAMU WAJIB MENOLAKNYA DENGAN TEGAS DAN SOPAN!
-   - Tuliskan pesan penolakan 1 paragraf berikut tanpa embel-embel rumusan/kode/contoh:
+2. **DILARANG KERAS MENGERJAKAN SOAL MATEMATIKA MURNI, TUGAS AKADEMIK, ATAU KODINGAN PROGRAM:**
+   - Hanya tolak jika pengguna secara spesifik meminta dibuatkan program komputer (seperti C++, Java, Python, HTML, PHP, Javascript, skrip kode) atau soal matematika/tugas sekolah di luar topik pendidikan/dinas.
+   - Tuliskan pesan penolakan 1 paragraf berikut:
      "Mohon maaf, sebagai Asisten Virtual Resmi Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi, saya khusus melayani informasi seputar Layanan Pendidikan, Dapodik, Pencairan PIP/Beasiswa, serta Kebudayaan di Kabupaten Ngawi. Saya tidak dapat membantu pengerjaan soal ujian, matematika/tugas sekolah, maupun pembuatan kode program (kodingan). Ada yang bisa saya bantu terkait layanan pendidikan atau Dapodik sekolah Anda?"
    - DILARANG KERAS memberikan skrip, potongan kode, perhitungan matematika, contoh program, atau jawaban tugas akademik apapun meskipun pengguna memaksa!
 
@@ -218,6 +244,8 @@ export function buildUserPrompt(params: {
 }) {
   const currentGreeting = getWibGreeting();
   const isGreetingOnly = isPureGreeting(params.userMessage);
+  const isDevQuery = isDeveloperQuery(params.userMessage);
+  const isForbidden = isForbiddenTaskQuery(params.userMessage);
 
   const overviewContext = isOverviewQuestion(params.userMessage)
     ? `\n\nKONTEKS OVERVIEW LAYANAN:\n${OVERVIEW_CONTEXT}`
@@ -227,8 +255,6 @@ export function buildUserPrompt(params: {
     ? `\n\nKONTEKS PANDUAN ESKALASI PENGADUAN:\n${TICKET_ESCALATION_GUIDANCE}`
     : "";
 
-  const isForbidden = isForbiddenTaskQuery(params.userMessage);
-
   const mathInstruction = isMathQuestion(params.userMessage) && !isForbidden
     ? "\n- KETENTUAN KHUSUS: Pengguna menanyakan soal perhitungan matematika umum. Tetap prioritaskan batasan layanan resmi jika pertanyaan berbentuk soal ujian/tugas."
     : "";
@@ -237,7 +263,9 @@ export function buildUserPrompt(params: {
     ? "\n\nPERBAIKAN FORMAT: Jawaban sebelumnya gagal divalidasi. Buat ulang jawaban dengan struktur logis, paragraf berjarak legah, tanpa format tabel (|), tanpa garis pemisah (---), tanpa emoji berlebih, tanpa karakter '\\n\\n' mentah, tanpa pengulangan kalimat penutup, dan tanpa karakter '##'."
     : "";
 
-  const intentInstruction = isForbidden
+  const intentInstruction = isDevQuery
+    ? "\n- INSTRUKSI IDENTITAS DEVELOPER: Pengguna menanyakan pembuat/developer. WAJIB Jawab HANYA DENGAN: 'Saya dikembangkan dan dibuat oleh MAULANA SYAHID AL FATAH untuk membantu pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.' TANPA MENAMBAHKAN KALIMAT PENOLAKAN ATAU FORMULIR APAPUN!"
+    : isForbidden
     ? "\n- DETEKSI PENOLAKAN KODINGAN/TUGAS/MATEMATIKA: Pengguna meminta kodingan, program, perhitungan matematika, atau jawaban tugas/soal ujian. WAJIB Jawab HANYA dengan 1 paragraf penolakan resmi SOP Disdikbud Ngawi tanpa memberikan perhitungan/jawaban/skrip apapun!"
     : isOverviewQuestion(params.userMessage)
     ? "\n- Jelaskan cakupan layanan utama (Dapodik, PIP, Kebudayaan, Verval) secara runtut dan sistematis menggunakan bullet points."
@@ -315,11 +343,17 @@ function formatConversationHistory(history: HistoryMessage[] | undefined): strin
 export function isForbiddenTaskQuery(message: string): boolean {
   const normalized = message.toLowerCase();
 
+  // Jika merupakan pertanyaan developer, JANGAN blokir
+  if (isDeveloperQuery(message)) {
+    return false;
+  }
+
   // Whitelist mutlak: Pertanyaan seputar pendidikan, PIP, Info GTK, Dapodik, dan layanan dinas tidak boleh diblokir
   const allowedKeywords = [
     "dapodik", "infogtk", "info gtk", "tarik data", "sinkron", 
     "pip", "beasiswa", "ptk", "verval", "mutasi", "sipa", "ngawi", 
-    "bosp", "nuptk", "nik", "rombel", "sarpras", "rapor", "cair", "pencairan", "tpg", "sktp", "besaran", "nominal", "sd", "smp", "sma", "smk"
+    "bosp", "nuptk", "nik", "rombel", "sarpras", "rapor", "cair", "pencairan",
+    "tpg", "sktp", "besaran", "nominal", "sd", "smp", "sma", "smk"
   ];
   if (allowedKeywords.some((kw) => normalized.includes(kw))) {
     return false;
@@ -368,8 +402,14 @@ export function isForbiddenTaskQuery(message: string): boolean {
 function isMathQuestion(message: string): boolean {
   const normalized = message.toLowerCase();
 
-  // Abaikan pengecekan jika mengandung kata kunci operasional resmi
-  const allowedKeywords = ["dapodik", "infogtk", "info gtk", "pip", "tpg", "besaran", "nominal", "sd", "smp", "sma", "smk"];
+  if (isDeveloperQuery(message)) {
+    return false;
+  }
+
+  const allowedKeywords = [
+    "dapodik", "infogtk", "info gtk", "pip", "tpg", "besaran", "nominal",
+    "sd", "smp", "sma", "smk"
+  ];
   if (allowedKeywords.some((kw) => normalized.includes(kw))) {
     return false;
   }
