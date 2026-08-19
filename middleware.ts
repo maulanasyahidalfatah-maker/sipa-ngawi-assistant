@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Bebaskan akses HANYA untuk /login, endpoint API, dan aset statis Next.js
@@ -15,12 +15,12 @@ export function middleware(request: NextRequest) {
   // Cek Cookie Sesi Pengguna
   const sessionCookie = request.cookies.get("sipa_user_session")?.value;
 
-  // 1. JIKA BELUM LOGIN: Paksa redirect pengguna dari mana pun ke gerbang /login
+  // 1. JIKA BELUM LOGIN: Paksa redirect pengguna ke gerbang /login
   if (!isPublicPath && !sessionCookie) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // 2. JIKA SUDAH LOGIN & MEMBUKA /login: Lempar otomatis ke halaman sesuai role-nya
+  // 2. JIKA SUDAH LOGIN & MEMBUKA /login: Lempar otomatis sesuai role
   if (path === "/login" && sessionCookie) {
     try {
       const session = JSON.parse(sessionCookie);
@@ -29,7 +29,7 @@ export function middleware(request: NextRequest) {
       }
       return NextResponse.redirect(new URL("/", request.url));
     } catch {
-      // Jika cookie corrupt, abaikan
+      // Jika cookie corrupt, izinkan lanjut
     }
   }
 
