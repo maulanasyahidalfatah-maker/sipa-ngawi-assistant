@@ -1,47 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 import { Redis } from "@upstash/redis";
 import { sendBatchReportEmail, TicketItem } from "@/lib/email-service";
+import { createChatResponse } from "@/lib/rag/service";
 import {
-  SYSTEM_PROMPT,
-  buildUserPrompt,
+  OFFICIAL_REJECTION_MESSAGE,
   isForbiddenTaskQuery,
   isDeveloperQuery,
+  isConfirmationQuery,
 } from "@/lib/rag/prompt";
 
 export const runtime = "nodejs";
 export const maxDuration = 45;
 
-// ============================================================================
-// 🎛️ SETELAN "PENGGUNAAAN API KEY" TOKEN (PENGATURAN EFISIENSI)
-// ============================================================================
-type ThrottleMode = "SUPER_HEMAT" | "HEMAT" | "NORMAL";
-
-// Nilai default "HEMAT". Bisa diubah via env: TOKEN_THROTTLE_MODE="SUPER_HEMAT"
-const CURRENT_MODE: ThrottleMode =
-  (process.env.TOKEN_THROTTLE_MODE as ThrottleMode) || "HEMAT";
-
-const TOKEN_TUNING_CONFIG = {
-  SUPER_HEMAT: {
-    maxTokens: 350,
-    maxHistory: 2,
-    temperature: 0.1,
-  },
-  HEMAT: {
-    maxTokens: 550,
-    maxHistory: 4,
-    temperature: 0.1,
-  },
-  NORMAL: {
-    maxTokens: 1000,
-    maxHistory: 8,
-    temperature: 0.2,
-  },
-};
-
-const activeSetting = TOKEN_TUNING_CONFIG[CURRENT_MODE] || TOKEN_TUNING_CONFIG.HEMAT;
-
-// Inisialisasi Upstash Redis (Persisten di serverless/Vercel)
+// Inisialisasi Upstash Redis (Persisten di Serverless Cloud)
 const redis =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
     ? new Redis({
@@ -52,7 +23,6 @@ const redis =
 
 let ticketMemoryBatch: TicketItem[] = [];
 
-// Helper sapaan instan tanpa bakar token AI
 function getQuickGreeting(): string {
   const jakartaTimeStr = new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" });
   const hour = new Date(jakartaTimeStr).getHours();
@@ -65,7 +35,8 @@ function getQuickGreeting(): string {
 function isPureGreetingCheck(message: string): boolean {
   const normalized = message.toLowerCase().trim();
   const greetings = [
-    "halo", "hai", "hi", "pagi", "siang", "sore", "malam", "ping", "p",
+    "halo", "hai", "hi", "helo", "hello", "pagi", "siang", "sore", "malam",
+    "ping", "p", "assalamualaikum", "assalamu'alaikum",
     "selamat pagi", "selamat siang", "selamat sore", "selamat malam"
   ];
   return greetings.includes(normalized);
@@ -90,7 +61,8 @@ export async function POST(request: NextRequest) {
     // 1. HANDLER EMAIL MANUAL
     // =========================================================================
     if (action === "send_email_transcript") {
-      const emailTarget = targetEmail || process.env.EMAIL_REKAP_TARGET || "avidusfathcorp@gmail.com";
+      const emailTarget =
+        targetEmail || process.env.EMAIL_REKAP_TARGET || "avidusfathcorp@gmail.com";
 
       let recordsToSend: TicketItem[] = [];
 
@@ -121,7 +93,10 @@ export async function POST(request: NextRequest) {
       }
 
       if (recordsToSend.length === 0) {
-        return NextResponse.json({ error: "Tiada data rekapitulasi aduan untuk dikirim." }, { status: 400 });
+        return NextResponse.json(
+          { error: "Tiada data rekapitulasi aduan untuk dikirim." },
+          { status: 400 }
+        );
       }
 
       let totalCounter = recordsToSend.length;
@@ -133,17 +108,21 @@ export async function POST(request: NextRequest) {
       }
 
       await sendBatchReportEmail(recordsToSend, totalCounter);
-      return NextResponse.json({ success: true, message: `Rekapitulasi berhasil dikirim ke ${emailTarget}` });
+      return NextResponse.json({
+        success: true,
+        message: `Rekapitulasi berhasil dikirim ke ${emailTarget}`,
+      });
     }
 
     // =========================================================================
-    // 2. SUBMIT TICKET / PENGADUAN
+    // 2. SUBMIT TIKET PENGADUAN
     // =========================================================================
     if (action === "submit_ticket" || ticketData) {
-      if (!ticketData) {
+      if (!ticketData && !message && !namaPelapor) {
         return NextResponse.json({ error: "Data aduan tidak boleh kosong." }, { status: 400 });
       }
 
+      const input = ticketData || {};
       let ticketNumber = "1";
 
       if (redis) {
@@ -158,15 +137,17 @@ export async function POST(request: NextRequest) {
         ticketNumber = (ticketMemoryBatch.length + 1).toString();
       }
 
+      const formattedTicketId = `TK-${ticketNumber.padStart(3, "0")}`;
+
       const newTicket: TicketItem = {
         timestamp: new Date().toISOString(),
-        namaPelapor: ticketData.namaPelapor || namaPelapor || "-",
-        asalSekolah: ticketData.asalSekolah || asalSekolah || "-",
-        npsn: ticketData.npsn || npsn || "-",
-        noWhatsapp: ticketData.noWhatsapp || noWhatsapp || "-",
-        kategoriKendala: ticketData.kategoriKendala || ticketData.kategori || "Kendala Dapodik",
-        rincianKeluhan: ticketData.rincianKeluhan || ticketData.rincian || "-",
-        ticketNumber: ticketNumber,
+        namaPelapor: input.namaPelapor || namaPelapor || "-",
+        asalSekolah: input.asalSekolah || asalSekolah || "-",
+        npsn: input.npsn || npsn || "-",
+        noWhatsapp: input.noWhatsapp || noWhatsapp || "-",
+        kategoriKendala: input.kategoriKendala || input.kategori || "Kendala Dapodik",
+        rincianKeluhan: input.rincianKeluhan || input.rincian || "-",
+        ticketNumber: formattedTicketId,
       };
 
       if (redis) {
@@ -211,96 +192,50 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Pesan teks wajib diisi." }, { status: 400 });
     }
 
-    // A. Identitas Developer (Bypass penuh - Hemat 100% token)
+    // A. Identitas Developer (Bypass penuh)
     if (isDeveloperQuery(message)) {
       const devReply =
         "Saya dikembangkan dan dibuat oleh **MAULANA SYAHID AL FATAH** untuk membantu pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.";
       return NextResponse.json({ reply: devReply, content: devReply, response: devReply });
     }
 
-    // B. Sapaan Singkat (Bypass penuh - Hemat 100% token)
+    // B. Konfirmasi / Ucapan Terima Kasih (Bypass penuh)
+    if (isConfirmationQuery(message)) {
+      const confirmReply =
+        "Terima kasih atas konfirmasinya. Jika ada pertanyaan lanjutan terkait layanan pendidikan, Dapodik, pencairan PIP, validasi data GTK, mutasi peserta didik atau PTK, saya siap membantu.";
+      return NextResponse.json({ reply: confirmReply, content: confirmReply, response: confirmReply });
+    }
+
+    // C. Sapaan Singkat (Bypass penuh)
     if (isPureGreetingCheck(message)) {
       const greetingReply = `${getQuickGreeting()} 🙏, Bapak/Ibu Operator & Guru!\n\nAda yang bisa saya bantu terkait layanan pendidikan, Info GTK, pencairan PIP, atau kendala Dapodik di sekolah Anda?`;
       return NextResponse.json({ reply: greetingReply, content: greetingReply, response: greetingReply });
     }
 
-    // C. Guardrail Penolakan Kodingan Murni (Bypass penuh)
+    // D. Guardrail Penolakan Tugas Sekolah / Kodingan / Trivia Umum (Bypass penuh)
     if (isForbiddenTaskQuery(message)) {
-      const refusalMessage =
-        "Mohon maaf, sebagai Asisten Virtual Resmi Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi, saya khusus melayani informasi seputar Layanan Pendidikan, Dapodik, Pencairan PIP/Beasiswa, serta Kebudayaan di Kabupaten Ngawi. Saya tidak dapat membantu pengerjaan soal ujian, matematika/tugas sekolah, maupun pembuatan kode program (kodingan). Ada yang bisa saya bantu terkait layanan pendidikan atau Dapodik sekolah Anda?";
-      return NextResponse.json({ reply: refusalMessage, content: refusalMessage, response: refusalMessage });
+      return NextResponse.json({
+        reply: OFFICIAL_REJECTION_MESSAGE,
+        content: OFFICIAL_REJECTION_MESSAGE,
+        response: OFFICIAL_REJECTION_MESSAGE,
+      });
     }
 
     // =========================================================================
-    // 4. CHAT AI DENGAN EFISIENSI TOKEN TERKONTROL
+    // 4. GENERASI PERCAKAPAN VIA SERVICE (QWEN CLIENT SERVICE)
     // =========================================================================
-    // Potong riwayat chat sesuai setelan efisiensi
-    const trimmedHistory = rawHistory.slice(-activeSetting.maxHistory);
-
-    const formattedPrompt = buildUserPrompt({
-      userMessage: message,
-      history: trimmedHistory,
-      retrievedDocuments: [],
+    const chatResult = await createChatResponse(process.env.QWEN_API_KEY || "", {
+      message,
+      history: rawHistory,
     });
 
-    let aiReply = "";
-
-    // Jalur Utama: Qwen Turbo
-    const qwenApiKey = process.env.QWEN_API_KEY;
-    if (qwenApiKey) {
-      try {
-        const qwen = new OpenAI({
-          apiKey: qwenApiKey,
-          baseURL:
-            process.env.QWEN_BASE_URL ||
-            "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
-        });
-
-        const completion = await qwen.chat.completions.create({
-          model: process.env.QWEN_MODEL || "qwen-turbo",
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: formattedPrompt },
-          ],
-          temperature: activeSetting.temperature,
-          max_tokens: activeSetting.maxTokens,
-        });
-
-        aiReply = completion.choices[0]?.message?.content || "";
-      } catch (qwenErr) {
-        console.warn("⚠️ Qwen gagal, beralih ke DeepSeek...", qwenErr);
-      }
-    }
-
-    // Jalur Cadangan: DeepSeek Chat
-    if (!aiReply) {
-      const deepseekKey = process.env.DEEPSEEK_API_KEY;
-      if (!deepseekKey) {
-        throw new Error("Kunci API Qwen maupun DeepSeek tidak dikonfigurasi.");
-      }
-
-      const deepseek = new OpenAI({
-        apiKey: deepseekKey,
-        baseURL: "https://api.deepseek.com",
-      });
-
-      const completion = await deepseek.chat.completions.create({
-        model: process.env.DEEPSEEK_MODEL || "deepseek-chat",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: formattedPrompt },
-        ],
-        temperature: activeSetting.temperature,
-        max_tokens: activeSetting.maxTokens,
-      });
-
-      aiReply = completion.choices[0]?.message?.content || "";
-    }
+    const finalAnswer = chatResult.response;
 
     return NextResponse.json({
-      reply: aiReply,
-      content: aiReply,
-      response: aiReply,
+      reply: finalAnswer,
+      content: finalAnswer,
+      response: finalAnswer,
+      formatted: chatResult.formatted,
     });
   } catch (error: unknown) {
     console.error("💥 Error API Route:", error);

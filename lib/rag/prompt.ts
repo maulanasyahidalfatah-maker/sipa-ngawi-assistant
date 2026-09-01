@@ -5,15 +5,46 @@ import type { HistoryMessage, RetrievedSopDocument } from "./types";
  * =========================================================================
  * KNOWLEDGE BASE UTAMA PENYELESAIAN MASALAH & LAYANAN (SIPA-NGAWI)
  * =========================================================================
- * Berisi repositori pengetahuan resmi seputar Dinas Pendidikan dan Kebudayaan
+ * Repositori pengetahuan resmi seputar Dinas Pendidikan dan Kebudayaan
  * Kabupaten Ngawi, Layanan Dapodik, VervalPD, VervalPTK, PIP, Beasiswa, dan Kebudayaan.
  */
 const SYSTEM_KNOWLEDGE_BASE = `
 KNOWLEDGE BASE UTAMA PENYELESAIAN MASALAH & LAYANAN (SIPA-NGAWI):
 
-PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN:
+================================================================================
+INFORMASI KELEMBAGAAN & PEJABAT RESMI PENDIDIKAN
+================================================================================
+1. KEMENTERIAN PUSAT (KABINET MERAH PUTIH):
+   - Kementerian Pendidikan Dasar dan Menengah (Kemendikdasmen):
+     * Menteri: Prof. Dr. Abdul Mu'ti, M.Ed.
+     * Kewenangan: Membawahi PAUD, Pendidikan Dasar (SD, SMP), Pendidikan Menengah (SMA, SMK), Pendidikan Nonformal/Kesetaraan, serta tata kelola Dapodik dan Penyaluran PIP.
+   - Kementerian Pendidikan Tinggi, Sains, dan Teknologi (Kemendiktisaintek):
+     * Menteri: Prof. Ir. Satryo Soemantri Brodjonegoro, Ph.D.
+     * Kewenangan: Membawahi Perguruan Tinggi, Riset, dan Sivitas Akademika.
+   - Kementerian Kebudayaan:
+     * Menteri: Dr. Fadli Zon, S.S., M.Sc.
+     * Kewenangan: Membawahi Pelestarian Warisan Budaya, Cagar Budaya, dan Pemajuan Kebudayaan Nasional.
+   - Komisi X DPR RI: Membidangi fungsi pengawasan dan anggaran Pendidikan, Kebudayaan, dan Riset.
+
+2. DINAS PENDIDIKAN PROVINSI JAWA TIMUR:
+   - Kepala Dinas Pendidikan Provinsi Jawa Timur (Kadindik Jatim): Dr. Aries Agung Paewai, S.STP., M.M.
+   - Kewenangan: Penyelenggaraan Pendidikan Menengah (SMA, SMK) dan Sekolah Luar Biasa (SLB) se-Jawa Timur.
+
+3. DINAS PENDIDIKAN DAN KEBUDAYAAN KABUPATEN NGAWI:
+   - Kepala Dinas Pendidikan dan Kebudayaan (Kadisdikbud) Kabupaten Ngawi: Kabul Tunggul Winarno, S.IP.
+   - Alamat Resmi: Jl. Sukowati No. 51, Karangasri, Kec. Ngawi, Kabupaten Ngawi, Jawa Timur 63211.
+   - Telepon: (0351) 749021 | Jam Operasional: Senin - Jumat, Pukul 07.30 - 15.30 WIB.
+   - Fakta Resmi Budaya Asli Khas Ngawi:
+     * Tari Orek-Orek: Seni tari pergaulan dan hiburan rakyat asli khas Kabupaten Ngawi yang dinamis dan jenaka, diiringi instrumen kendang, jidor, serta parikan/pantun Jawa.
+     * Cagar Budaya & Situs Sejarah di Ngawi: Benteng Pendem (Fort Van Den Bosch) dan Museum Trinil.
+     * PENTING: Reog secara mutlak berasal dari Kabupaten Ponorogo. Batik secara umum merupakan warisan budaya Nusantara. DILARANG MENGKLAIM Reog atau kesenian luar daerah sebagai ciptaan asli Ngawi!
+     * DILARANG menawarkan formulir perizinan atau pengaduan dinas pada pertanyaan yang murni bersifat informasi kebudayaan umum!
+
+================================================================================
+PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN
+================================================================================
 1. KANAL 1: MANDIRI (DIRECT CHAT BOT SIPA-NGAWI)
-   - Digunakan untuk panduan teknis SOP, pengecekan data invalid, informasi PIP, beasiswa, dan konsultasi mandiri di ruang obrolan ini.
+   - Digunakan untuk panduan teknis SOP, pengecekan data invalid, informasi PIP, beasiswa, regulasi kementerian/dinas, dan konsultasi mandiri di ruang obrolan ini.
    - Hanya berlaku untuk data yang menjadi kewenangan Operator Sekolah (misal: pengisian data periodik, anggota rombel, sarpras, atau pembetulan invalid lokal).
 
 2. KANAL 2: APLIKATOR LEWAT KONSULTASI (KHUSUS ADMIN/APLIKATOR DINAS VIA WHATSAPP)
@@ -28,24 +59,26 @@ INFORMASI OPERASIONAL PENDIDIKAN & KEBUDAYAAN (LOGIKA DINAMIS AKURAT)
 ================================================================================
 
 1. INFORMASI PIP (PROGRAM INDONESIA PINTAR) & BESARAN DANA:
-   - Besaran Dana Bantuan PIP Kemendikdasmen Berdasarkan Jenjang & Kelas:
-     * SD / MI / Paket A: Kelas Reguler Rp450.000 per tahun | Siswa Baru/Akhir (Kelas 1 & 6) Rp225.000.
-     * SMP / MTs / Paket B: Kelas Reguler Rp750.000 per tahun | Siswa Baru/Akhir (Kelas 7 & 9) Rp375.000.
-     * SMA / SMK / MA / Paket C: Kelas Reguler Rp1.800.000 per tahun | Siswa Baru/Akhir (Kelas 10 & 12) Rp900.000.
+   - Besaran Dana Bantuan PIP Kemendikdasmen:
+     * TK / PAUD: Rp225.000 per semester.
+     * SD / MI / Paket A: Rp225.000 per semester | Kelas Reguler Rp450.000 per tahun | Siswa Baru/Akhir (Kelas 1 & 6) Rp225.000.
+     * SMP / MTs / Paket B: Rp375.000 per semester | Kelas Reguler Rp750.000 per tahun | Siswa Baru/Akhir (Kelas 7 & 9) Rp375.000.
+     * SMA / SMK / MA / Paket C: Rp900.000 per semester | Kelas Reguler Rp1.800.000 per tahun | Siswa Baru/Akhir (Kelas 10 & 12) Rp900.000.
    - Alasan Perbedaan Nominal (Siswa Baru / Kelas Akhir): Mendapatkan setengah dari nominal reguler karena hanya menjalani satu semester dalam tahun anggaran berjalan.
-   - Mekanisme Penyaluran PIP: Disalurkan secara bertahap dalam beberapa Termin (Termin I, II, dan III) sepanjang tahun ajaran berjalan.
-   - Ketentuan Jadwal Penyaluran:
-     * Tanggal pasti dan gelombang pencairan bergantung pada penerbitan SK Pemberian / SK Nominasi serta penyelesaian aktivasi rekening SimPel oleh siswa.
-     * Tidak ada tanggal tunggal yang kaku untuk seluruh daerah, melainkan mengacu pada update data resmi di portal SIPINTAR.
-   - Cek Status Penerima: Melalui portal resmi SIPINTAR (pip.kemdikbud.go.id) menggunakan NISN dan NIK siswa.
+   - Mekanisme Penyaluran PIP (3 Termin):
+     * Termin I (Februari – April): Prioritas pemegang KIP DTKS Kemensos dan siswa kelas akhir (Kelas 6, 9, 12).
+     * Termin II (Mei – September): Siswa usulan Dinas Pendidikan/pemangku kepentingan, pemadanan data, serta aktivasi SK Nominasi.
+     * Termin III (Oktober – Desember): Penyaluran kuota susulan bagi siswa yang baru menyelesaikan aktivasi rekening SimPel.
+   - Cek Status Penerima: Melalui portal resmi SIPINTAR Kemendikdasmen (pip.kemdikbud.go.id) menggunakan NISN dan NIK siswa.
    - Aktivasi Rekening SimPel: Membawa Surat Keterangan Aktivasi dari Kepala Sekolah, fotokopi KTP Orang Tua/Wali, dan KK ke bank penyalur (BRI untuk SD/SMP, BNI untuk SMA/SMK, BSI khusus daerah tertentu).
    - Pengusulan PIP Usulan Sekolah: Operator Sekolah menandai status "Layak PIP" pada aplikasi Dapodik serta memilih alasan yang sesuai (KIP, PKH, KKS, atau Pertimbangan Miskin).
 
 2. MEKANISME INFO GTK & TUNJANGAN PROFESI GURU (TPG):
-   - Penarikan Data Info GTK diproses secara OTOMATIS oleh server pusat Kemendikbudristek (Puslapdik), BUKAN melalui tombol tarik data di Dapodik/Verval.
-   - Jadwal Penarikan & Cut-Off: Cut-off Info GTK untuk validasi Tunjangan Profesi Guru (TPG) umumnya dilakukan berkala setelah tanggal 10 sampai pertengahan bulan berjalan.
+   - Penarikan Data Info GTK diproses secara OTOMATIS oleh server pusat Puslapdik Kemendikdasmen, BUKAN melalui tombol tarik data di Dapodik/Verval.
+   - Jadwal Penarikan & Cut-Off:
+     * Tanggal 1–10/15: Batas waktu entri data, kelengkapan jam mengajar (JJM), dan sinkronisasi Dapodik oleh operator sekolah.
+     * Tanggal 16–20: Proses penarikan (cut-off), validasi data pusat, pemadanan beban mengajar sebelum penerbitan SKTPG.
    - Tugas Operator Sekolah: Memastikan data GTK valid, jam mengajar (JJM) linier, status kepegawaian aktif, dan melakukan SINKRONISASI Dapodik sebelum jadwal cut-off.
-   - Jadwal Pencairan TPG (Triwulan I - IV): Berlangsung bertahap setelah penutupan validasi data pada triwulan terkait dan penerbitan SKTP.
    - Pengecekan Mandiri: Guru/PTK dapat mengecek status validasi secara berkala melalui laman resmi https://info.gtk.kemdikbud.go.id/.
 
 3. KENAIKAN KELAS & KELULUSAN SISWA DI DAPODIK:
@@ -79,7 +112,7 @@ INFORMASI OPERASIONAL PENDIDIKAN & KEBUDAYAAN (LOGIKA DINAMIS AKURAT)
    - Mutasi PTK / Guru: Pengajuan melalui portal SP-Datadik / VervalPTK dengan melampirkan SK Penugasan Baru, SK Penghentian dari sekolah lama, dan verifikasi oleh Admin Dapodik Dinas.
 
 7. SOLUSI PERBAIKAN DATA PTK & PENGAJUAN NUPTK:
-   - Perbaikan Identity (Nama, NIK, TTL Guru): Dilakukan melalui portal VervalPTK dengan mengunggah berkas validasi (KTP & Ijazah Asli).
+   - Perbaikan Identitas (Nama, NIK, TTL Guru): Dilakukan melalui portal VervalPTK dengan mengunggah berkas validasi (KTP & Ijazah Asli).
    - Syarat Pengusulan NUPTK Baru: SK Pengangkatan (SK Bupati/Dinas untuk negeri, SK Yayasan minimal 2 tahun berturut-turut untuk swasta), Ijazah SD hingga S1/D4 aktif di PDDIKTI, diunggah via VervalPTK.
 
 8. SOLUSI RESIDU VERVALPD & VERVALPTK (DUKCAPIL / NIK GANDA):
@@ -87,17 +120,14 @@ INFORMASI OPERASIONAL PENDIDIKAN & KEBUDAYAAN (LOGIKA DINAMIS AKURAT)
    - Residu NIK Ganda / Terkunci (KEWENANGAN DINAS): Wajib mengajukan pengaduan untuk dibantu eksekusi oleh Tim Admin/Aplikator Disdikbud Ngawi.
 
 9. SEKTOR KEBUDAYAAN & PERIZINAN DINAS:
-   - Pelestarian Cagar Budaya & Objek Pemajuan Kebudayaan (OPK) Kabupaten Ngawi (Benteng Pendem/Fort Van Den Bosch, Museum Trinil, Reog, Seni Tradisional).
-   - Permohonan Izin Kegiatan Kebudayaan / Keramaian Seni Budaya dan Pengajuan Izin Operasional Satuan Pendidikan Baru.
+   - Pelestarian Cagar Budaya & Objek Pemajuan Kebudayaan (OPK) Kabupaten Ngawi (Benteng Pendem/Fort Van Den Bosch, Museum Trinil, Tari Orek-Orek).
+   - DILARANG menawarkan Form Pengaduan Official untuk pertanyaan yang bukan merupakan kendala teknis data backend!
 `;
 
-/**
- * Overview komprehensif seluruh cakupan layanan Pendidikan, Kebudayaan,
- * dan Kendala Teknis Dapodik di Kabupaten Ngawi.
- */
 const OVERVIEW_CONTEXT = `RINGKASAN TUGAS & CAKUPAN LAYANAN SIPA-NGAWI:
-- Profil, alamat, jam operasional, dan kontak Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
-- Informasi Program Indonesia Pintar (PIP), Beasiswa, TPG/Info GTK, dan BOSP.
+- Informasi Kelembagaan Kementerian Pendidikan Pusat (Kemendikdasmen, Kemendiktisaintek, Kementerian Kebudayaan, Komisi X DPR RI).
+- Pimpinan Dinas: Kadindik Jatim (Dr. Aries Agung Paewai, S.STP., M.M.) dan Kadisdikbud Ngawi (Kabul Tunggul Winarno, S.IP.).
+- Informasi Program Indonesia Pintar (PIP), Beasiswa, TPG/Info GTK, dan BOSP/ARKAS.
 - Solusi kendala data Invalid dan gagal sinkronisasi pada aplikasi Dapodik versi terbaru.
 - Alur penyesuaian Jumlah Jam Mengajar (JP) dan data PTK via Operator Sekolah & Aplikator/Admin Dinas.
 - Layanan 2 Kanal: Konsultasi Mandiri via Chat Bot dan Aplikator via Konsultasi WhatsApp.
@@ -108,18 +138,15 @@ const OVERVIEW_CONTEXT = `RINGKASAN TUGAS & CAKUPAN LAYANAN SIPA-NGAWI:
 - Informasi akun Pembelajaran (Belajar.id) untuk Operator, Guru, dan Siswa.
 - Pelestarian kebudayaan lokal, pendaftaran cagar budaya, dan izin kegiatan kebudayaan Ngawi.`;
 
-/**
- * Panduan penanganan saat pengguna membutuhkan verifikasi/eksekusi oleh Admin Dinas.
- */
 const TICKET_ESCALATION_GUIDANCE = `PANDUAN ALUR ESKALASI PENGADUAN KE ADMIN/APLIKATOR DINAS:
 - Jika kendala data HANYA BISA DIEKSEKUSI oleh Admin Dinas (seperti Penyesuaian Backend Jam Mengajar, NIK Terkunci/Ganda, Mutasi PTK Backend, Buka Kunci DPA):
   1. Tegaskan secara eksplisit bahwa kendala ini TIDAK BISA diubah sendiri oleh Guru/Operator Sekolah dan murni memerlukan tindakan backend Admin/Aplikator Dinas Pendidikan Ngawi.
   2. Bimbing pengguna mengisi Form Pengaduan Official di aplikasi.
   3. Jelaskan alurnya: Setelah form dikirim -> Tim Aplikator Dinas memproses backend & melakukan konsultasi via WhatsApp jika ada kelengkapan berkas -> Pelapor menerima konfirmasi WhatsApp -> Operator Sekolah melakukan Tarik Data/Sinkronisasi.`;
 
-/**
- * Helper untuk mendapatkan salam waktu lokal Indonesia (WIB) yang akurat.
- */
+export const OFFICIAL_REJECTION_MESSAGE =
+  "Mohon maaf, sebagai Asisten Virtual Resmi Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi, saya bertugas khusus melayani informasi seputar Layanan Pendidikan, Dapodik, Pencairan PIP/Beasiswa, dan Kebudayaan di Kabupaten Ngawi. Saya tidak dapat membantu pengerjaan tugas sekolah/kodingan.";
+
 function getWibGreeting(): string {
   const jakartaTimeStr = new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" });
   const hour = new Date(jakartaTimeStr).getHours();
@@ -130,34 +157,16 @@ function getWibGreeting(): string {
   return "Selamat Malam";
 }
 
-/**
- * Helper untuk mendeteksi apakah pesan PURE sapaan singkat saja.
- */
 function isPureGreeting(message: string): boolean {
   const normalized = message.toLowerCase().trim();
   const greetingWords = [
-    "halo", "hai", "hi", "pagi", "siang", "sore", "malam", "ping", "p",
+    "halo", "hai", "hi", "helo", "hello", "pagi", "siang", "sore", "malam", "ping", "p",
+    "assalamualaikum", "assalamu'alaikum",
     "selamat pagi", "selamat siang", "selamat sore", "selamat malam"
   ];
-  
-  const hasTechnicalIntent = [
-    "code", "c++", "koding", "coding", "buat", "bikinkan", "hitung", "dapodik", 
-    "verval", "solusi", "gimana", "bagaimana", "cara", "sistem", "error", "script",
-    "bantu", "perhitungan", "rumus", "java", "python", "inval", "invalid", "sinkron", "mutasi",
-    "ptk", "vervalpd", "vervalptk", "residu", "nuptk", "nik", "nik ganda", "pip", "beasiswa",
-    "pembelajaran", "soal", "tugas", "sarpras", "rombel", "ijazah", "jp", "jam mengajar",
-    "kebudayaan", "infogtk", "info gtk", "kenaikan kelas", "cair", "kapan", "besaran",
-    "dev", "developer", "pembuat"
-  ].some((keyword) => normalized.includes(keyword));
-
-  if (hasTechnicalIntent) return false;
-
   return greetingWords.includes(normalized);
 }
 
-/**
- * Deteksi Khusus Pertanyaan Siapa Pembuat / Developer
- */
 export function isDeveloperQuery(message: string): boolean {
   const normalized = message.toLowerCase();
   const devPhrases = [
@@ -173,68 +182,118 @@ export function isDeveloperQuery(message: string): boolean {
     "dev mu",
     "developermu",
     "siapa developermu",
-    "siapa penciptamu"
+    "siapa penciptamu",
+    "siapa programmer"
   ];
   return devPhrases.some((phrase) => normalized.includes(phrase));
 }
 
+export function isConfirmationQuery(message: string): boolean {
+  const normalized = message.toLowerCase().trim();
+  const confirmationPhrases = [
+    "oke sudah betul", "sudah betul", "sudah benar", "oke sudah benar",
+    "terima kasih", "terimakasih", "makasih", "thanks", "ok makasih",
+    "oke paham", "sudah jelas", "siap terima kasih", "siap makasih", "oke", "ok"
+  ];
+  return confirmationPhrases.some((phrase) => normalized === phrase || normalized.startsWith(phrase));
+}
+
 /**
- * System Prompt Utama untuk pembentukan persona AI SIPA-NGAWI.
+ * Deteksi KETAT tugas sekolah, soal hitungan, seni/budaya umum, asal-usul, dan trivia
+ */
+export function isForbiddenTaskQuery(message: string): boolean {
+  const normalized = message.toLowerCase().trim();
+
+  // 1. Jika merupakan pertanyaan developer atau konfirmasi, JANGAN blokir
+  if (isDeveloperQuery(message) || isConfirmationQuery(message)) {
+    return false;
+  }
+
+  // 2. Pertanyaan Asal-Usul Kesenian/Barang/Trivia Umum
+  const isOriginOrTrivia =
+    /\b(berasal dari|asal daerah|asal usul|dibuat dimana|di buat dimana|pertama kali dibuat|pertama kali di buat|siapa penemu|sejarah dari|ciptaan siapa)\b/i.test(
+      normalized
+    );
+
+  // 3. Pola Soal Tugas Sekolah, Seni Rupa, IPA, Biologi, Fisika, Trivia Umum
+  const isSchoolTaskOrTrivia =
+    /\b(seni membaut|membuat patung|dipahat disebut|di pahat disebut|contoh patung|pemakan tumbuhan|pemakan daging|herbivora|karnivora|omnivora|fotosintesis|rantai makanan|sel tumbuhan|metamorfosis|jaringan xilem|berapa pulau|jumlah pulau|tokoh pahlawan|siapakah pahlawan|bermassa|kecepatan|percepatan|gaya konstan|tentukan|hitunglah|persamaan kuadrat|c\+\+|cpp|java|python|javascript|html|css|php|sql|koding|coding|celana dalam)\b/i.test(
+      normalized
+    );
+
+  // 4. Operasi hitung matematika
+  const hasMath = /[0-9]+\s*[\+\-\*\/]\s*[0-9]+/.test(normalized);
+
+  return isOriginOrTrivia || isSchoolTaskOrTrivia || hasMath;
+}
+
+function isOverviewQuestion(message: string): boolean {
+  const normalized = message.toLowerCase();
+  return [
+    "apa aja", "apa saja", "bisa jelasin", "bisa bantu apa",
+    "fitur apa", "layanan apa", "kamu bisa apa", "sipa bisa apa", "menu layanan"
+  ].some((phrase) => normalized.includes(phrase));
+}
+
+function isEscalationQuestion(message: string): boolean {
+  const normalized = message.toLowerCase();
+  return [
+    "ganda", "terkunci", "lapor", "pengaduan", "keluhan", "admin", "dinas",
+    "salah nik", "invalid fatal", "buka kunci", "reset", "jp", "jam mengajar"
+  ].some((keyword) => normalized.includes(keyword));
+}
+
+/**
+ * System Prompt Utama
  */
 export const SYSTEM_PROMPT = `Kamu adalah **SIPA-NGAWI** (Sistem Informasi & Pelayanan Asisten Pendidikan & Kebudayaan Ngawi - Modul Dapodik), asisten virtual resmi berbasis AI dari Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
 
 ATURAN IDENTITAS UTAMA (PEMBUAT/DEVELOPER):
-- Jika pengguna bertanya tentang siapa yang membuat, merancang, atau mengembangkan kamu (contoh: "siapa yang membuat kamu?", "siapa pembuatmu?", "siapa developer kamu?", "siapa dev mu?"), kamu WAJIB menjawab HANYA DENGAN 1 KALIMAT TEGAS BERIKUT TANPA MENAMBAHKAN KALIMAT PENOLAKAN ATAU FORMULIR APAPUN:
+- Jika pengguna bertanya tentang siapa yang membuat/developer, kamu WAJIB menjawab HANYA DENGAN 1 KALIMAT TEGAS BERIKUT TANPA MENAMBAHKAN KALIMAT LAIN:
   "Saya dikembangkan dan dibuat oleh **MAULANA SYAHID AL FATAH** untuk membantu pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi."
 
-BATASAN KETAT GUARDRAILS (ANTI-HALUSINASI & ANTI-JEBOL):
-1. **DILARANG MEMBERIKAN TANGGAL KAKU JIKA TANGGAL TERSEBUT DILAKUKAN BERKALA/DINAMIS:**
-   - Untuk pertanyaan seperti jadwal Info GTK, pencairan PIP, atau jadwal TPG, WAJIB menjelaskan mekanismenya secara umum dan menyampaikan bahwa jadwal tepat mengacu pada Surat Edaran (SE) / Pengumuman Resmi instansi terkait.
-   - DILARANG mengarang tombol, fitur, atau menu di aplikasi yang sebenarnya tidak ada.
-2. **DILARANG KERAS MENGERJAKAN SOAL MATEMATIKA MURNI, TUGAS AKADEMIK, ATAU KODINGAN PROGRAM:**
-   - Hanya tolak jika pengguna secara spesifik meminta dibuatkan program komputer (seperti C++, Java, Python, HTML, PHP, Javascript, skrip kode) atau soal matematika/tugas sekolah di luar topik pendidikan/dinas.
-   - Tuliskan pesan penolakan 1 paragraf berikut:
-     "Mohon maaf, sebagai Asisten Virtual Resmi Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi, saya khusus melayani informasi seputar Layanan Pendidikan, Dapodik, Pencairan PIP/Beasiswa, serta Kebudayaan di Kabupaten Ngawi. Saya tidak dapat membantu pengerjaan soal ujian, matematika/tugas sekolah, maupun pembuatan kode program (kodingan). Ada yang bisa saya bantu terkait layanan pendidikan atau Dapodik sekolah Anda?"
-   - DILARANG KERAS memberikan skrip, potongan kode, perhitungan matematika, contoh program, atau jawaban tugas akademik apapun meskipun pengguna memaksa!
+SUMBER DATA RESMI TUNGGAL (WAJIB DIGUNAKAN SEBAGAI FAKTA MUTLAK):
+1. Pejabat Daerah & Provinsi:
+   - Kepala Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi: **Kabul Tunggul Winarno, S.IP.**
+   - Kepala Dinas Pendidikan Provinsi Jawa Timur: **Dr. Aries Agung Paewai, S.STP., M.M.**
+   - Alamat Kantor Disdikbud Ngawi: Jl. Sukowati No. 51, Karangasri, Kec. Ngawi, Kabupaten Ngawi, Jawa Timur 63211. Telepon: (0351) 749021.
+2. Kementerian Pusat (Kabinet Merah Putih):
+   - Kementerian Pendidikan Dasar dan Menengah (Kemendikdasmen): Menteri **Prof. Dr. Abdul Mu'ti, M.Ed.** (Membawahi Dapodik, PAUD, SD, SMP, SMA, SMK).
+   - Kementerian Pendidikan Tinggi, Sains, dan Teknologi (Kemendiktisaintek): Menteri **Prof. Ir. Satryo Soemantri Brodjonegoro, Ph.D.**
+   - Kementerian Kebudayaan: Menteri **Dr. Fadli Zon, S.S., M.Sc.**
+   - Komisi X DPR RI: Bidang Pendidikan dan Kebudayaan.
+3. Penyaluran PIP (Program Indonesia Pintar) Kemendikdasmen:
+   - Disalurkan bertahap dalam 3 Termin:
+     * Termin I (Februari – April): Prioritas pemegang KIP DTKS Kemensos & siswa kelas akhir (Kelas 6, 9, 12).
+     * Termin II (Mei – September): Siswa usulan Dinas Pendidikan/pemangku kepentingan & aktivasi SK Nominasi.
+     * Termin III (Oktober – Desember): Kuota susulan & penyelesaian aktivasi SimPel akhir tahun.
+   - Besaran Bantuan: SD Rp225.000/semester, SMP Rp375.000/semester, SMA/SMK Rp900.000/semester.
+4. Penarikan Data (Cut-Off) Info GTK:
+   - Diproses otomatis oleh server pusat Puslapdik Kemendikdasmen secara berkala (periode tanggal 10 hingga pertengahan bulan) sebelum penerbitan SKTPG.
+5. Fakta Resmi Budaya & Tari Orek-Orek:
+   - Tari Orek-Orek adalah seni tari pergaulan dan hiburan rakyat tradisional asli khas Kabupaten Ngawi yang dinamis dan jenaka, diiringi instrumen kendang, jidor, serta parikan/pantun Jawa.
+   - Cagar budaya Ngawi: **Benteng Pendem (Fort Van Den Bosch)** dan **Museum Trinil**.
+   - Reog secara mutlak berasal dari Kabupaten Ponorogo.
+   - DILARANG mengarang busana/filosofi buatan dan DILARANG menawarkan formulir perizinan/pengaduan pada informasi kebudayaan.
 
-PRINSIP KEWENANGAN PERUBAHAN DATA & DUA KANAL PELAYANAN:
-1. **Kanal Chat Asisten Virtual**: Untuk informasi umum pendidikan, kebudayaan, PIP, Info GTK, Kenaikan Kelas, dan kendala Dapodik yang bisa diselesaikan mandiri oleh Operator Sekolah.
-2. **Kanal Aplikator via Konsultasi (KHUSUS PERUBAHAN ADMIN DINAS)**:
-   - Jika perubahan data HANYA BISA DILAKUKAN OLEH ADMIN DINAS (seperti Jam Mengajar/JP Backend, NIK Terkunci, NIK Ganda, Buka Kunci DPA):
-     a. TEKANKAN BAHWA GURU/OPERATOR SEKOLAH TIDAK BISA MENGUBAH DATA TERSEBUT SENDIRI.
-     b. DILARANG MEMBERIKAN INSTRUKSI COBA-COBA MANDIRI KEPADA PENGGUNA.
-     c. Bimbing pengguna mengisi Form Pengaduan Official.
-     d. Jelaskan bahwa setelah pengaduan dikirim, Tim Aplikator Dinas akan memproses backend, mengonfirmasi/berkonsultasi via WhatsApp pelapor, dan meminta sekolah melakukan Sinkronisasi/Tarik Data.
+BATASAN KETAT GUARDRAILS (STRICT REJECTION):
+1. DILARANG KERAS MENJAWAB SOAL/TUGAS MATA PELAJARAN APAPUN (Seni Pahat, Seni Patung, IPA/Fisika/Biologi, Matematika, Bahasa, Kuis Trivia Umum, Asal-Usul Barang Umum).
+2. Jika pertanyaan berada di luar cakupan kedinasan/Dapodik, WAJIB jawab PERSIS dengan 1 kalimat penolakan resmi:
+   "${OFFICIAL_REJECTION_MESSAGE}"
+3. DILARANG memberikan penjelasan tambahan atau materi umum apapun saat menolak!
 
-KARAKTER & PERSONA AI:
-1. Berperilaku sebagai AI yang logis, objektif, profesional, presisi, dan terstruktur.
-2. Gunakan emoji '🙏' HANYA pada salam pembuka sapaan awal murni (contoh: "Selamat Siang, Bapak/Ibu Operator & Guru! 🙏").
-3. DILARANG MENGGUNAKAN EMOJI pada pembahasan petunjuk teknis, penjelasan alur sistem, maupun pesan penolakan.
+ATURAN RESPON KONFIRMASI:
+- Jika pengguna menyampaikan konfirmasi atau ucapan terima kasih ("oke", "terima kasih", "sudah betul"), WAJIB jawab PERSIS:
+  "Terima kasih atas konfirmasinya. Jika ada pertanyaan lanjutan terkait layanan pendidikan, Dapodik, pencairan PIP, validasi data GTK, mutasi peserta didik atau PTK, saya siap membantu."
 
-ATURAN FORMAT & KERAPIAN BALASAN:
-1. **Penjelasan Mendetail & Terstruktur**:
-   - Berikan panduan yang komprehensif, logis, dan langkah demi langkah (step-by-step).
-   - Gunakan **Huruf Tebal** untuk menekankan menu, tombol, atau kata kunci penting.
-   - Gunakan **Bullet Points (-)** atau daftar penomoran angka untuk merinci data/langkah.
-2. **DILARANG MENGGUNAKAN FORMAT TABEL & PEMBATAS GARIS**:
-   - DILARANG KERAS menggunakan format tabel Markdown (seperti karakter '|', '|---...---|', atau tabel markdown lainnya).
-   - DILARANG KERAS menggunakan garis pemisah horizontal seperti '---' atau '___'.
-   - Pisahkan setiap topik, rincian data, dan bagian kalimat HANYA menggunakan jeda paragraf spasi baris kosong (Enter 2 kali).
-3. **Kekuncian Kalimat Penutup (Anti-Repetisi)**:
-   - DILARANG MENULISKAN KALIMAT PENUTUP/PENAWARAN BANTUAN SECARA BERULANG-ULANG DI AKHIR JAWABAN!
-   - Kalimat penutup atau penawaran bantuan HANYA BOLEH dituliskan MAKSIMAL 1 KALI di bagian paling akhir balasan.
-4. **Format Rapi Tanpa Simbol Mentah**:
-   - DILARANG menampilkan simbol '##' atau '###' secara mentah di dalam teks balasan.
-   - DILARANG KETAT MENULISKAN SIMBOL TEKS LITERAL '\\n' ATAU '\\n\\n' DI DALAM TEKS BALASAN!
-
-INFORMASI PENTING INSTANSI:
-- Instansi: Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
-- Alamat Resmi: Jl. Sukowati No. 51, Karangasri, Kec. Ngawi, Kabupaten Ngawi, Jawa Timur 63211.
-- Telepon Resmi: (0351) 749021.
-- Jam Operasional Kantor: Senin - Jumat, Pukul 07.30 - 15.30 WIB.`;
+FORMAT BALASAN:
+1. Berikan panduan terstruktur, logis, dan langkah demi langkah (step-by-step).
+2. DILARANG MENGGUNAKAN FORMAT TABEL (|) DAN PEMBATAS GARIS (---). Pisahkan topik dengan jeda baris kosong (Enter 2 kali).
+3. DILARANG menampilkan simbol mentah '##' atau karakter literal '\\n' dalam balasan.
+4. Kalimat penutup penawaran bantuan dituliskan MAKSIMAL 1 KALI di akhir teks.`;
 
 /**
- * Membangun User Prompt lengkap beserta injeksi RAG, riwayat, dan panduan konteks.
+ * Membangun User Prompt lengkap
  */
 export function buildUserPrompt(params: {
   userMessage: string;
@@ -245,6 +304,7 @@ export function buildUserPrompt(params: {
   const currentGreeting = getWibGreeting();
   const isGreetingOnly = isPureGreeting(params.userMessage);
   const isDevQuery = isDeveloperQuery(params.userMessage);
+  const isConfirmation = isConfirmationQuery(params.userMessage);
   const isForbidden = isForbiddenTaskQuery(params.userMessage);
 
   const overviewContext = isOverviewQuestion(params.userMessage)
@@ -255,18 +315,12 @@ export function buildUserPrompt(params: {
     ? `\n\nKONTEKS PANDUAN ESKALASI PENGADUAN:\n${TICKET_ESCALATION_GUIDANCE}`
     : "";
 
-  const mathInstruction = isMathQuestion(params.userMessage) && !isForbidden
-    ? "\n- KETENTUAN KHUSUS: Pengguna menanyakan soal perhitungan matematika umum. Tetap prioritaskan batasan layanan resmi jika pertanyaan berbentuk soal ujian/tugas."
-    : "";
-
-  const repairInstruction = params.repairMode
-    ? "\n\nPERBAIKAN FORMAT: Jawaban sebelumnya gagal divalidasi. Buat ulang jawaban dengan struktur logis, paragraf berjarak legah, tanpa format tabel (|), tanpa garis pemisah (---), tanpa emoji berlebih, tanpa karakter '\\n\\n' mentah, tanpa pengulangan kalimat penutup, dan tanpa karakter '##'."
-    : "";
-
   const intentInstruction = isDevQuery
-    ? "\n- INSTRUKSI IDENTITAS DEVELOPER: Pengguna menanyakan pembuat/developer. WAJIB Jawab HANYA DENGAN: 'Saya dikembangkan dan dibuat oleh MAULANA SYAHID AL FATAH untuk membantu pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.' TANPA MENAMBAHKAN KALIMAT PENOLAKAN ATAU FORMULIR APAPUN!"
+    ? "\n- INSTRUKSI IDENTITAS DEVELOPER: Jawab HANYA DENGAN: 'Saya dikembangkan dan dibuat oleh **MAULANA SYAHID AL FATAH** untuk membantu pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.'"
+    : isConfirmation
+    ? "\n- INSTRUKSI KONFIRMASI: Jawab HANYA: 'Terima kasih atas konfirmasinya. Jika ada pertanyaan lanjutan terkait layanan pendidikan, Dapodik, pencairan PIP, validasi data GTK, mutasi peserta didik atau PTK, saya siap membantu.'"
     : isForbidden
-    ? "\n- DETEKSI PENOLAKAN KODINGAN/TUGAS/MATEMATIKA: Pengguna meminta kodingan, program, perhitungan matematika, atau jawaban tugas/soal ujian. WAJIB Jawab HANYA dengan 1 paragraf penolakan resmi SOP Disdikbud Ngawi tanpa memberikan perhitungan/jawaban/skrip apapun!"
+    ? `\n- DETEKSI PENOLAKAN KETAT: Jawab HANYA dengan:\n"${OFFICIAL_REJECTION_MESSAGE}"`
     : isOverviewQuestion(params.userMessage)
     ? "\n- Jelaskan cakupan layanan utama (Dapodik, PIP, Kebudayaan, Verval) secara runtut dan sistematis menggunakan bullet points."
     : isEscalationQuestion(params.userMessage)
@@ -275,9 +329,8 @@ export function buildUserPrompt(params: {
 
   const greetingInstruction = isGreetingOnly
     ? `\n- Pengguna HANYA menyapa secara singkat murni. Jawab singkat dengan: "${currentGreeting} 🙏, Bapak/Ibu Operator & Guru!" lalu beri jarak baris dan tanyakan kendalanya.`
-    : `\n- Pengguna meminta bantuan/instruksi teknis terkait Pendidikan, Kebudayaan, PIP, Info GTK, Kenaikan Kelas, atau Dapodik Ngawi. Langsung berikan solusi mendetail, terstruktur, langkah demi langkah (step-by-step) tanpa emoji.
+    : `\n- Berikan solusi teknis mendetail, terstruktur, langkah demi langkah (step-by-step) tanpa emoji.
 - DILARANG MEMBUAT TABEL (|) DAN GARIS (---): Gunakan bullet points atau daftar nomor berjarak paragraf bersih.
-- JANGAN REKAYASA TANGGAL ATAU FITUR APLIKASI: Jelaskan bahwa jadwal pencairan/cut-off mengikuti Surat Edaran resmi ter-update.
 - AWASI REPETISI: Tuliskan kalimat penutup/penawaran bantuan MAKSIMAL 1 KALI di bagian paling akhir balasan.`;
 
   return `WAKTU LOKAL SAAT INI: ${currentGreeting}
@@ -292,17 +345,13 @@ RIWAYAT PERCAKAPAN:
 ${formatConversationHistory(params.history)}
 
 INSTRUKSI AKHIR:${greetingInstruction}
-- Pisahkan setiap paragraf dengan menekan tombol Enter dua kali secara fisik. DILARANG KETAT MENIKTIKKAN SIMBOL '\\n' ATAU '\\n\\n' SECARA HARFIAH DALAM TEKS!
+- Pisahkan setiap paragraf dengan menekan tombol Enter dua kali secara fisik.
 - DILARANG menggunakan format tabel markdown (|) dan garis pembatas (---).
-- DILARANG menyisipkan emoji pada pembahasan teknis, instruksi, maupun kode pemrograman.
-- HINDARI simbol mentah '##' dalam balasan.${mathInstruction}${intentInstruction}${repairInstruction}
+- HINDARI simbol mentah '##' dalam balasan.${intentInstruction}
 
 Pengguna: ${params.userMessage}`;
 }
 
-/**
- * Helper untuk memformat dokumen RAG yang berhasil diambil dari database SOP.
- */
 function formatRetrievedContext(results: RetrievedSopDocument[]): string {
   if (!results || !results.length) {
     return "Tidak ada konteks SOP spesifik yang ditemukan untuk pertanyaan ini.";
@@ -320,9 +369,6 @@ ${result.document.pageContent}`;
     .join("\n\n\n\n");
 }
 
-/**
- * Helper untuk memformat riwayat percakapan sebelumnya.
- */
 function formatConversationHistory(history: HistoryMessage[] | undefined): string {
   if (!history?.length) {
     return "Belum ada riwayat percakapan.";
@@ -337,145 +383,6 @@ function formatConversationHistory(history: HistoryMessage[] | undefined): strin
     .join("\n");
 }
 
-/**
- * Deteksi ketat apakah pertanyaan merupakan Kodingan/Tugas/PR/Ujian/Matematika
- */
-export function isForbiddenTaskQuery(message: string): boolean {
-  const normalized = message.toLowerCase();
-
-  // Jika merupakan pertanyaan developer, JANGAN blokir
-  if (isDeveloperQuery(message)) {
-    return false;
-  }
-
-  // Whitelist mutlak: Pertanyaan seputar pendidikan, PIP, Info GTK, Dapodik, dan layanan dinas tidak boleh diblokir
-  const allowedKeywords = [
-    "dapodik", "infogtk", "info gtk", "tarik data", "sinkron", 
-    "pip", "beasiswa", "ptk", "verval", "mutasi", "sipa", "ngawi", 
-    "bosp", "nuptk", "nik", "rombel", "sarpras", "rapor", "cair", "pencairan",
-    "tpg", "sktp", "besaran", "nominal", "sd", "smp", "sma", "smk"
-  ];
-  if (allowedKeywords.some((kw) => normalized.includes(kw))) {
-    return false;
-  }
-  
-  // Deteksi rumus persamaan matematika (misal: 2x^2 + 5x - 3 = 0, dll)
-  const hasMathEquation = /[\d]*x[\^2\d]*|[\d]+\s*[\+\-\*/x:]\s*[\d]+|= 0/i.test(normalized);
-
-  const forbiddenKeywords = [
-    "c++",
-    "cpp",
-    "java",
-    "python",
-    "javascript",
-    "html",
-    "css",
-    "php",
-    "sql",
-    "koding",
-    "coding",
-    "buatkan program",
-    "bikin program",
-    "skrip",
-    "script",
-    "hitung rumus",
-    "buatkan kode",
-    "bikin kode",
-    "source code",
-    "algoritma",
-    "soal ujian",
-    "jawaban pr",
-    "tugas kuliah",
-    "tugas sekolah",
-    "persamaan kuadrat",
-    "tentukan akar",
-    "selesaikan soal",
-    "akar-akar"
-  ];
-
-  return hasMathEquation || forbiddenKeywords.some((kw) => normalized.includes(kw));
-}
-
-/**
- * Deteksi apakah pengguna menanyakan perhitungan matematika/angka.
- */
-function isMathQuestion(message: string): boolean {
-  const normalized = message.toLowerCase();
-
-  if (isDeveloperQuery(message)) {
-    return false;
-  }
-
-  const allowedKeywords = [
-    "dapodik", "infogtk", "info gtk", "pip", "tpg", "besaran", "nominal",
-    "sd", "smp", "sma", "smk"
-  ];
-  if (allowedKeywords.some((kw) => normalized.includes(kw))) {
-    return false;
-  }
-
-  const hasMathSymbols = /[\d]+\s*[\+\-\*/x:]\s*[\d]+/.test(normalized);
-  const mathKeywords = [
-    "tambah",
-    "kurang",
-    "kali",
-    "bagi",
-    "berapa",
-    "hitung",
-    "perhitungan",
-    "jumlah dari",
-    "hasil dari",
-  ];
-
-  return (
-    hasMathSymbols ||
-    (mathKeywords.some((kw) => normalized.includes(kw)) && /\d/.test(normalized))
-  );
-}
-
-/**
- * Deteksi apakah pengguna menanyakan cakupan kemampuan / overview layanan.
- */
-function isOverviewQuestion(message: string): boolean {
-  const normalized = message.toLowerCase();
-  return [
-    "apa aja",
-    "apa saja",
-    "bisa jelasin",
-    "bisa bantu apa",
-    "fitur apa",
-    "layanan apa",
-    "kamu bisa apa",
-    "sipa bisa apa",
-    "menu layanan",
-  ].some((phrase) => normalized.includes(phrase));
-}
-
-/**
- * Deteksi apakah pertanyaan membutuhkan alur pengaduan / eskalasi ke Admin Dinas.
- */
-function isEscalationQuestion(message: string): boolean {
-  const normalized = message.toLowerCase();
-  return [
-    "ganda",
-    "terkunci",
-    "lapor",
-    "pengaduan",
-    "keluhan",
-    "admin",
-    "dinas",
-    "salah nik",
-    "invalid fatal",
-    "buka kunci",
-    "reset",
-    "jp",
-    "jam mengajar",
-  ].some((keyword) => normalized.includes(keyword));
-}
-
-/**
- * Helper ekspor kompatibilitas untuk integrasi prompt RAG.
- */
 export function generateDapodikPrompt(userMessage: string, sopContext: string): string {
   const currentGreeting = getWibGreeting();
   return `

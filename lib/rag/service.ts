@@ -1,4 +1,3 @@
-import Groq from "groq-sdk";
 import { buildUserPrompt, SYSTEM_PROMPT } from "./prompt";
 import type { 
   ChatRequestBody, 
@@ -6,25 +5,55 @@ import type {
   FormattedAnswer 
 } from "./types";
 
-export async function createChatResponse(apiKeyPayload: string, body: ChatRequestBody): Promise<ChatResponseBody> {
+export type ThrottleMode = "SUPER_HEMAT" | "HEMAT" | "NORMAL";
+
+export const TOKEN_TUNING_CONFIG = {
+  SUPER_HEMAT: { maxTokens: 450, maxHistory: 2, temperature: 0.1 },
+  HEMAT: { maxTokens: 800, maxHistory: 4, temperature: 0.1 },
+  NORMAL: { maxTokens: 1500, maxHistory: 8, temperature: 0.2 },
+};
+
+export async function createChatResponse(
+  apiKeyPayload: string, 
+  body: ChatRequestBody
+): Promise<ChatResponseBody> {
   const { message, history } = body;
   const userMessage = (message || "Halo").trim();
 
-  // Ambil API Key Groq dari .env.local (Mendukung string dipisah koma)
-  const rawKeys = process.env.GROQ_API_KEYS || apiKeyPayload || process.env.GROQ_API_KEY || "";
-  const apiKeys = rawKeys.split(",").map((k) => k.trim()).filter(Boolean);
+  // Mode efisiensi token & riwayat
+  const mode: ThrottleMode =
+    (process.env.TOKEN_THROTTLE_MODE as ThrottleMode) || "HEMAT";
+  const activeSetting = TOKEN_TUNING_CONFIG[mode] || TOKEN_TUNING_CONFIG.HEMAT;
 
-  const groqModel = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+  const trimmedHistory = (history || []).slice(-activeSetting.maxHistory);
 
   // Susun Prompt
   const userPromptText = buildUserPrompt({
     userMessage,
-    history,
+    history: trimmedHistory,
     retrievedDocuments: [], // Bypass dokumen RAG sementara
   });
 
+  // Ambil API Keys Qwen dari .env.local (Mendukung multi-key dipisah koma)
+  const rawKeys =
+    process.env.QWEN_API_KEYS ||
+    apiKeyPayload ||
+    process.env.QWEN_API_KEY ||
+    "";
+  const apiKeys = rawKeys
+    .split(",")
+    .map((k) => k.trim())
+    .filter(Boolean);
+
+  const qwenBaseUrl =
+    process.env.QWEN_BASE_URL ||
+    "https://dashscope-intl.aliyuncs.com/compatible-mode/v1";
+  const qwenModel = process.env.QWEN_MODEL || "qwen-plus";
+
   if (apiKeys.length === 0) {
-    return createErrorResponse("GROQ_API_KEYS tidak ditemukan. Pastikan sudah diisi di .env.local");
+    return createErrorResponse(
+      "QWEN_API_KEY atau QWEN_API_KEYS tidak ditemukan. Pastikan sudah diisi di .env.local"
+    );
   }
 
   let lastErrorDetails = "";
@@ -35,22 +64,45 @@ export async function createChatResponse(apiKeyPayload: string, body: ChatReques
   for (let i = 0; i < apiKeys.length; i++) {
     const currentKey = apiKeys[i];
     try {
-      console.log(`[Groq RAG] Mengirim request menggunakan API Key ke-${i + 1}...`);
-      const groq = new Groq({ apiKey: currentKey });
+      console.log(`[Qwen RAG] Mengirim request menggunakan API Key ke-${i + 1} (${qwenModel})...`);
 
-      const completion = await groq.chat.completions.create({
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: userPromptText },
-        ],
-        model: groqModel,
-        temperature: 0.2,
-        max_tokens: 1024,
+      const response = await fetch(`${qwenBaseUrl}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${currentKey}`,
+        },
+        body: JSON.stringify({
+          model: qwenModel,
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            { role: "user", content: userPromptText },
+          ],
+          temperature: activeSetting.temperature,
+          max_tokens: activeSetting.maxTokens,
+        }),
       });
 
-      const answerText = completion.choices[0]?.message?.content || "Mohon maaf, tidak ada respons.";
+      if (!response.ok) {
+        const errorText = await response.text();
 
-      // Jika berhasil, langsung kembalikan respons ke route!
+        // Cek apakah error merupakan Rate Limit 429
+        if (response.status === 429 && i < apiKeys.length - 1) {
+          console.warn(
+            `⚠️ [Qwen RAG] Key ke-${i + 1} terkena Rate Limit (429). Otomatis beralih ke Key ke-${i + 2}...`
+          );
+          lastErrorDetails = `HTTP 429: ${errorText}`;
+          continue; // Pindah ke key berikutnya
+        }
+
+        throw new Error(`Qwen HTTP ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+      const answerText =
+        data.choices?.[0]?.message?.content || "Mohon maaf, tidak ada respons.";
+
+      // Jika berhasil, langsung kembalikan respons
       return {
         response: answerText,
         formatted: {
@@ -65,25 +117,27 @@ export async function createChatResponse(apiKeyPayload: string, body: ChatReques
     } catch (error: any) {
       lastErrorDetails = error instanceof Error ? error.message : String(error);
 
-      // Cek apakah error merupakan Rate Limit 429 atau kuota token habis
+      // Cek apakah pesan error mengindikasikan rate limit
       const isRateLimit =
-        error?.status === 429 ||
-        error?.error?.type === "tokens" ||
-        error?.error?.code === "rate_limit_exceeded";
+        lastErrorDetails.includes("429") ||
+        lastErrorDetails.includes("rate_limit_exceeded");
 
       if (isRateLimit && i < apiKeys.length - 1) {
-        console.warn(`⚠️ [Groq RAG] Key ke-${i + 1} terkena Rate Limit (429). Otomatis beralih ke Key ke-${i + 2}...`);
-        continue; // Lanjut ke iterasi key berikutnya (jangan break)
+        console.warn(
+          `⚠️ [Qwen RAG] Key ke-${i + 1} limit. Beralih ke Key ke-${i + 2}...`
+        );
+        continue;
       }
 
-      // Jika errornya bukan 429 (misal 401 salah token) atau jika ini sudah key terakhir
-      console.error(`❌ [Groq API Error pada Key ke-${i + 1}]:`, lastErrorDetails);
-      break; // Hentikan loop dan turun ke return error di bawah
+      console.error(`❌ [Qwen API Error pada Key ke-${i + 1}]:`, lastErrorDetails);
+      break;
     }
   }
 
-  // Jika semua percobaan gagal (semua key limit)
-  return createErrorResponse(`[Groq API Error]: Semua kuota kunci API sedang penuh/limit. Detail terakhir: ${lastErrorDetails}`);
+  // Jika semua percobaan kunci gagal
+  return createErrorResponse(
+    `[Qwen API Error]: Gagal mendapatkan respons dari semua kunci API Qwen. Detail terakhir: ${lastErrorDetails}`
+  );
 }
 
 /**

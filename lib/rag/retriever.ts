@@ -91,9 +91,9 @@ export function buildRetrievalQuery(
   const recentUserMessages =
     history
       ?.filter((message) => message.role === "user")
-      .slice(-2)
-      .map((message) => message.content)
-      .join("\n") ?? "";
+      ?.slice(-2)
+      ?.map((message) => message.content)
+      ?.join("\n") ?? "";
 
   return expandRetrievalQuery(
     normalizeText(`${recentUserMessages}\n${userMessage}`)
@@ -143,7 +143,6 @@ async function buildVectorStore(apiKey: string): Promise<VectorStoreBundle> {
   return { vectorStore, documents };
 }
 
-// ✅ DIPERBAIKI: Panggilan GoogleGenerativeAI embedContent disesuaikan dengan SDK resmi
 function createSopEmbeddings(apiKey: string) {
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
@@ -160,8 +159,7 @@ function createSopEmbeddings(apiKey: string) {
             taskType: TaskType.RETRIEVAL_DOCUMENT,
           });
           results.push(res.embedding.values);
-        } catch (err) {
-          // Fallback sederhana jika taskType RETRIEVAL_DOCUMENT gagal/not supported
+        } catch {
           const res = await model.embedContent(text);
           results.push(res.embedding.values);
         }
@@ -175,7 +173,7 @@ function createSopEmbeddings(apiKey: string) {
           taskType: TaskType.RETRIEVAL_QUERY,
         });
         return res.embedding.values;
-      } catch (err) {
+      } catch {
         const res = await model.embedContent(text);
         return res.embedding.values;
       }
