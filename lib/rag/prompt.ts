@@ -189,13 +189,33 @@ export function isDeveloperQuery(message: string): boolean {
 }
 
 export function isConfirmationQuery(message: string): boolean {
-  const normalized = message.toLowerCase().trim();
+  const normalized = message.toLowerCase().trim().replace(/[.,!?:;]/g, "");
   const confirmationPhrases = [
     "oke sudah betul", "sudah betul", "sudah benar", "oke sudah benar",
-    "terima kasih", "terimakasih", "makasih", "thanks", "ok makasih",
-    "oke paham", "sudah jelas", "siap terima kasih", "siap makasih", "oke", "ok"
+    "terima kasih", "terimakasih", "makasih", "thanks", "thank you", "thx",
+    "ok makasih", "oke paham", "sudah jelas", "siap terima kasih", "siap makasih",
+    "mantap", "oke sip", "oke sipa", "sudah betul sipa", "sudah benar sipa",
+    "oke", "ok", "siap"
   ];
   return confirmationPhrases.some((phrase) => normalized === phrase || normalized.startsWith(phrase));
+}
+
+export function isKadisQuery(message: string): boolean {
+  const normalized = message.toLowerCase().trim();
+  const isKadis =
+    normalized.includes("kepala dinas") ||
+    normalized.includes("kadis") ||
+    normalized.includes("kadisdikbud") ||
+    normalized.includes("kabul tunggul");
+
+  const isNgawiOrGeneral =
+    normalized.includes("ngawi") ||
+    normalized.includes("saat ini") ||
+    normalized.includes("sekarang") ||
+    normalized === "siapa kepala dinas" ||
+    normalized === "siapa kadis";
+
+  return isKadis && isNgawiOrGeneral;
 }
 
 /**
@@ -204,8 +224,8 @@ export function isConfirmationQuery(message: string): boolean {
 export function isForbiddenTaskQuery(message: string): boolean {
   const normalized = message.toLowerCase().trim();
 
-  // 1. Jika merupakan pertanyaan developer atau konfirmasi, JANGAN blokir
-  if (isDeveloperQuery(message) || isConfirmationQuery(message)) {
+  // 1. Jika merupakan pertanyaan developer, konfirmasi, atau kadis, JANGAN blokir
+  if (isDeveloperQuery(message) || isConfirmationQuery(message) || isKadisQuery(message)) {
     return false;
   }
 
@@ -282,15 +302,11 @@ BATASAN KETAT GUARDRAILS (STRICT REJECTION):
    "${OFFICIAL_REJECTION_MESSAGE}"
 3. DILARANG memberikan penjelasan tambahan atau materi umum apapun saat menolak!
 
-ATURAN RESPON KONFIRMASI:
-- Jika pengguna menyampaikan konfirmasi atau ucapan terima kasih ("oke", "terima kasih", "sudah betul"), WAJIB jawab PERSIS:
-  "Terima kasih atas konfirmasinya. Jika ada pertanyaan lanjutan terkait layanan pendidikan, Dapodik, pencairan PIP, validasi data GTK, mutasi peserta didik atau PTK, saya siap membantu."
-
-FORMAT BALASAN:
-1. Berikan panduan terstruktur, logis, dan langkah demi langkah (step-by-step).
-2. DILARANG MENGGUNAKAN FORMAT TABEL (|) DAN PEMBATAS GARIS (---). Pisahkan topik dengan jeda baris kosong (Enter 2 kali).
-3. DILARANG menampilkan simbol mentah '##' atau karakter literal '\\n' dalam balasan.
-4. Kalimat penutup penawaran bantuan dituliskan MAKSIMAL 1 KALI di akhir teks.`;
+FORMAT BALASAN & ATURAN PENUTUP:
+1. Berikan solusi faktual, terstruktur, padat, dan langsung ke inti pembahasan langkah demi langkah (step-by-step).
+2. DILARANG MENAMBAHKAN template kalimat penutup atau basa-basi penawaran bantuan otomatis di akhir jawaban jika pengguna tidak bertanya/mengucapkan konfirmasi.
+3. DILARANG MENGGUNAKAN FORMAT TABEL (|) DAN PEMBATAS GARIS (---). Pisahkan topik dengan jeda baris kosong (Enter 2 kali).
+4. DILARANG menampilkan simbol mentah '##' atau karakter literal '\\n' dalam balasan.`;
 
 /**
  * Membangun User Prompt lengkap
@@ -329,9 +345,7 @@ export function buildUserPrompt(params: {
 
   const greetingInstruction = isGreetingOnly
     ? `\n- Pengguna HANYA menyapa secara singkat murni. Jawab singkat dengan: "${currentGreeting} 🙏, Bapak/Ibu Operator & Guru!" lalu beri jarak baris dan tanyakan kendalanya.`
-    : `\n- Berikan solusi teknis mendetail, terstruktur, langkah demi langkah (step-by-step) tanpa emoji.
-- DILARANG MEMBUAT TABEL (|) DAN GARIS (---): Gunakan bullet points atau daftar nomor berjarak paragraf bersih.
-- AWASI REPETISI: Tuliskan kalimat penutup/penawaran bantuan MAKSIMAL 1 KALI di bagian paling akhir balasan.`;
+    : `\n- Berikan jawaban lugas, mendetail, dan terstruktur tanpa kalimat basa-basi di awal maupun di akhir balasan.`;
 
   return `WAKTU LOKAL SAAT INI: ${currentGreeting}
 
