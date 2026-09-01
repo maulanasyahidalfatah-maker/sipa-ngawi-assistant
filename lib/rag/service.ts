@@ -13,6 +13,18 @@ export const TOKEN_TUNING_CONFIG = {
   NORMAL: { maxTokens: 1500, maxHistory: 8, temperature: 0.2 },
 };
 
+/**
+ * Membersihkan respons dari sisa-sisa template penutup otomatis yang tidak diinginkan
+ */
+function sanitizeResponseText(text: string): string {
+  if (!text) return "";
+  
+  return text
+    .replace(/Terima kasih atas konfirmasinya\.?\s*(Jika ada pertanyaan lanjutan[^\n]*)?/gi, "")
+    .replace(/Jika ada pertanyaan lanjutan terkait layanan pendidikan[^\n]*/gi, "")
+    .trim();
+}
+
 export async function createChatResponse(
   apiKeyPayload: string, 
   body: ChatRequestBody
@@ -99,17 +111,19 @@ export async function createChatResponse(
       }
 
       const data = await response.json();
-      const answerText =
+      const rawAnswerText =
         data.choices?.[0]?.message?.content || "Mohon maaf, tidak ada respons.";
 
-      // Jika berhasil, langsung kembalikan respons
+      const cleanAnswerText = sanitizeResponseText(rawAnswerText);
+
+      // Jika berhasil, langsung kembalikan respons bersih
       return {
-        response: answerText,
+        response: cleanAnswerText,
         formatted: {
           sections: [
             {
               title: "Jawaban SIPA-NGAWI",
-              body: answerText,
+              body: cleanAnswerText,
             },
           ],
         },

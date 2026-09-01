@@ -188,18 +188,6 @@ export function isDeveloperQuery(message: string): boolean {
   return devPhrases.some((phrase) => normalized.includes(phrase));
 }
 
-export function isConfirmationQuery(message: string): boolean {
-  const normalized = message.toLowerCase().trim().replace(/[.,!?:;]/g, "");
-  const confirmationPhrases = [
-    "oke sudah betul", "sudah betul", "sudah benar", "oke sudah benar",
-    "terima kasih", "terimakasih", "makasih", "thanks", "thank you", "thx",
-    "ok makasih", "oke paham", "sudah jelas", "siap terima kasih", "siap makasih",
-    "mantap", "oke sip", "oke sipa", "sudah betul sipa", "sudah benar sipa",
-    "oke", "ok", "siap"
-  ];
-  return confirmationPhrases.some((phrase) => normalized === phrase || normalized.startsWith(phrase));
-}
-
 export function isKadisQuery(message: string): boolean {
   const normalized = message.toLowerCase().trim();
   const isKadis =
@@ -224,8 +212,8 @@ export function isKadisQuery(message: string): boolean {
 export function isForbiddenTaskQuery(message: string): boolean {
   const normalized = message.toLowerCase().trim();
 
-  // 1. Jika merupakan pertanyaan developer, konfirmasi, atau kadis, JANGAN blokir
-  if (isDeveloperQuery(message) || isConfirmationQuery(message) || isKadisQuery(message)) {
+  // 1. Jika merupakan pertanyaan developer atau kadis, JANGAN blokir
+  if (isDeveloperQuery(message) || isKadisQuery(message)) {
     return false;
   }
 
@@ -302,11 +290,10 @@ BATASAN KETAT GUARDRAILS (STRICT REJECTION):
    "${OFFICIAL_REJECTION_MESSAGE}"
 3. DILARANG memberikan penjelasan tambahan atau materi umum apapun saat menolak!
 
-FORMAT BALASAN & ATURAN PENUTUP:
-1. Berikan solusi faktual, terstruktur, padat, dan langsung ke inti pembahasan langkah demi langkah (step-by-step).
-2. DILARANG MENAMBAHKAN template kalimat penutup atau basa-basi penawaran bantuan otomatis di akhir jawaban jika pengguna tidak bertanya/mengucapkan konfirmasi.
-3. DILARANG MENGGUNAKAN FORMAT TABEL (|) DAN PEMBATAS GARIS (---). Pisahkan topik dengan jeda baris kosong (Enter 2 kali).
-4. DILARANG menampilkan simbol mentah '##' atau karakter literal '\\n' dalam balasan.`;
+FORMAT BALASAN:
+1. Berikan solusi dan penjelasan terstruktur, faktual, dan langsung ke inti pembahasan langkah demi langkah (step-by-step).
+2. DILARANG MENGGUNAKAN FORMAT TABEL (|) DAN PEMBATAS GARIS (---). Pisahkan topik dengan jeda baris kosong (Enter 2 kali).
+3. DILARANG menampilkan simbol mentah '##' atau karakter literal '\\n' dalam balasan.`;
 
 /**
  * Membangun User Prompt lengkap
@@ -320,7 +307,6 @@ export function buildUserPrompt(params: {
   const currentGreeting = getWibGreeting();
   const isGreetingOnly = isPureGreeting(params.userMessage);
   const isDevQuery = isDeveloperQuery(params.userMessage);
-  const isConfirmation = isConfirmationQuery(params.userMessage);
   const isForbidden = isForbiddenTaskQuery(params.userMessage);
 
   const overviewContext = isOverviewQuestion(params.userMessage)
@@ -333,8 +319,6 @@ export function buildUserPrompt(params: {
 
   const intentInstruction = isDevQuery
     ? "\n- INSTRUKSI IDENTITAS DEVELOPER: Jawab HANYA DENGAN: 'Saya dikembangkan dan dibuat oleh **MAULANA SYAHID AL FATAH** untuk membantu pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.'"
-    : isConfirmation
-    ? "\n- INSTRUKSI KONFIRMASI: Jawab HANYA: 'Terima kasih atas konfirmasinya. Jika ada pertanyaan lanjutan terkait layanan pendidikan, Dapodik, pencairan PIP, validasi data GTK, mutasi peserta didik atau PTK, saya siap membantu.'"
     : isForbidden
     ? `\n- DETEKSI PENOLAKAN KETAT: Jawab HANYA dengan:\n"${OFFICIAL_REJECTION_MESSAGE}"`
     : isOverviewQuestion(params.userMessage)
@@ -345,7 +329,7 @@ export function buildUserPrompt(params: {
 
   const greetingInstruction = isGreetingOnly
     ? `\n- Pengguna HANYA menyapa secara singkat murni. Jawab singkat dengan: "${currentGreeting} 🙏, Bapak/Ibu Operator & Guru!" lalu beri jarak baris dan tanyakan kendalanya.`
-    : `\n- Berikan jawaban lugas, mendetail, dan terstruktur tanpa kalimat basa-basi di awal maupun di akhir balasan.`;
+    : `\n- Berikan solusi teknis lugas, mendetail, terstruktur, langkah demi langkah (step-by-step) tanpa kalimat basa-basi di awal maupun di akhir balasan.`;
 
   return `WAKTU LOKAL SAAT INI: ${currentGreeting}
 
