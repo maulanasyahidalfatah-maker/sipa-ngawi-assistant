@@ -6,7 +6,7 @@ import {
   OFFICIAL_REJECTION_MESSAGE,
   isForbiddenTaskQuery,
   isDeveloperQuery,
-  isConfirmationQuery,
+  isKadisQuery,
 } from "@/lib/rag/prompt";
 
 export const runtime = "nodejs";
@@ -199,11 +199,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ reply: devReply, content: devReply, response: devReply });
     }
 
-    // B. Konfirmasi / Ucapan Terima Kasih (Bypass penuh)
-    if (isConfirmationQuery(message)) {
-      const confirmReply =
-        "Terima kasih atas konfirmasinya. Jika ada pertanyaan lanjutan terkait layanan pendidikan, Dapodik, pencairan PIP, validasi data GTK, mutasi peserta didik atau PTK, saya siap membantu.";
-      return NextResponse.json({ reply: confirmReply, content: confirmReply, response: confirmReply });
+    // B. Kepala Dinas Pendidikan Ngawi (Bypass penuh, jawaban rapi & padat)
+    if (isKadisQuery(message)) {
+      const kadisReply =
+        "Kepala Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi saat ini adalah **Kabul Tunggul Winarno, S.IP.**\n\nBeliau memimpin penyelenggaraan layanan pendidikan dasar dan kebudayaan di lingkungan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.";
+      return NextResponse.json({ reply: kadisReply, content: kadisReply, response: kadisReply });
     }
 
     // C. Sapaan Singkat (Bypass penuh)
