@@ -139,7 +139,7 @@ const TICKET_ESCALATION_GUIDANCE = `PANDUAN ALUR ESKALASI PENGADUAN KE ADMIN/APL
   3. Jelaskan alurnya: Setelah form dikirim -> Tim Aplikator Dinas memproses backend -> Pelapor menerima konfirmasi WhatsApp -> Operator Sekolah melakukan Tarik Data/Sinkronisasi.`;
 
 export const OFFICIAL_REJECTION_MESSAGE =
-  "Mohon maaf, sebagai Asisten Virtual Resmi Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi, saya bertugas khusus melayani informasi seputar Layanan Pendidikan, Dapodik, Pencairan PIP/Beasiswa, dan Kebudayaan di Kabupaten Ngawi. Saya tidak dapat membantu pengerjaan tugas sekolah/kodingan.";
+  "Mohon maaf, sebagai Asisten Virtual Resmi Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi, saya bertugas khusus melayani informasi seputar Layanan Pendidikan, Dapodik, dan Kebudayaan di Kabupaten Ngawi. Saya tidak dapat membantu pengerjaan tugas sekolah/kodingan.";
 
 function getWibGreeting(): string {
   const jakartaTimeStr = new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" });
