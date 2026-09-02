@@ -201,13 +201,23 @@ export function isKadisQuery(message: string): boolean {
 }
 
 /**
+ * Deteksi Konfirmasi / Ucapan Terima Kasih (Diekspor untuk digunakan di route.ts)
+ */
+export function isConfirmationQuery(message: string): boolean {
+  const normalized = message.toLowerCase().trim().replace(/[.,!?:;]/g, "");
+  return /^(terima\s*kasih|terimakasih|makasih|thanks|thank\s*you|thx|oke\s*terima\s*kasih|oke\s*makasih|ok\s*makasih|siap\s*makasih|siap\s*terima\s*kasih|sudah\s*betul|sudah\s*benar|oke\s*paham|sudah\s*jelas|sip|mantap|oke\s*sip)$/i.test(
+    normalized
+  );
+}
+
+/**
  * Deteksi KETAT tugas sekolah, soal hitungan, seni/budaya umum, asal-usul, dan trivia
  */
 export function isForbiddenTaskQuery(message: string): boolean {
   const normalized = message.toLowerCase().trim();
 
-  // 1. Jika merupakan pertanyaan developer atau kadis, JANGAN blokir
-  if (isDeveloperQuery(message) || isKadisQuery(message)) {
+  // 1. Jika merupakan pertanyaan developer, kadis, atau konfirmasi, JANGAN blokir
+  if (isDeveloperQuery(message) || isKadisQuery(message) || isConfirmationQuery(message)) {
     return false;
   }
 

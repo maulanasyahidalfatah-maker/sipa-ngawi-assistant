@@ -7,12 +7,13 @@ import {
   isForbiddenTaskQuery,
   isDeveloperQuery,
   isKadisQuery,
+  isConfirmationQuery,
 } from "@/lib/rag/prompt";
 
 export const runtime = "nodejs";
 export const maxDuration = 45;
 
-// Inisialisasi Upstash Redis (Persisten di Serverless Cloud)
+// Inisialisasi Upstash Redis
 const redis =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
     ? new Redis({
@@ -192,27 +193,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Pesan teks wajib diisi." }, { status: 400 });
     }
 
-    // A. Identitas Developer (Bypass penuh)
+    // A. Identitas Developer
     if (isDeveloperQuery(message)) {
       const devReply =
         "Saya dikembangkan dan dibuat oleh **MAULANA SYAHID AL FATAH** untuk membantu pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.";
       return NextResponse.json({ reply: devReply, content: devReply, response: devReply });
     }
 
-    // B. Kepala Dinas Pendidikan Ngawi (Bypass penuh, jawaban rapi & padat)
+    // B. Kepala Dinas Pendidikan Ngawi (Bypass resmi lengkap alamat & kontak)
     if (isKadisQuery(message)) {
       const kadisReply =
-        "Kepala Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi saat ini adalah **Kabul Tunggul Winarno, S.IP.**\n\nBeliau memimpin penyelenggaraan layanan pendidikan dasar dan kebudayaan di lingkungan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.";
+        "Kepala Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi adalah **Kabul Tunggul Winarno, S.IP.**\n\n" +
+        "Beliau memimpin penyelenggaraan layanan pendidikan dasar dan menengah (SD, SMP), pendidikan nonformal, serta urusan kebudayaan di wilayah Kabupaten Ngawi sesuai kewenangan yang diatur dalam Peraturan Perundangan dan tugas pokok Dinas Pendidikan dan Kebudayaan.\n\n" +
+        "Alamat kantor resmi: Jl. Sukowati No. 51, Karangasri, Kec. Ngawi, Kabupaten Ngawi, Jawa Timur 63211.\n" +
+        "Nomor telepon: (0351) 749021.\n" +
+        "Jam operasional: Senin–Jumat, pukul 07.30–15.30 WIB.";
       return NextResponse.json({ reply: kadisReply, content: kadisReply, response: kadisReply });
     }
 
-    // C. Sapaan Singkat (Bypass penuh)
+    // C. Ucapan Terima Kasih / Konfirmasi
+    if (isConfirmationQuery(message)) {
+      const confirmReply = "Sama-sama! Senang bisa membantu. Jika ada kendala lain seputar layanan Dapodik dan pendidikan di Ngawi, silakan tanyakan kembali.";
+      return NextResponse.json({ reply: confirmReply, content: confirmReply, response: confirmReply });
+    }
+
+    // D. Sapaan Singkat
     if (isPureGreetingCheck(message)) {
       const greetingReply = `${getQuickGreeting()} 🙏, Bapak/Ibu Operator & Guru!\n\nAda yang bisa saya bantu terkait layanan pendidikan, Info GTK, pencairan PIP, atau kendala Dapodik di sekolah Anda?`;
       return NextResponse.json({ reply: greetingReply, content: greetingReply, response: greetingReply });
     }
 
-    // D. Guardrail Penolakan Tugas Sekolah / Kodingan / Trivia Umum (Bypass penuh)
+    // E. Penolakan Tugas Luar
     if (isForbiddenTaskQuery(message)) {
       return NextResponse.json({
         reply: OFFICIAL_REJECTION_MESSAGE,
