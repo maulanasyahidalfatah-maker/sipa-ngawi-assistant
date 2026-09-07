@@ -748,8 +748,8 @@ export function ChatInterface({
           onKeyDown={handleKeyDown}
           placeholder={
             isCentered
-              ? "Tanyakan kendala Dapodik, VervalPD, VervalPTK, atau Kebudayaan..."
-              : "Tulis pesan..."
+              ? "Tanyakan kendala anda . . ."
+              : "Tulis pesan . . ."
           }
           className="w-full bg-transparent border-0 focus:outline-none focus:ring-0 text-neutral-800 placeholder-neutral-400 text-[15px] sm:text-base py-3 sm:py-3.5 px-3 sm:px-4 resize-none min-h-[44px] sm:min-h-[48px] max-h-[160px] overflow-y-auto"
         />
@@ -1018,7 +1018,7 @@ export function ChatInterface({
                     className="text-[15px] sm:text-base font-medium text-[#006837]"
                     duration={2.8}
                   >
-                    SIPA-NGAWI sedang menyusun solusi Dapodik...
+                    SIPA-NGAWI Berpikir . . .
                   </TextShimmer>
                 </div>
               )}
