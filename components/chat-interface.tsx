@@ -30,6 +30,7 @@ import { TextShimmer } from "@/components/core/text-shimmer";
 import {
   DATABASE_SEKOLAH_NGAWI,
   DAFTAR_SEKOLAH_NGAWI,
+  type SekolahItem,
 } from "@/lib/data-sekolah";
 
 export interface Message {
@@ -304,7 +305,7 @@ export function ChatInterface({
   const [isKategoriDropdownOpen, setIsKategoriDropdownOpen] = useState(false);
   const kategoriDropdownRef = useRef<HTMLDivElement>(null);
 
-  // State Form Pengaduan Lengkap
+  // State Form Pengaduan
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pengaduanSuccess, setPengaduanSuccess] = useState(false);
   const [formData, setFormData] = useState<PengaduanData>({
@@ -343,7 +344,6 @@ export function ChatInterface({
     }
   }, [input]);
 
-  // FOKUSKAN INPUT PENCARIAN SAAT DROPDOWN ASAL SEKOLAH DIBUKA
   useEffect(() => {
     if (isSekolahDropdownOpen) {
       setTimeout(() => {
@@ -352,9 +352,24 @@ export function ChatInterface({
     }
   }, [isSekolahDropdownOpen]);
 
-  // LOGIKA NPSN LENGKAP -> AUTO-FILL ASAL SEKOLAH, HILANG 1 DIGIT/TIDAK COCOK -> KOSONGKAN ASAL SEKOLAH
+  // Validasi Real-Time (Tanpa Tambahan Teks di Luar)
+  const handleNamaPelaporChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/[^a-zA-Z\s'.]/g, "");
+    setFormData((prev) => ({ ...prev, namaPelapor: val }));
+  };
+
+  const handleNikPelaporChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/\D/g, "").slice(0, 16);
+    setFormData((prev) => ({ ...prev, nikPelapor: val }));
+  };
+
+  const handleNoWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/\D/g, "").slice(0, 15);
+    setFormData((prev) => ({ ...prev, noWhatsapp: val }));
+  };
+
   const handleNpsnChange = (val: string) => {
-    const cleanNpsn = val.trim();
+    const cleanNpsn = val.replace(/\D/g, "").slice(0, 8);
     const matchedSekolah = DATABASE_SEKOLAH_NGAWI[cleanNpsn];
 
     if (matchedSekolah) {
@@ -366,10 +381,15 @@ export function ChatInterface({
     } else {
       setFormData((prev) => ({
         ...prev,
-        npsn: val,
-        asalSekolah: "", // Kembali kosong jika NPSN tidak lengkap / belum cocok
+        npsn: cleanNpsn,
+        asalSekolah: cleanNpsn.length === 8 ? prev.asalSekolah : "",
       }));
     }
+  };
+
+  const handleSearchSekolahChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/[^a-zA-Z0-9\s.,\/-]/g, "");
+    setSearchSekolah(val);
   };
 
   useEffect(() => {
@@ -439,8 +459,7 @@ export function ChatInterface({
     };
   }, [setInput]);
 
-  // FILTERING SEKOLAH: BERDASARKAN NAMA DAN NPSN PADA INPUT SEARCH DROPDOWN
-  const filteredSekolah = DAFTAR_SEKOLAH_NGAWI.filter((item) => {
+  const filteredSekolah = DAFTAR_SEKOLAH_NGAWI.filter((item: SekolahItem) => {
     const query = searchSekolah.toLowerCase().trim();
     if (!query) return true;
     return (
@@ -474,7 +493,7 @@ export function ChatInterface({
     const namaMatch =
       content.match(/Nama Lengkap Pelapor\s*\/[^\:]*:\s*([^\n]+)/i) ||
       content.match(/Nama Lengkap[^\:]*:\s*([^\n]+)/i);
-    if (namaMatch) nama = namaMatch[1].trim();
+    if (namaMatch) nama = namaMatch[1].replace(/[^a-zA-Z\s'.]/g, "").trim();
 
     const sekolahMatch = content.match(/Asal Sekolah[^\:]*:\s*([^\n]+)/i);
     if (sekolahMatch) sekolah = sekolahMatch[1].trim();
@@ -482,10 +501,21 @@ export function ChatInterface({
     const rincianMatch = content.match(/Rincian Keluhan[^\:]*:\s*([^\n]+)/i);
     if (rincianMatch) rincian = rincianMatch[1].trim();
 
+    let foundNpsn = "";
+    if (sekolah) {
+      const match = DAFTAR_SEKOLAH_NGAWI.find(
+        (s) => s.nama.toLowerCase() === sekolah.toLowerCase()
+      );
+      if (match && match.npsn) {
+        foundNpsn = match.npsn;
+      }
+    }
+
     setFormData((prev) => ({
       ...prev,
       namaPelapor: nama || prev.namaPelapor,
       asalSekolah: sekolah || prev.asalSekolah,
+      npsn: foundNpsn || prev.npsn,
       rincian: rincian || prev.rincian,
       buktiKeluhanPelapor: selectedImage || prev.buktiKeluhanPelapor,
     }));
@@ -587,7 +617,6 @@ export function ChatInterface({
     }
   };
 
-  // SUBMIT PENGADUAN OFFICIAL (PROTEKSI INPUT GANDA & SINGLE-TRIGGER GUARD)
   const handleSubmitPengaduan = async (e: React.FormEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -1009,7 +1038,7 @@ export function ChatInterface({
         </>
       )}
 
-      {/* MODAL POP-UP FORM PENGADUAN DENGAN SEARCHABLE COMBOBOX & AUTO-FILL NPSN */}
+      {/* MODAL POP-UP FORM PENGADUAN RESMI (PERSIS GAMBAR 1) */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white rounded-3xl shadow-xl max-w-xl w-full max-h-[90vh] flex flex-col border border-neutral-100 relative overflow-hidden">
@@ -1044,9 +1073,7 @@ export function ChatInterface({
                           type="text"
                           required
                           value={formData.namaPelapor}
-                          onChange={(e) =>
-                            setFormData({ ...formData, namaPelapor: e.target.value })
-                          }
+                          onChange={handleNamaPelaporChange}
                           placeholder="Contoh: Burhanudin"
                           className="w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837]"
                         />
@@ -1058,26 +1085,24 @@ export function ChatInterface({
                         </label>
                         <input
                           type="text"
+                          inputMode="numeric"
                           required
                           maxLength={16}
                           value={formData.nikPelapor || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, nikPelapor: e.target.value })
-                          }
+                          onChange={handleNikPelaporChange}
                           placeholder="NIK 16 Digit (sesuai KTP)"
                           className="w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837] font-mono"
                         />
                       </div>
                     </div>
 
-                    {/* BARIS 2: ASAL SEKOLAH (DENGAN SEARCH BOX) & NOMOR WHATSAPP */}
+                    {/* BARIS 2: ASAL SEKOLAH & NOMOR WHATSAPP */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="relative" ref={sekolahDropdownRef}>
                         <label className="block font-semibold text-neutral-700 mb-1">
                           Asal Sekolah *
                         </label>
                         
-                        {/* Tombol Pilihan Asal Sekolah */}
                         <div
                           onClick={() => {
                             setIsSekolahDropdownOpen(!isSekolahDropdownOpen);
@@ -1101,17 +1126,15 @@ export function ChatInterface({
                           />
                         </div>
 
-                        {/* Dropdown Pencarian Sekolah */}
                         {isSekolahDropdownOpen && (
                           <div className="absolute z-50 left-0 right-0 mt-1.5 bg-white border border-neutral-200 rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-                            {/* Kolom Pencarian di dalam Dropdown */}
                             <div className="p-2 border-b border-neutral-100 bg-neutral-50/90 sticky top-0 z-10 flex items-center gap-2">
                               <Search className="w-4 h-4 text-neutral-400 shrink-0 ml-1" />
                               <input
                                 ref={searchSekolahInputRef}
                                 type="text"
                                 value={searchSekolah}
-                                onChange={(e) => setSearchSekolah(e.target.value)}
+                                onChange={handleSearchSekolahChange}
                                 placeholder="Cari nama sekolah / NPSN..."
                                 className="w-full bg-transparent text-xs py-1.5 px-1 text-neutral-800 placeholder-neutral-400 focus:outline-none"
                               />
@@ -1126,10 +1149,9 @@ export function ChatInterface({
                               )}
                             </div>
 
-                            {/* List Hasil Pencarian */}
                             <div className="max-h-52 overflow-y-auto divide-y divide-neutral-100 text-xs [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full">
                               {filteredSekolah.length > 0 ? (
-                                filteredSekolah.slice(0, 100).map((sekolah, idx) => (
+                                filteredSekolah.slice(0, 100).map((sekolah: SekolahItem, idx: number) => (
                                   <button
                                     key={`sekolah-${idx}`}
                                     type="button"
@@ -1178,11 +1200,11 @@ export function ChatInterface({
                         </label>
                         <input
                           type="tel"
+                          inputMode="numeric"
                           required
+                          maxLength={15}
                           value={formData.noWhatsapp}
-                          onChange={(e) =>
-                            setFormData({ ...formData, noWhatsapp: e.target.value })
-                          }
+                          onChange={handleNoWhatsappChange}
                           placeholder="081234567890"
                           className="w-full px-3 py-2 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#006837]"
                         />
@@ -1245,7 +1267,9 @@ export function ChatInterface({
                         </label>
                         <input
                           type="text"
+                          inputMode="numeric"
                           required
+                          maxLength={8}
                           value={formData.npsn}
                           onChange={(e) => handleNpsnChange(e.target.value)}
                           placeholder="205XXXXX"
@@ -1320,7 +1344,7 @@ export function ChatInterface({
                       />
                     </div>
 
-                    {/* BARIS 6: UNGGAH FOTO LAMPIRAN KELUHAN PELAPOR */}
+                    {/* BARIS 6: UNGGAH FOTO LAMPIRAN */}
                     <div>
                       <label className="block font-semibold text-neutral-700 mb-1 text-xs">
                         Unggah Tangkapan Layar / Foto Bukti Kendala (Opsional)
