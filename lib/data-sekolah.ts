@@ -16543,3 +16543,30 @@ export const DAFTAR_SEKOLAH_NGAWI: SekolahItem[] = [
     "npsn": "20508490"
   }
 ];
+
+/**
+ * Helper mencari sekolah berdasarkan NPSN (Exact Match)
+ */
+export function cariSekolahByNpsn(npsn: string): SekolahItem | null {
+  const cleanNpsn = npsn.trim();
+  const found = DATABASE_SEKOLAH_NGAWI[cleanNpsn];
+  if (found) {
+    return {
+      npsn: cleanNpsn,
+      nama: found.nama,
+      jenjang: found.jenjang,
+    };
+  }
+  return null;
+}
+
+/**
+ * Helper mencari daftar saran sekolah berdasarkan nama (Autocomplete/Search)
+ */
+export function cariSekolahByNama(query: string, limit: number = 8): SekolahItem[] {
+  const q = query.toLowerCase().trim();
+  if (!q) return [];
+  return DAFTAR_SEKOLAH_NGAWI.filter((item: SekolahItem) =>
+    item.nama.toLowerCase().includes(q)
+  ).slice(0, limit);
+}
