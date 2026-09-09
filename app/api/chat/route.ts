@@ -24,6 +24,10 @@ const redis =
 
 let ticketMemoryBatch: TicketItem[] = [];
 
+function getJakartaDate(): Date {
+  return new Date();
+}
+
 function getQuickGreeting(): string {
   const jakartaTimeStr = new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" });
   const hour = new Date(jakartaTimeStr).getHours();
@@ -41,6 +45,60 @@ function isPureGreetingCheck(message: string): boolean {
     "selamat pagi", "selamat siang", "selamat sore", "selamat malam"
   ];
   return greetings.includes(normalized);
+}
+
+// Deteksi pertanyaan waktu / tanggal saat ini
+function isDateTimeQuery(message: string): boolean {
+  const lower = message.toLowerCase();
+  const timeKeywords = [
+    "hari ini hari apa",
+    "sekarang hari apa",
+    "tanggal berapa sekarang",
+    "sekarang tanggal berapa",
+    "tanggal hari ini",
+    "jam berapa sekarang",
+    "waktu sekarang",
+    "tahun berapa sekarang",
+    "bulan berapa sekarang",
+    "hari tanggal",
+    "hari ini tanggal",
+  ];
+
+  if (timeKeywords.some((keyword) => lower.includes(keyword))) {
+    return true;
+  }
+
+  // Cek kombinasi kata kunci penanda waktu
+  const hasTimeAnchor = lower.includes("sekarang") || lower.includes("hari ini") || lower.includes("saat ini");
+  const hasUnit =
+    lower.includes("tanggal") ||
+    lower.includes("hari") ||
+    lower.includes("bulan") ||
+    lower.includes("tahun") ||
+    lower.includes("jam");
+
+  return hasTimeAnchor && hasUnit;
+}
+
+function getFormattedDateTimeResponse(): string {
+  const now = getJakartaDate();
+
+  const tanggalLengkap = now.toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Jakarta",
+  });
+
+  const jamWib = now.toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    timeZone: "Asia/Jakarta",
+  });
+
+  return `Hari ini adalah **${tanggalLengkap}**, pukul **${jamWib} WIB**.`;
 }
 
 export async function POST(request: NextRequest) {
@@ -211,19 +269,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ reply: kadisReply, content: kadisReply, response: kadisReply });
     }
 
-    // C. Ucapan Terima Kasih / Konfirmasi
+    // C. Pertanyaan Hari, Tanggal, Bulan, Tahun, dan Jam (Real-time Instant Bypass)
+    if (isDateTimeQuery(message)) {
+      const timeReply = getFormattedDateTimeResponse();
+      return NextResponse.json({ reply: timeReply, content: timeReply, response: timeReply });
+    }
+
+    // D. Ucapan Terima Kasih / Konfirmasi
     if (isConfirmationQuery(message)) {
       const confirmReply = "Sama-sama! Senang bisa membantu. Jika ada kendala lain seputar layanan Dapodik dan pendidikan di Ngawi, silakan tanyakan kembali.";
       return NextResponse.json({ reply: confirmReply, content: confirmReply, response: confirmReply });
     }
 
-    // D. Sapaan Singkat
+    // E. Sapaan Singkat
     if (isPureGreetingCheck(message)) {
       const greetingReply = `${getQuickGreeting()} 🙏, Bapak/Ibu Operator & Guru!\n\nAda yang bisa saya bantu terkait layanan pendidikan, Info GTK, pencairan PIP, atau kendala Dapodik di sekolah Anda?`;
       return NextResponse.json({ reply: greetingReply, content: greetingReply, response: greetingReply });
     }
 
-    // E. Penolakan Tugas Luar
+    // F. Penolakan Tugas Luar
     if (isForbiddenTaskQuery(message)) {
       return NextResponse.json({
         reply: OFFICIAL_REJECTION_MESSAGE,
@@ -235,9 +299,18 @@ export async function POST(request: NextRequest) {
     // =========================================================================
     // 4. GENERASI PERCAKAPAN VIA SERVICE (QWEN CLIENT SERVICE)
     // =========================================================================
+    const nowContext = getJakartaDate().toLocaleDateString("id-ID", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      timeZone: "Asia/Jakarta",
+    });
+
     const chatResult = await createChatResponse(process.env.QWEN_API_KEY || "", {
       message,
       history: rawHistory,
+      currentDateContext: nowContext,
     });
 
     const finalAnswer = chatResult.response;

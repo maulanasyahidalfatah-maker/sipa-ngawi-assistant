@@ -13,6 +13,12 @@ export const TOKEN_TUNING_CONFIG = {
   NORMAL: { maxTokens: 1500, maxHistory: 8, temperature: 0.2 },
 };
 
+export interface ExtendedChatRequestBody extends Partial<ChatRequestBody> {
+  message?: string;
+  history?: any[];
+  currentDateContext?: string;
+}
+
 /**
  * Membersihkan respons dari sisa-sisa template penutup otomatis yang tidak diinginkan
  */
@@ -27,9 +33,9 @@ function sanitizeResponseText(text: string): string {
 
 export async function createChatResponse(
   apiKeyPayload: string, 
-  body: ChatRequestBody
+  body: ExtendedChatRequestBody
 ): Promise<ChatResponseBody> {
-  const { message, history } = body;
+  const { message, history, currentDateContext } = body;
   const userMessage = (message || "Halo").trim();
 
   // Mode efisiensi token & riwayat
@@ -39,12 +45,17 @@ export async function createChatResponse(
 
   const trimmedHistory = (history || []).slice(-activeSetting.maxHistory);
 
-  // Susun Prompt
+  // Susun Prompt Pengguna
   const userPromptText = buildUserPrompt({
     userMessage,
     history: trimmedHistory,
     retrievedDocuments: [], // Bypass dokumen RAG sementara
   });
+
+  // Susun System Prompt dengan konteks tanggal jika tersedia
+  const finalSystemPrompt = currentDateContext
+    ? `${SYSTEM_PROMPT}\n\n[INFORMASI WAKTU RESMI]: Hari dan tanggal saat ini adalah ${currentDateContext}. Gunakan acuan ini bila pengguna menanyakan waktu atau konteks waktu terkini.`
+    : SYSTEM_PROMPT;
 
   // Ambil API Keys Qwen dari .env.local (Mendukung multi-key dipisah koma)
   const rawKeys =
@@ -87,7 +98,7 @@ export async function createChatResponse(
         body: JSON.stringify({
           model: qwenModel,
           messages: [
-            { role: "system", content: SYSTEM_PROMPT },
+            { role: "system", content: finalSystemPrompt },
             { role: "user", content: userPromptText },
           ],
           temperature: activeSetting.temperature,
