@@ -8,9 +8,9 @@ import type {
 export type ThrottleMode = "SUPER_HEMAT" | "HEMAT" | "NORMAL";
 
 export const TOKEN_TUNING_CONFIG = {
-  SUPER_HEMAT: { maxTokens: 450, maxHistory: 2, temperature: 0.1 },
-  HEMAT: { maxTokens: 800, maxHistory: 4, temperature: 0.1 },
-  NORMAL: { maxTokens: 1500, maxHistory: 8, temperature: 0.2 },
+  SUPER_HEMAT: { maxTokens: 450, maxHistory: 2, temperature: 0.0 },
+  HEMAT: { maxTokens: 800, maxHistory: 4, temperature: 0.0 },
+  NORMAL: { maxTokens: 1500, maxHistory: 8, temperature: 0.0 },
 };
 
 export interface ExtendedChatRequestBody extends Partial<ChatRequestBody> {

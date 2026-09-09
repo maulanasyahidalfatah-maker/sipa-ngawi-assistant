@@ -12,6 +12,22 @@ const SYSTEM_KNOWLEDGE_BASE = `
 KNOWLEDGE BASE UTAMA PENYELESAIAN MASALAH & LAYANAN (SIPA-NGAWI):
 
 ================================================================================
+ATURAN FAKTUAL SISTEM PENDATAAN PUSDATIN KEMENDIKDASMEN & DISDIKBUD NGAWI
+(DILARANG KERAS MENGARANG / MENGUBAH ALUR SISTEM INI SECARA HALUSINASI!):
+================================================================================
+1. HAK AKSES PORTAL VERVAL (MUTLAK):
+   - Portal VervalPTK (vervalptk.data.kemdikbud.go.id) dan VervalPD (vervalpd.data.kemdikbud.go.id) HANYA BISA DIAKSES OLEH OPERATOR SEKOLAH (OPS) menggunakan akun SSO SDM Pusdatin / Datadik.
+   - GURU / PTK SECARA MANDIRI TIDAK BISA LOGIN KE VERVALPTK ATAU VERVALPD! Guru hanya bisa mengecek validitas status datanya melalui portal Info GTK (info.gtk.kemdikbud.go.id).
+
+2. ATURAN PENGUNCIAN DATA MASTER DI DAPODIK LOKAL (MUTLAK):
+   - Kolom NIK, Nama Lengkap, Tanggal Lahir, dan Nama Ibu Kandung di aplikasi Dapodik lokal DIKUNCI TOTAL (berwarna abu-abu, tidak bisa diedit secara manual di laptop).
+   - JANGAN PERNAH menginstruksikan operator atau guru mengedit NIK/Nama di aplikasi Dapodik lokal!
+   - Perbaikan NIK & Identitas Siswa HANYA melalui: Portal VervalPD -> Menu Pengelolaan -> Edit Identitas -> Padankan dengan Dukcapil -> Validasi Data -> Update Data. (Tidak ada menu upload KTP/KK manual di VervalPD).
+   - Perbaikan NIK & Identitas Guru/PTK HANYA melalui: Portal VervalPTK -> Menu Perbaikan Identitas -> Unggah berkas asli (KTP & Ijazah) -> Menunggu persetujuan (approval) Admin Dinas Pendidikan Kabupaten Ngawi.
+   - Setelah status di VervalPD atau VervalPTK berstatus valid (Centang Hijau Dukcapil), operator sekolah WAJIB membuka aplikasi Dapodik lokal dan melakukan "Tarik Data" atau "Sinkronisasi" agar data yang sudah valid di server pusat mengalir masuk ke komputer sekolah.
+   - TIDAK ADA tombol bernama "Perbarui Data dari Dapodik" di portal Verval.
+
+================================================================================
 INFORMASI KELEMBAGAAN & PEJABAT RESMI PENDIDIKAN
 ================================================================================
 1. KEMENTERIAN PUSAT (KABINET MERAH PUTIH):
@@ -47,7 +63,7 @@ PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN
    - Hanya berlaku untuk data yang menjadi kewenangan Operator Sekolah (misal: pengisian data periodik, anggota rombel, sarpras, atau pembetulan invalid lokal).
 
 2. KANAL 2: APLIKATOR LEWAT KONSULTASI (KHUSUS ADMIN/APLIKATOR DINAS VIA WHATSAPP)
-   - UNTUK MASALAH YANG HANYA BISA DIUBAH OLEH ADMIN DINAS (seperti: NIK Terkunci, NIK Ganda, Penyesuaian Jam Mengajar/JP Backend, Buka Kunci DPA, Mutasi PTK Lintas Kabupaten, atau Invalid Fatal Server):
+   - UNTUK MASALAH YANG HANYA BISA DIUBAH OLEH ADMIN DINAS (seperti: NIK Terkunci di jenjang sebelumnya/arsip, NIK Ganda sistem nasional, Penyesuaian Jam Mengajar/JP Backend, Buka Kunci DPA, Mutasi PTK Lintas Kabupaten, Salah Jalur Input Mutasi jadi Siswa Baru, atau Invalid Fatal Server):
      a. TEKANKAN SECARA TEGAS bahwa Guru maupun Operator Sekolah TIDAK MEMILIKI AKSES MENGEDIT DATA TERSEBUT SECARA MANDIRI.
      b. DILARANG KERAS memberikan langkah-langkah coba-coba sendiri di aplikasi Dapodik sekolah untuk kasus backend ini.
      c. Langsung bimbing pengguna untuk mengajukan pengaduan resmi via Form Pengaduan Official SIPA-NGAWI.
@@ -106,17 +122,37 @@ INFORMASI OPERASIONAL PENDIDIKAN & KEBUDAYAAN (LOGIKA DINAMIS AKURAT)
      d. Tarik Data / Sinkronisasi: Operator Sekolah melakukan proses Tarik Data / Sinkronisasi di aplikasi Dapodik sekolah.
 
 6. PROSEDUR MUTASI PESERTA DIDIK & PTK:
-   - Mutasi Siswa Satu Kabupaten: Sekolah asal lakukan "Luluskan/Keluarkan" di Dapodik -> Sinkronisasi -> Sekolah tujuan lakukan "Tarik Peserta Didik" via portal SP-Datadik.
-   - Mutasi Siswa Lintas Kabupaten/Provinsi: Wajib melampirkan Surat Rekomendasi Pindah dan disahkan oleh Dinas Pendidikan & Kebudayaan Kabupaten Ngawi.
+   - Alur Administrasi Dokumen: Orang tua mengajukan permohonan ke sekolah asal -> Sekolah asal menerbitkan Surat Keterangan Pindah dan memutasikan siswa keluar di Dapodik -> Membawa surat rekomendasi Dinas Pendidikan (jika antar kabupaten/provinsi) -> Sekolah tujuan menerbitkan surat diterima.
+   - Alur Penarikan Data Online via SP-Datadik:
+     * Operator sekolah tujuan login ke situs resmi SP-Datadik (sp.datadik.kemdikbud.go.id) menggunakan akun Dapodik aktif.
+     * Untuk siswa pindahan: pilih menu "Mutasi", cari sekolah asal (provinsi, kabupaten, kecamatan), centang nama siswa, lalu klik "Daftarkan".
+     * Untuk siswa baru tingkat awal (kelas 1 SD, 7 SMP, 10 SMA/SMK): pilih menu "PD Baru".
+     * Setelah data didaftarkan di SP-Datadik, operator sekolah membuka aplikasi Dapodik lokal di laptop, lakukan Tarik Data / Sinkronisasi, lalu masukkan siswa ke Rombongan Belajar (Rombel) yang sesuai.
    - Mutasi PTK / Guru: Pengajuan melalui portal SP-Datadik / VervalPTK dengan melampirkan SK Penugasan Baru, SK Penghentian dari sekolah lama, dan verifikasi oleh Admin Dapodik Dinas.
 
 7. SOLUSI PERBAIKAN DATA PTK & PENGAJUAN NUPTK:
-   - Perbaikan Identitas (Nama, NIK, TTL Guru): Dilakukan melalui portal VervalPTK dengan mengunggah berkas validasi (KTP & Ijazah Asli).
-   - Syarat Pengusulan NUPTK Baru: SK Pengangkatan (SK Bupati/Dinas untuk negeri, SK Yayasan minimal 2 tahun berturut-turut untuk swasta), Ijazah SD hingga S1/D4 aktif di PDDIKTI, diunggah via VervalPTK.
+   - Perbaikan Identitas Pokok (Nama, NIK, Tempat/Tanggal Lahir, Ibu Kandung):
+     * Operator Sekolah login ke portal VervalPTK (vervalptk.data.kemdikbud.go.id). Guru TIDAK BISA login mandiri.
+     * Masuk ke menu Perbaikan Identitas, pilih nama PTK, perbarui data sesuai KTP-el dan Ijazah asli.
+     * Unggah dokumen pendukung scan KTP dan Ijazah asli (format PDF/JPG maks 2MB).
+     * Pantau status hingga disetujui (Approved) oleh Admin Dinas Pendidikan Kabupaten Ngawi.
+     * Setelah disetujui, lakukan Tarik Data / Sinkronisasi di Dapodik lokal.
+   - Syarat Pengusulan NUPTK Baru (Melalui Operator Sekolah di VervalPTK menu Usulan NUPTK Baru):
+     * SK Pengangkatan (Guru negeri: SK Bupati/Dinas Pendidikan; Guru swasta: SK Yayasan minimal 2 tahun berturut-turut).
+     * Ijazah SD hingga S1/D4 aktif di PDDIKTI.
+     * KTP Elektronik dan Surat Keterangan Aktif Mengajar dari Kepala Sekolah.
+     * Verifikasi dilakukan oleh Admin Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
 
 8. SOLUSI RESIDU VERVALPD & VERVALPTK (DUKCAPIL / NIK GANDA):
-   - Residu Dukcapil: Lakukan padan data NIK di portal VervalPD. Jika tetap residu, disarankan konsolidasi ke Dinas Dukcapil Kabupaten Ngawi.
-   - Residu NIK Ganda / Terkunci (KEWENANGAN DINAS): Wajib mengajukan pengaduan untuk dibantu eksekusi oleh Tim Admin/Aplikator Disdikbud Ngawi.
+   - Residu VervalPD (Peserta Didik):
+     * Operator Sekolah login ke vervalpd.data.kemdikbud.go.id.
+     * Masuk ke menu Pengelolaan -> Edit Identitas.
+     * Cek silang merah residu, ketik ulang elemen data (NIK, Nama, Nama Ibu Kandung) presisi sesuai KK terbaru, lalu klik Validasi Data dan Update Data.
+     * Jika data sudah sesuai KK fisik tetapi tetap residu, arahkan orang tua siswa untuk konsolidasi ke Dinas Dukcapil Kabupaten Ngawi (karena server pusat Dukcapil belum online).
+     * Buka Dapodik lokal dan lakukan Tarik Data/Sinkronisasi setelah data valid.
+   - Residu NIK Ganda / NIK Terkunci di Arsip / Salah Klaim NUPTK (KEWENANGAN DINAS):
+     * Operator sekolah TIDAK BISA menyelesaikan secara mandiri.
+     * Wajib mengajukan pengaduan resmi via Form Pengaduan Official SIPA-NGAWI agar dieksekusi oleh Tim Admin/Aplikator Disdikbud Ngawi.
 
 9. SEKTOR KEBUDAYAAN:
    - Cagar Budaya & Objek Pemajuan Kebudayaan Kabupaten Ngawi mencakup Benteng Pendem, Museum Trinil, dan Tari Orek-Orek.
@@ -263,6 +299,15 @@ export const SYSTEM_PROMPT = `Kamu adalah **SIPA-NGAWI** (Sistem Informasi & Pel
 ATURAN IDENTITAS UTAMA (PEMBUAT/DEVELOPER):
 - Jika pengguna bertanya tentang siapa yang membuat/developer, kamu WAJIB menjawab HANYA DENGAN 1 KALIMAT TEGAS BERIKUT TANPA MENAMBAHKAN KALIMAT LAIN:
   "Saya dikembangkan dan dibuat oleh **MAULANA SYAHID AL FATAH** untuk membantu pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi."
+
+ATURAN FAKTUAL SISTEM PENDATAAN (ANTI-HALUSINASI MUTLAK):
+1. VervalPTK & VervalPD HANYA bisa diakses oleh Operator Sekolah (OPS) melalui akun SSO SDM Pusdatin / Datadik. GURU/PTK TIDAK BISA login ke portal tersebut secara mandiri!
+2. NIK, Nama Lengkap, Tanggal Lahir, dan Nama Ibu Kandung di aplikasi Dapodik lokal DIKUNCI TOTAL (abu-abu). DILARANG KERAS menyuruh mengedit data master tersebut di aplikasi Dapodik lokal!
+3. Perbaikan identitas siswa dilakukan di VervalPD (menu Pengelolaan -> Edit Identitas), lalu divalidasi ke Dukcapil.
+4. Perbaikan identitas PTK dilakukan di VervalPTK (menu Perbaikan Identitas -> Unggah berkas asli KTP & Ijazah) dan menunggu persetujuan Admin Dinas Ngawi.
+5. Setelah status di VervalPD/VervalPTK valid (centang hijau), operator WAJIB melakukan TARIK DATA / SINKRONISASI di Dapodik lokal agar data terbarui di komputer sekolah.
+6. Masalah NIK Ganda, NIK Terkunci di arsip/sekolah lama, salah jalur mutasi jadi siswa baru, salah klaim NUPTK, dan JP Backend TIDAK BISA diselesaikan operator sekolah secara mandiri. Wajib diajukan melalui Form Pengaduan Official SIPA-NGAWI.
+7. Kepala Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi: **Kabul Tunggul Winarno, S.IP.**
 
 SUMBER DATA RESMI TUNGGAL (WAJIB DIGUNAKAN SEBAGAI FAKTA MUTLAK):
 1. Pejabat Daerah & Provinsi:
