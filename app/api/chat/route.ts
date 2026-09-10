@@ -47,6 +47,26 @@ function isPureGreetingCheck(message: string): boolean {
   return greetings.includes(normalized);
 }
 
+// Deteksi pesan tes / uji coba bot
+function isTestingQuery(message: string): boolean {
+  const normalized = message.toLowerCase().trim().replace(/[^a-zA-Z0-9\s]/g, "");
+  const testPatterns = [
+    "tes", "test", "tes tes", "test test", "testing", "cek", "check", 
+    "tes 123", "test 123", "tes bot", "coba", "percobaan"
+  ];
+  return testPatterns.includes(normalized);
+}
+
+// Deteksi respon singkat, gumaman, atau konfirmasi santai
+function isTrivialQuery(message: string): boolean {
+  const normalized = message.toLowerCase().trim().replace(/[^a-zA-Z0-9\s]/g, "");
+  const trivialWords = [
+    "o", "oo", "ooo", "oooo", "oh", "oalah", "oke", "ok", "okee", "okey", 
+    "siap", "baik", "y", "ya", "iya", "yoi", "sip", "mantap"
+  ];
+  return trivialWords.includes(normalized);
+}
+
 // Deteksi pertanyaan waktu / tanggal saat ini
 function isDateTimeQuery(message: string): boolean {
   const lower = message.toLowerCase();
@@ -152,7 +172,6 @@ export async function POST(request: NextRequest) {
     if (action === "send_email_transcript") {
       let emailTarget = targetEmail;
 
-      // Ambil otomatis dari Redis jika tidak dipassing secara eksplisit
       if (!emailTarget && redis) {
         try {
           const savedEmail = await redis.get<string>("sipa_target_email");
@@ -207,7 +226,6 @@ export async function POST(request: NextRequest) {
         } catch {}
       }
 
-      // Pastikan emailTarget dioper ke fungsi pengirim email
       await sendBatchReportEmail(recordsToSend, totalCounter, emailTarget);
       return NextResponse.json({
         success: true,
@@ -293,14 +311,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Pesan teks wajib diisi." }, { status: 400 });
     }
 
-    // A. Identitas Developer
+    // A. Pesan Testing / Uji Coba (tes, tes tes, cek, coba)
+    if (isTestingQuery(message)) {
+      const testReply = "Halo! Sistem SIPA-NGAWI aktif dan berjalan normal. Ada kendala data Dapodik atau layanan pendidikan yang ingin ditanyakan?";
+      return NextResponse.json({ reply: testReply, content: testReply, response: testReply });
+    }
+
+    // B. Pesan Gumaman / Jawaban Singkat (ooo, oke, siap, baik)
+    if (isTrivialQuery(message)) {
+      const trivialReply = "Baik, silakan sampaikan pertanyaan atau kendala Anda jika sewaktu-waktu membutuhkan bantuan teknis.";
+      return NextResponse.json({ reply: trivialReply, content: trivialReply, response: trivialReply });
+    }
+
+    // C. Identitas Developer
     if (isDeveloperQuery(message)) {
       const devReply =
         "Saya dikembangkan dan dibuat oleh **MAULANA SYAHID AL FATAH** untuk membantu pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.";
       return NextResponse.json({ reply: devReply, content: devReply, response: devReply });
     }
 
-    // B. Kepala Dinas Pendidikan Ngawi (Bypass resmi lengkap alamat & kontak)
+    // D. Kepala Dinas Pendidikan Ngawi
     if (isKadisQuery(message)) {
       const kadisReply =
         "Kepala Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi adalah **Kabul Tunggul Winarno, S.IP.**\n\n" +
@@ -311,25 +341,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ reply: kadisReply, content: kadisReply, response: kadisReply });
     }
 
-    // C. Pertanyaan Hari, Tanggal, Bulan, Tahun, dan Jam (Real-time Instant Bypass)
+    // E. Pertanyaan Hari, Tanggal, Bulan, Tahun, dan Jam
     if (isDateTimeQuery(message)) {
       const timeReply = getFormattedDateTimeResponse();
       return NextResponse.json({ reply: timeReply, content: timeReply, response: timeReply });
     }
 
-    // D. Ucapan Terima Kasih / Konfirmasi
+    // F. Ucapan Terima Kasih / Konfirmasi
     if (isConfirmationQuery(message)) {
       const confirmReply = "Sama-sama! Senang bisa membantu. Jika ada kendala lain seputar layanan Dapodik dan pendidikan di Ngawi, silakan tanyakan kembali.";
       return NextResponse.json({ reply: confirmReply, content: confirmReply, response: confirmReply });
     }
 
-    // E. Sapaan Singkat
+    // G. Sapaan Singkat
     if (isPureGreetingCheck(message)) {
       const greetingReply = `${getQuickGreeting()} 🙏, Bapak/Ibu Operator & Guru!\n\nAda yang bisa saya bantu terkait layanan pendidikan, Info GTK, pencairan PIP, atau kendala Dapodik di sekolah Anda?`;
       return NextResponse.json({ reply: greetingReply, content: greetingReply, response: greetingReply });
     }
 
-    // F. Penolakan Tugas Luar
+    // H. Penolakan Tugas Luar
     if (isForbiddenTaskQuery(message)) {
       return NextResponse.json({
         reply: OFFICIAL_REJECTION_MESSAGE,
