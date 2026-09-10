@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ShieldCheck,
@@ -14,8 +14,6 @@ import {
   AlertCircle,
   KeyRound,
   Loader2,
-  LogOut,
-  CheckCircle2,
 } from "lucide-react";
 
 // WHITELIST DATA PEKERJA / ADMIN DINAS TERDAFTAR
@@ -34,40 +32,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [namaLengkap, setNamaLengkap] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [checkingSession, setCheckingSession] = useState(true);
-  const [activeUser, setActiveUser] = useState<any>(null);
-
-  // AUTO-LOGIN: CEK SESI TERSIMPAN DI BROWSER
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedSession = localStorage.getItem("sipa_user_session");
-      if (savedSession) {
-        try {
-          const parsed = JSON.parse(savedSession);
-          if (parsed && parsed.role === "PUBLIC") {
-            setActiveUser(parsed);
-            router.push("/");
-            return;
-          } else if (parsed && parsed.role === "ADMIN") {
-            setActiveUser(parsed);
-            router.push("/admin");
-            return;
-          }
-        } catch {
-          localStorage.removeItem("sipa_user_session");
-        }
-      }
-    }
-    setCheckingSession(false);
-  }, [router]);
 
   const handleSwitchRole = (targetRole: "PUBLIC" | "ADMIN") => {
     setRole(targetRole);
     setIsRegister(false);
     setErrorMsg("");
-    setSuccessMsg("");
     setEmailOrNip("");
     setPassword("");
     setNamaLengkap("");
@@ -84,43 +54,42 @@ export default function LoginPage() {
     router.push(targetPath);
   };
 
-  const handleClearSession = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("sipa_user_session");
-      document.cookie = "sipa_user_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-    }
-    setActiveUser(null);
-    setCheckingSession(false);
-  };
-
-  const handleAuthSubmit = async (e: React.FormEvent) => {
+  const handleAuthSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
-    setSuccessMsg("");
     setIsLoading(true);
 
     const inputUser = emailOrNip.trim();
     const inputPass = password.trim();
 
     if (!inputUser || !inputPass) {
-      setErrorMsg("Mohon isi identitas dan kata sandi terlebih dahulu.");
+      setErrorMsg("Mohon isi Email/NIP dan Password terlebih dahulu.");
       setIsLoading(false);
       return;
     }
 
     // =========================================================================
-    // 🔑 AKUN MASTER DEVELOPER MAULANA (BYPASS KE MANA SAJA)
+    // 🔑 AKUN MASTER DEVELOPER MAULANA (BYPASS)
     // =========================================================================
     if (
       (inputUser.toUpperCase() === "MAULANA-DEV@SIPA.COM" || inputUser.toLowerCase() === "maulana-dev@sipa.com") &&
       inputPass === "Alhakim5758"
     ) {
-      const devSession = {
-        role: role,
-        nama: "Maulana Syahid Al Fatah (Developer)",
-        email: "MAULANA-DEV@SIPA.COM",
-      };
-      saveSessionAndRedirect(devSession, role === "ADMIN" ? "/admin" : "/");
+      if (role === "ADMIN") {
+        const devAdminSession = {
+          role: "ADMIN",
+          nama: "Maulana Syahid Al Fatah (Developer)",
+          email: "MAULANA-DEV@SIPA.COM",
+        };
+        saveSessionAndRedirect(devAdminSession, "/admin");
+      } else {
+        const devPublicSession = {
+          role: "PUBLIC",
+          nama: "Maulana Syahid Al Fatah",
+          email: "MAULANA-DEV@SIPA.COM",
+        };
+        saveSessionAndRedirect(devPublicSession, "/");
+      }
       return;
     }
 
@@ -142,52 +111,79 @@ export default function LoginPage() {
         };
         saveSessionAndRedirect(adminSession, "/admin");
       } else {
-        setErrorMsg("NIP / Email Dinas atau Password Admin salah! Hubungi Tim IT Disdikbud jika ada kendala.");
+        setErrorMsg("NIP / Email Dinas atau Password Admin salah! Hubungi TI Disdikbud jika ada kendala.");
         setIsLoading(false);
       }
       return;
     }
 
     // =========================================================================
-    // 👤 PROSES PUBLIK (TERHUBUNG LANGSUNG KE UPSTASH REDIS VIA API)
+    // 👤 LOGIN & REGISTER PUBLIK
     // =========================================================================
     if (role === "PUBLIC") {
-      try {
-        const payload = isRegister
-          ? { action: "register", emailOrPhone: inputUser, password: inputPass, nama: namaLengkap }
-          : { action: "login", emailOrPhone: inputUser, password: inputPass };
+      let registeredUsers: any[] = [];
+      if (typeof window !== "undefined") {
+        const saved = localStorage.getItem("sipa_registered_users");
+        if (saved) {
+          try {
+            registeredUsers = JSON.parse(saved);
+          } catch {
+            registeredUsers = [];
+          }
+        }
+      }
 
-        const res = await fetch("/api/auth", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+      if (isRegister) {
+        if (!namaLengkap.trim()) {
+          setErrorMsg("Mohon isikan Nama Lengkap dan Gelar Anda.");
+          setIsLoading(false);
+          return;
+        }
 
-        const data = await res.json();
+        const isExist = registeredUsers.some(
+          (u) => u.email.toLowerCase() === inputUser.toLowerCase()
+        );
 
-        if (res.ok && data.success) {
-          saveSessionAndRedirect(data.user, "/");
+        if (isExist) {
+          setErrorMsg("Email / Nomor WhatsApp sudah terdaftar. Silakan lakukan login.");
+          setIsLoading(false);
+          return;
+        }
+
+        const newUser = {
+          nama: namaLengkap.trim(),
+          email: inputUser,
+          password: inputPass,
+        };
+
+        registeredUsers.push(newUser);
+        localStorage.setItem("sipa_registered_users", JSON.stringify(registeredUsers));
+
+        const publicSession = {
+          role: "PUBLIC",
+          nama: newUser.nama,
+          email: newUser.email,
+        };
+        saveSessionAndRedirect(publicSession, "/");
+      } else {
+        const matchedUser = registeredUsers.find(
+          (u) => u.email.toLowerCase() === inputUser.toLowerCase() && u.password === inputPass
+        );
+
+        if (matchedUser) {
+          const publicSession = {
+            role: "PUBLIC",
+            nama: matchedUser.nama,
+            email: matchedUser.email,
+          };
+          saveSessionAndRedirect(publicSession, "/");
         } else {
-          setErrorMsg(data.error || "Gagal memproses akun.");
+          setErrorMsg("Akun belum terdaftar atau password salah! Silakan klik 'Buat akun Pengguna Publik' terlebih dahulu.");
           setIsLoading(false);
         }
-      } catch {
-        setErrorMsg("Terjadi gangguan saat menghubungkan ke database server.");
-        setIsLoading(false);
       }
     }
   };
-
-  if (checkingSession) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans text-xs text-slate-500">
-        <div className="flex items-center gap-2">
-          <Loader2 className="w-4 h-4 animate-spin text-[#006837]" />
-          <span>Memeriksa sesi login...</span>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen w-full bg-slate-50 flex items-center justify-center p-4 font-sans">
@@ -202,66 +198,33 @@ export default function LoginPage() {
 
         {/* TAB ROLE */}
         <div className="p-6">
-          {activeUser ? (
-            <div className="mb-4 p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between text-xs">
-              <div>
-                <p className="text-emerald-900 font-bold">Sesi Anda Masih Aktif</p>
-                <p className="text-emerald-700 mt-0.5">{activeUser.nama}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => router.push(activeUser.role === "ADMIN" ? "/admin" : "/")}
-                  className="px-3 py-1.5 bg-[#006837] text-white font-semibold rounded-xl hover:bg-[#00522c] cursor-pointer"
-                >
-                  Lanjut
-                </button>
-                <button
-                  type="button"
-                  onClick={handleClearSession}
-                  className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg cursor-pointer"
-                  title="Ganti Akun / Keluar"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-2xl mb-6">
-              <button
-                type="button"
-                onClick={() => handleSwitchRole("PUBLIC")}
-                className={`py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                  role === "PUBLIC" ? "bg-white text-[#006837] shadow-xs" : "text-slate-500 hover:text-slate-800"
-                }`}
-              >
-                <User className="w-4 h-4" />
-                <span>Operator / Guru</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSwitchRole("ADMIN")}
-                className={`py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                  role === "ADMIN" ? "bg-[#006837] text-white shadow-xs" : "text-slate-500 hover:text-slate-800"
-                }`}
-              >
-                <ShieldCheck className="w-4 h-4" />
-                <span>Admin Dinas</span>
-              </button>
-            </div>
-          )}
+          <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-2xl mb-6">
+            <button
+              type="button"
+              onClick={() => handleSwitchRole("PUBLIC")}
+              className={`py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                role === "PUBLIC" ? "bg-white text-[#006837] shadow-xs" : "text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <User className="w-4 h-4" />
+              <span>Operator / Guru</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSwitchRole("ADMIN")}
+              className={`py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                role === "ADMIN" ? "bg-[#006837] text-white shadow-xs" : "text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>Admin Dinas</span>
+            </button>
+          </div>
 
           {errorMsg && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl font-medium flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
               <span>{errorMsg}</span>
-            </div>
-          )}
-
-          {successMsg && (
-            <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-xl font-medium flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-              <span>{successMsg}</span>
             </div>
           )}
 
@@ -389,7 +352,6 @@ export default function LoginPage() {
                 onClick={() => {
                   setIsRegister(!isRegister);
                   setErrorMsg("");
-                  setSuccessMsg("");
                 }}
                 className="text-xs text-[#006837] font-semibold hover:underline cursor-pointer"
               >
