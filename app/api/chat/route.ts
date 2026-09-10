@@ -68,7 +68,6 @@ function isDateTimeQuery(message: string): boolean {
     return true;
   }
 
-  // Cek kombinasi kata kunci penanda waktu
   const hasTimeAnchor = lower.includes("sekarang") || lower.includes("hari ini") || lower.includes("saat ini");
   const hasUnit =
     lower.includes("tanggal") ||
@@ -117,11 +116,53 @@ export async function POST(request: NextRequest) {
     const npsn: string | undefined = body.npsn;
 
     // =========================================================================
+    // 0. CONFIG EMAIL DINAS (BACA & SIMPAN KE REDIS)
+    // =========================================================================
+    if (action === "get_admin_config") {
+      let currentTarget = process.env.EMAIL_REKAP_TARGET || "avidusfathcorp@gmail.com";
+      if (redis) {
+        try {
+          const savedEmail = await redis.get<string>("sipa_target_email");
+          if (savedEmail) currentTarget = savedEmail;
+        } catch (err) {
+          console.warn("Gagal membaca email dinas dari Redis:", err);
+        }
+      }
+      return NextResponse.json({ targetEmail: currentTarget });
+    }
+
+    if (action === "save_admin_config") {
+      const emailBaru = (body.email || "").trim().toLowerCase();
+      if (!emailBaru || !emailBaru.includes("@")) {
+        return NextResponse.json({ error: "Format email tidak valid." }, { status: 400 });
+      }
+      if (redis) {
+        try {
+          await redis.set("sipa_target_email", emailBaru);
+        } catch {
+          return NextResponse.json({ error: "Gagal menyimpan ke Redis." }, { status: 500 });
+        }
+      }
+      return NextResponse.json({ success: true, targetEmail: emailBaru });
+    }
+
+    // =========================================================================
     // 1. HANDLER EMAIL MANUAL
     // =========================================================================
     if (action === "send_email_transcript") {
-      const emailTarget =
-        targetEmail || process.env.EMAIL_REKAP_TARGET || "avidusfathcorp@gmail.com";
+      let emailTarget = targetEmail;
+
+      // Ambil otomatis dari Redis jika tidak dipassing secara eksplisit
+      if (!emailTarget && redis) {
+        try {
+          const savedEmail = await redis.get<string>("sipa_target_email");
+          if (savedEmail) emailTarget = savedEmail;
+        } catch {}
+      }
+
+      if (!emailTarget) {
+        emailTarget = process.env.EMAIL_REKAP_TARGET || "avidusfathcorp@gmail.com";
+      }
 
       let recordsToSend: TicketItem[] = [];
 
@@ -166,7 +207,8 @@ export async function POST(request: NextRequest) {
         } catch {}
       }
 
-      await sendBatchReportEmail(recordsToSend, totalCounter);
+      // Pastikan emailTarget dioper ke fungsi pengirim email
+      await sendBatchReportEmail(recordsToSend, totalCounter, emailTarget);
       return NextResponse.json({
         success: true,
         message: `Rekapitulasi berhasil dikirim ke ${emailTarget}`,

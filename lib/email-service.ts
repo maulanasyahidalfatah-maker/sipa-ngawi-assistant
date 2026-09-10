@@ -90,15 +90,23 @@ export function generateComplaintsPDF(tickets: TicketItem[]): Buffer {
 }
 
 /**
- * 2. Fungsi Pengirim Email Batch PDF ke avidusfathcorp@gmail.com via Nodemailer (Gmail SMTP)
+ * 2. Fungsi Pengirim Email Batch PDF via Nodemailer (Gmail SMTP)
+ * Menerima targetEmailOverride dinamis dari Redis / Admin Panel
  */
 export async function sendBatchReportEmail(
   tickets: TicketItem[],
-  totalCount: number
+  totalCount: number,
+  targetEmailOverride?: string
 ) {
   const senderEmail = process.env.SMTP_EMAIL || "avidusfathcorp@gmail.com";
   const senderPass = process.env.SMTP_PASSWORD || "nzto qijf zbxj lqxs";
-  const targetEmail = process.env.EMAIL_REKAP_TARGET || "avidusfathcorp@gmail.com";
+  
+  // Prioritaskan email dinamis yang diteruskan dari request / Redis
+  const targetEmail = (
+    targetEmailOverride ||
+    process.env.EMAIL_REKAP_TARGET ||
+    "avidusfathcorp@gmail.com"
+  ).trim();
 
   try {
     // 1. Inisialisasi Transporter Nodemailer (Gmail SMTP)
@@ -153,5 +161,6 @@ export async function sendBatchReportEmail(
     );
   } catch (error) {
     console.error("❌ Error sending Gmail SMTP email with PDF:", error);
+    throw error;
   }
 }

@@ -293,6 +293,9 @@ export function ChatInterface({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
+  // Email Dinas Dinamis dari Redis
+  const [adminEmailDisplay, setAdminEmailDisplay] = useState("avidusfathcorp@gmail.com");
+
   // Dropdown Custom
   const [isSekolahDropdownOpen, setIsSekolahDropdownOpen] = useState(false);
   const [searchSekolah, setSearchSekolah] = useState("");
@@ -325,6 +328,22 @@ export function ChatInterface({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const complaintFileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Ambil Konfigurasi Email Dinas saat komponen dimuat
+  useEffect(() => {
+    fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "get_admin_config" }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.targetEmail) {
+          setAdminEmailDisplay(data.targetEmail);
+        }
+      })
+      .catch(() => {});
+  }, [isModalOpen]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -1038,7 +1057,7 @@ export function ChatInterface({
         </>
       )}
 
-      {/* MODAL POP-UP FORM PENGADUAN RESMI (PERSIS GAMBAR 1) */}
+      {/* MODAL POP-UP FORM PENGADUAN RESMI */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white rounded-3xl shadow-xl max-w-xl w-full max-h-[90vh] flex flex-col border border-neutral-100 relative overflow-hidden">
@@ -1463,7 +1482,7 @@ export function ChatInterface({
                   <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t">
                     <div className="flex items-center gap-1.5 text-xs text-emerald-800 font-medium">
                       <Mail className="w-4 h-4 text-[#006837]" />
-                      <span className="truncate max-w-[200px] sm:max-w-xs">Terkirim ke: avidusfathcorp@gmail.com</span>
+                      <span className="truncate max-w-[200px] sm:max-w-xs">Terkirim ke: {adminEmailDisplay}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
