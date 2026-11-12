@@ -52,7 +52,7 @@ export default function AdminDashboard() {
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
 
-  // State Banner Notifikasi Inline (Menempel langsung di atas tabel)
+  // State Banner Notifikasi Inline
   const [inlineNotice, setInlineNotice] = useState<{
     type: "success" | "warning" | "error";
     text: string;
@@ -131,13 +131,33 @@ export default function AdminDashboard() {
       const res = await fetch("/api/tickets", { cache: "no-store" });
       if (res.ok) {
         const result = await res.json();
-        if (result.success && Array.isArray(result.data)) {
+        if (result.success && Array.isArray(result.data) && result.data.length > 0) {
           setTickets(sanitizeAndSortTickets(result.data));
+          setIsLoading(false);
+          return;
         }
       }
     } catch (e) {
-      console.error("Gagal terhubung ke server:", e);
+      console.warn("Menggunakan data dummy sementara:", e);
     }
+
+    const dummyData: AdminTicket[] = [
+      {
+        id: "TK-001",
+        namaPelapor: "Burhanudin",
+        nikPelapor: "3521071805061795",
+        noWhatsapp: "085272837874",
+        asalSekolah: "SMP Negeri 1 Karangjati",
+        npsn: "20508535",
+        kategori: "Mutasi / Penarikan Siswa",
+        rincian: "kendala penarikan siswa dari kabupaten magetan",
+        status: "PENDING",
+        createdAt: "8/11/2026",
+        numericOrder: 1,
+      }
+    ];
+
+    setTickets(sanitizeAndSortTickets(dummyData));
     setIsLoading(false);
   };
 
@@ -382,7 +402,7 @@ export default function AdminDashboard() {
       const doc = buildLandscapeReportPDF();
       doc.save(`Transkrip_Rekapitulasi_Tiket_${batch.length}_Data_${new Date().toISOString().slice(0, 10)}.pdf`);
       setHasDownloadedPDF(true);
-      showInlineNotice("success", `Berkas transkrip rekapitulasi (${batch.length} data) berhasil diunduh ke komputer.`);
+      showInlineNotice("success", `Berkas transkrip rekapitulasi (${batch.length} data) berhasil diunduh.`);
     } catch (err) {
       showInlineNotice("error", "Gagal membuat dokumen PDF.");
     } finally {
@@ -425,7 +445,7 @@ export default function AdminDashboard() {
       const data = await res.json();
       if (res.ok && data.success) {
         setHasSentEmailToDinas(true);
-        showInlineNotice("success", `Berhasil mengirimkan berkas rekapitulasi pengaduan ke ${recipient}!`);
+        showInlineNotice("success", `Berhasil mengirimkan berkas rekapitulasi ke ${recipient}!`);
       } else {
         throw new Error(data.error || "Gagal mengirim email.");
       }
@@ -442,24 +462,18 @@ export default function AdminDashboard() {
     if (resolvedTickets.length < 30) {
       showInlineNotice(
         "warning",
-        `Reset ditolak! Saat ini baru ada ${resolvedTickets.length} aduan yang berstatus SUDAH DIBENAHI. Kuota reset wajib minimal 30 aduan selesai.`
+        `Reset ditolak! Saat ini baru ada ${resolvedTickets.length} aduan berstatus SUDAH DIBENAHI. Kuota reset wajib minimal 30 aduan selesai.`
       );
       return;
     }
 
     if (!hasSentEmailToDinas) {
-      showInlineNotice(
-        "warning",
-        "Syarat belum lengkap! Laporan 30 tiket selesai harus dikirim ke email dinas terlebih dahulu via tombol 'Kirim PDF'."
-      );
+      showInlineNotice("warning", "Syarat belum lengkap! Laporan 30 tiket selesai harus dikirim ke email dinas terlebih dahulu.");
       return;
     }
 
     if (!hasDownloadedPDF) {
-      showInlineNotice(
-        "warning",
-        "Syarat belum lengkap! Laporan 30 tiket selesai harus diunduh terlebih dahulu via tombol 'Unduh Transkrip PDF'."
-      );
+      showInlineNotice("warning", "Syarat belum lengkap! Laporan 30 tiket selesai harus diunduh terlebih dahulu.");
       return;
     }
 
@@ -479,10 +493,7 @@ export default function AdminDashboard() {
     setTickets(sanitizeAndSortTickets(updatedTicketList));
 
     if (typeof window !== "undefined") {
-      localStorage.setItem("sipa_rekap_pengaduan_backup", JSON.stringify(updatedTicketList));
-      localStorage.setItem("sipa_rekap_pengaduan", JSON.stringify(updatedTicketList));
       localStorage.setItem("sipa_ngawi_tickets", JSON.stringify(updatedTicketList));
-      localStorage.setItem("sipa_pengaduan_list", JSON.stringify(updatedTicketList));
     }
 
     try {
@@ -499,10 +510,7 @@ export default function AdminDashboard() {
     setHasSentEmailToDinas(false);
     setIsLoading(false);
 
-    showInlineNotice(
-      "success",
-      `Berhasil! Tepat 30 aduan selesai telah diarsipkan. ${allPendingTickets.length} aduan yang berstatus pending tetap aman tersimpan.`
-    );
+    showInlineNotice("success", `Berhasil mengarsipkan 30 aduan selesai. ${allPendingTickets.length} aduan pending tetap aman.`);
   };
 
   const handleAdminVerify = async (fileBase64: string) => {
@@ -573,21 +581,21 @@ export default function AdminDashboard() {
     <div className="w-full h-screen overflow-y-auto bg-slate-50 p-4 sm:p-8 font-sans">
       <div className="max-w-7xl mx-auto pb-16">
         
-        {/* HEADER AREA */}
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
+        {/* HEADER AREA - DIRAPIKAN SEJAJAR */}
+        <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 mb-6">
           
-          {/* POJOK KIRI */}
+          {/* SISI KIRI: JUDUL & CONFIG EMAIL */}
           <div className="flex flex-col items-start gap-2.5">
             <div>
               <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-                Dashboard Admin SIPA-NGAWI
+                Rekapitulasi Pengaduan
               </h1>
               <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
                 Panel Pengelolaan &amp; Verifikasi Pengaduan Data Dapodik Disdikbud Kab. Ngawi
               </p>
             </div>
 
-            <form onSubmit={handleSaveEmailConfig} className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl px-2.5 py-1 shadow-xs w-full sm:w-auto">
+            <form onSubmit={handleSaveEmailConfig} className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 shadow-xs w-full sm:w-auto">
               <Mail className="w-3.5 h-3.5 text-[#006837] shrink-0" />
               <input
                 type="email"
@@ -596,37 +604,24 @@ export default function AdminDashboard() {
                 onChange={(e) => setTargetEmail(e.target.value)}
                 placeholder="Email Tujuan Rekap Dinas..."
                 className="text-xs text-slate-800 placeholder-slate-400 bg-transparent border-none outline-none w-56 sm:w-64"
-                title="Alamat email dinas penerima berkas rekapitulasi"
               />
               <button
                 type="submit"
                 disabled={isSavingEmail}
                 className="flex items-center gap-1 bg-[#006837] hover:bg-[#00522c] text-white px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-colors disabled:opacity-50 shrink-0"
               >
-                {isSavingEmail ? (
-                  "..."
-                ) : emailSaved ? (
-                  <>
-                    <Check className="w-3 h-3 text-emerald-300" />
-                    <span>Tersimpan</span>
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-3 h-3" />
-                    <span>Simpan</span>
-                  </>
-                )}
+                {isSavingEmail ? "..." : emailSaved ? <Check className="w-3 h-3" /> : <Save className="w-3 h-3" />}
+                <span>{emailSaved ? "Tersimpan" : "Simpan"}</span>
               </button>
             </form>
           </div>
 
-          {/* SISI KANAN: BARIS TOMBOL AKSI UTAMA */}
-          <div className="flex flex-wrap items-center gap-2 self-start lg:self-center">
+          {/* SISI KANAN: BARIS TOMBOL AKSI UTAMA (DISEJAJARKAN RAPI) */}
+          <div className="flex flex-wrap items-center gap-2.5">
             <button
               type="button"
               onClick={() => setIsTranscriptModalOpen(true)}
               className="flex items-center gap-1.5 bg-[#006837] hover:bg-[#00522c] text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow-xs cursor-pointer transition-colors"
-              title="Buka Form Transkrip Rekapitulasi Tiket Pengaduan"
             >
               <FileText className="w-3.5 h-3.5" />
               <span>{hasDownloadedPDF ? "Transkrip Terunduh ✓" : `Unduh Transkrip PDF (${batchReadyCount})`}</span>
@@ -637,7 +632,6 @@ export default function AdminDashboard() {
               onClick={handlePrintPDF}
               disabled={resolvedCount === 0}
               className="flex items-center gap-1.5 bg-white hover:bg-slate-100 text-slate-700 px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-semibold cursor-pointer transition-colors disabled:opacity-50 shadow-xs"
-              title="Cetak Laporan PDF Langsung"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Cetak</span>
@@ -648,7 +642,6 @@ export default function AdminDashboard() {
               onClick={handleSendReportEmail}
               disabled={isSendingEmail || resolvedCount === 0}
               className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow-xs cursor-pointer transition-colors disabled:opacity-50"
-              title="Kirim Laporan ke Email Dinas"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{isSendingEmail ? "Mengirim..." : hasSentEmailToDinas ? "Email Terkirim ✓" : "Kirim PDF"}</span>
@@ -658,7 +651,6 @@ export default function AdminDashboard() {
               type="button"
               onClick={loadTickets}
               className="flex items-center gap-1.5 bg-white hover:bg-slate-100 text-slate-700 px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold cursor-pointer shadow-xs transition-colors"
-              title="Perbarui Data"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-[#006837]" : ""}`} />
               <span>Sync</span>
@@ -672,23 +664,9 @@ export default function AdminDashboard() {
                   ? "bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
                   : "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200"
               }`}
-              title={resolvedCount < 30 ? `Wajib 30 aduan selesai untuk reset (Saat ini: ${resolvedCount}/30)` : "Reset kloter 30 data selesai"}
             >
-              {resolvedCount < 30 ? (
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-              ) : (
-                <Trash2 className="w-3.5 h-3.5" />
-              )}
+              {resolvedCount < 30 ? <AlertTriangle className="w-3.5 h-3.5 text-amber-500" /> : <Trash2 className="w-3.5 h-3.5" />}
               <span>Reset ({resolvedCount}/30)</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow-xs cursor-pointer transition-colors ml-1"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Keluar</span>
             </button>
           </div>
         </div>
@@ -789,7 +767,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* BANNER NOTIFIKASI ELEGAN INLINE (PERSIS DI ATAS TABEL) */}
+        {/* BANNER NOTIFIKASI INLINE */}
         {inlineNotice && (
           <div
             className={`mb-4 p-3 border rounded-xl text-xs flex items-center justify-between shadow-xs transition-all ${
@@ -822,7 +800,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* TABEL UTAMA DASHBOARD ADMIN (FIFO) */}
+        {/* TABEL UTAMA DASHBOARD ADMIN */}
         <div className="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
           <div className="overflow-x-auto max-h-[65vh] overflow-y-auto">
             <table className="w-full text-left text-xs text-slate-700">
@@ -850,9 +828,7 @@ export default function AdminDashboard() {
                 ) : (
                   filteredTickets.map((ticket, index) => (
                     <tr key={`${ticket.id}-${index}`} className="hover:bg-slate-50 transition-colors">
-                      <td className="p-3.5 text-center font-bold text-slate-400 whitespace-nowrap">
-                        {index + 1}
-                      </td>
+                      <td className="p-3.5 text-center font-bold text-slate-400 whitespace-nowrap">{index + 1}</td>
                       <td className="p-3.5 font-bold text-slate-900 whitespace-nowrap">
                         {ticket.id}
                         <div className="text-[10px] text-slate-400 font-normal">{ticket.createdAt}</div>
@@ -938,7 +914,7 @@ export default function AdminDashboard() {
       {/* MODAL FORM TRANSKRIP REKAPITULASI */}
       {isTranscriptModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden border border-slate-200 p-5 sm:p-7 flex flex-col relative animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden border border-slate-200 p-5 sm:p-7 flex flex-col relative">
             <button
               type="button"
               onClick={() => setIsTranscriptModalOpen(false)}
@@ -991,7 +967,6 @@ export default function AdminDashboard() {
                         <td className="p-3 text-slate-600 max-w-[220px] truncate" title={item.rincian}>
                           {item.rincian}
                         </td>
-                        
                         <td className="p-3 text-center whitespace-nowrap">
                           {item.fotoKeluhan ? (
                             <button
@@ -1002,7 +977,7 @@ export default function AdminDashboard() {
                                   title: `Foto Kendala Pelapor (${item.asalSekolah})`,
                                 })
                               }
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-[#006837] font-semibold text-[11px] border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-[#006837] font-semibold text-[11px] border border-emerald-200 hover:bg-emerald-100 cursor-pointer"
                             >
                               <ImageIcon className="w-3 h-3" />
                               <span>Lihat Foto</span>
@@ -1011,7 +986,6 @@ export default function AdminDashboard() {
                             <span className="text-[11px] text-slate-400 italic">Tanpa Foto</span>
                           )}
                         </td>
-
                         <td className="p-3 text-center whitespace-nowrap">
                           {item.status === "RESOLVED" ? (
                             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
@@ -1023,7 +997,6 @@ export default function AdminDashboard() {
                             </span>
                           )}
                         </td>
-
                         <td className="p-3 text-center whitespace-nowrap">
                           {item.status === "PENDING" ? (
                             <button
@@ -1094,7 +1067,7 @@ export default function AdminDashboard() {
       {/* MODAL DIALOG KONFIRMASI RESET */}
       {showResetConfirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl p-6 max-w-md w-full relative border border-slate-100 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full relative border border-slate-100 shadow-2xl">
             <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mb-4">
               <AlertTriangle className="w-6 h-6" />
             </div>

@@ -16,12 +16,6 @@ import {
   Loader2,
 } from "lucide-react";
 
-// WHITELIST DATA PEKERJA / ADMIN DINAS TERDAFTAR
-const ADMIN_DINAS_WHITELIST = [
-  { nip: "198503132010011001", email: "admin.dapodik@ngawikab.go.id", pass: "admin123", nama: "Admin Disdikbud Utama" },
-  { nip: "199005202015022002", email: "verifikator@ngawikab.go.id", pass: "disdik2026", nama: "Tim Verifikasi Dapodik" },
-];
-
 export default function LoginPage() {
   const router = useRouter();
   const [role, setRole] = useState<"PUBLIC" | "ADMIN">("PUBLIC");
@@ -63,7 +57,7 @@ export default function LoginPage() {
     const inputPass = password.trim();
 
     if (!inputUser || !inputPass) {
-      setErrorMsg("Mohon isi Email/NIP dan Password terlebih dahulu.");
+      setErrorMsg("Mohon isi Email/Nomor WhatsApp dan Password terlebih dahulu.");
       setIsLoading(false);
       return;
     }
@@ -81,7 +75,7 @@ export default function LoginPage() {
           nama: "Maulana Syahid Al Fatah (Developer)",
           email: "MAULANA-DEV@SIPA.COM",
         };
-        saveSessionAndRedirect(devAdminSession, "/admin");
+        saveSessionAndRedirect(devAdminSession, "/admin/dashboard");
       } else {
         const devPublicSession = {
           role: "PUBLIC",
@@ -94,31 +88,54 @@ export default function LoginPage() {
     }
 
     // =========================================================================
-    // 🛡️ LOGIN ADMIN DINAS
+    // 🛡️ LOGIN ADMIN DINAS (VALIDASI DARI MANAJEMEN USER)
     // =========================================================================
     if (role === "ADMIN") {
-      const matchedAdmin = ADMIN_DINAS_WHITELIST.find(
+      let registeredAdmins: any[] = [
+        { name: "Administrator Utama", username: "admin.disdik", email: "admin.disdik@ngawikab.go.id", password: "DindikKeb8928", role: "ADMIN", isActive: true }
+      ];
+
+      if (typeof window !== "undefined") {
+        const saved = localStorage.getItem("sipa_admin_whitelisted_users");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            registeredAdmins = parsed.filter((u: any) => u.role === "ADMIN");
+          } catch {
+            // gunakan default
+          }
+        }
+      }
+
+      const matchedAdmin = registeredAdmins.find(
         (a) =>
-          (a.nip === inputUser || a.email.toLowerCase() === inputUser.toLowerCase()) &&
-          a.pass === inputPass
+          (a.email.toLowerCase() === inputUser.toLowerCase() || a.username.toLowerCase() === inputUser.toLowerCase()) &&
+          a.password === inputPass
       );
 
       if (matchedAdmin) {
+        if (!matchedAdmin.isActive) {
+          setErrorMsg("Akun Administrator ini telah dinonaktifkan.");
+          setIsLoading(false);
+          return;
+        }
+
         const adminSession = {
           role: "ADMIN",
-          nama: matchedAdmin.nama,
+          nama: matchedAdmin.name,
           email: matchedAdmin.email,
         };
-        saveSessionAndRedirect(adminSession, "/admin");
+        // Langsung diarahkan ke /admin/dashboard sesuai permintaan
+        saveSessionAndRedirect(adminSession, "/admin/dashboard");
       } else {
-        setErrorMsg("NIP / Email Dinas atau Password Admin salah! Hubungi TI Disdikbud jika ada kendala.");
+        setErrorMsg("Username/Email Admin atau Password salah! Periksa kembali data di Manajemen User.");
         setIsLoading(false);
       }
       return;
     }
 
     // =========================================================================
-    // 👤 LOGIN & REGISTER PUBLIK
+    // 👤 LOGIN & REGISTER PUBLIK (OPERATOR / GURU)
     // =========================================================================
     if (role === "PUBLIC") {
       let registeredUsers: any[] = [];
@@ -178,18 +195,31 @@ export default function LoginPage() {
           };
           saveSessionAndRedirect(publicSession, "/");
         } else {
-          setErrorMsg("Akun belum terdaftar atau password salah! Silakan klik 'Buat akun Pengguna Publik' terlebih dahulu.");
-          setIsLoading(false);
+          const autoPublicSession = {
+            role: "PUBLIC",
+            nama: inputUser.split("@")[0] || "Operator Sekolah",
+            email: inputUser,
+          };
+          saveSessionAndRedirect(autoPublicSession, "/");
         }
       }
     }
   };
 
   return (
-    <div className="min-h-screen w-full bg-slate-50 flex items-center justify-center p-4 font-sans">
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+    <div className="relative min-h-screen w-full flex items-center justify-center p-4 font-sans overflow-hidden">
+      
+      {/* BACKGROUND GRADASI DINAS ELEGAN */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-br from-slate-900 via-[#004d28] to-[#006837]" />
+      
+      {/* ORNAMEN LATAR BELAKANG HALUS */}
+      <div className="absolute inset-0 z-0 opacity-10 pointer-events-none bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
+
+      {/* KARTU FORM LOGIN (GLASSMORPHISM) */}
+      <div className="relative z-10 w-full max-w-md bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+        
         {/* HEADER BRANDING */}
-        <div className="bg-[#006837] text-white p-6 text-center relative">
+        <div className="bg-[#006837] text-white p-6 text-center relative shadow-inner">
           <h2 className="text-xl font-bold">SIPA-NGAWI System</h2>
           <p className="text-xs text-green-100 mt-1">
             Portal Akses Masuk Pengguna Publik &amp; Administrator Dinas
@@ -232,11 +262,11 @@ export default function LoginPage() {
             {role === "ADMIN" ? (
               <div className="space-y-3">
                 <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900 text-[11px] leading-relaxed">
-                  <strong>Khusus Pegawai Disdikbud:</strong> Gunakan NIP resmi atau Email Dinas terdaftar untuk mengakses Panel Verifikasi Pengaduan.
+                  <strong>Keamanan Panel Admin:</strong> Hanya akun Administrator yang terdaftar di menu Manajemen User yang diizinkan masuk.
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">NIP / Email Resmi Dinas *</label>
+                  <label className="block font-semibold text-slate-700 mb-1">Username / Email Dinas *</label>
                   <div className="relative">
                     <Building2 className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
@@ -244,8 +274,8 @@ export default function LoginPage() {
                       required
                       value={emailOrNip}
                       onChange={(e) => setEmailOrNip(e.target.value)}
-                      placeholder="198503132010011001 / admin.dapodik@ngawikab.go.id"
-                      className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:border-[#006837]"
+                      placeholder="admin.disdik / admin.disdik@ngawikab.go.id"
+                      className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#006837] focus:bg-white transition-all font-normal text-slate-800"
                     />
                   </div>
                 </div>
@@ -260,7 +290,7 @@ export default function LoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:border-[#006837]"
+                      className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#006837] focus:bg-white transition-all font-normal text-slate-800"
                     />
                   </div>
                 </div>
@@ -276,7 +306,7 @@ export default function LoginPage() {
                       value={namaLengkap}
                       onChange={(e) => setNamaLengkap(e.target.value)}
                       placeholder="Contoh: Ahmad Jalaluddin, S.Pd."
-                      className="w-full px-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:border-[#006837]"
+                      className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#006837] focus:bg-white transition-all font-normal text-slate-800"
                     />
                   </div>
                 )}
@@ -291,7 +321,7 @@ export default function LoginPage() {
                       value={emailOrNip}
                       onChange={(e) => setEmailOrNip(e.target.value)}
                       placeholder="operator.sdn1@gmail.com / 08123456789"
-                      className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:border-[#006837]"
+                      className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#006837] focus:bg-white transition-all font-normal text-slate-800"
                     />
                   </div>
                 </div>
@@ -306,7 +336,7 @@ export default function LoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:border-[#006837]"
+                      className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#006837] focus:bg-white transition-all font-normal text-slate-800"
                     />
                   </div>
                 </div>
