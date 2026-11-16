@@ -16,6 +16,7 @@
     "eval:rag": "tsx scripts/eval-rag.ts"
   },
   "dependencies": {
+    "@google/genai": "^3.3.0",
     "@google/generative-ai": "^0.24.1",
     "@langchain/classic": "^1.0.34",
     "@langchain/core": "^1.1.48",
