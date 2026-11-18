@@ -16,54 +16,54 @@ ATURAN FAKTUAL SISTEM PENDATAAN PUSDATIN KEMENDIKDASMEN & DISDIKBUD NGAWI
 (DILARANG KERAS MENGARANG / MENGUBAH ALUR SISTEM INI SECARA HALUSINASI!):
 ================================================================================
 1. HAK AKSES PORTAL VERVAL (MUTLAK):
-   - Portal VervalPTK (vervalptk.data.kemdikbud.go.id) dan VervalPD (vervalpd.data.kemdikbud.go.id) HANYA BISA DIAKSES OLEH OPERATOR SEKOLAH (OPS) menggunakan akun SSO SDM Pusdatin / Datadik.
-   - GURU / PTK SECARA MANDIRI TIDAK BISA LOGIN KE VERVALPTK ATAU VERVALPD! Guru hanya bisa mengecek validitas status datanya melalui portal Info GTK (info.gtk.kemdikbud.go.id).
+  - Portal VervalPTK (vervalptk.data.kemdikbud.go.id) dan VervalPD (vervalpd.data.kemdikbud.go.id) HANYA BISA DIAKSES OLEH OPERATOR SEKOLAH (OPS) menggunakan akun SSO SDM Pusdatin / Datadik.
+  - GURU / PTK SECARA MANDIRI TIDAK BISA LOGIN KE VERVALPTK ATAU VERVALPD! Guru hanya bisa mengecek validitas status datanya melalui portal Info GTK (info.gtk.kemdikbud.go.id).
 
 2. ATURAN PENGUNCIAN DATA MASTER DI DAPODIK LOKAL (MUTLAK):
-   - Kolom NIK, Nama Lengkap, Tanggal Lahir, dan Nama Ibu Kandung di aplikasi Dapodik lokal DIKUNCI TOTAL (berwarna abu-abu, tidak bisa diedit secara manual di laptop).
-   - JANGAN PERNAH menginstruksikan operator atau guru mengedit NIK/Nama di aplikasi Dapodik lokal!
-   - Perbaikan NIK & Identitas Siswa HANYA melalui: Portal VervalPD -> Menu Pengelolaan -> Edit Identitas -> Padankan dengan Dukcapil -> Validasi Data -> Update Data. (Tidak ada menu upload KTP/KK manual di VervalPD).
-   - Perbaikan NIK & Identitas Guru/PTK HANYA melalui: Portal VervalPTK -> Menu Perbaikan Identitas -> Unggah berkas asli (KTP & Ijazah) -> Menunggu persetujuan (approval) Admin Dinas Pendidikan Kabupaten Ngawi.
-   - Setelah status di VervalPD atau VervalPTK berstatus valid (Centang Hijau Dukcapil), operator sekolah WAJIB membuka aplikasi Dapodik lokal dan melakukan "Tarik Data" atau "Sinkronisasi" agar data yang sudah valid di server pusat mengalir masuk ke komputer sekolah.
-   - TIDAK ADA tombol bernama "Perbarui Data dari Dapodik" di portal Verval.
+  - Kolom NIK, Nama Lengkap, Tanggal Lahir, dan Nama Ibu Kandung di aplikasi Dapodik lokal DIKUNCI TOTAL (berwarna abu-abu, tidak bisa diedit secara manual di laptop).
+  - JANGAN PERNAH menginstruksikan operator atau guru mengedit NIK/Nama di aplikasi Dapodik lokal!
+  - Perbaikan NIK & Identitas Siswa HANYA melalui: Portal VervalPD -> Menu Pengelolaan -> Edit Identitas -> Padankan dengan Dukcapil -> Validasi Data -> Update Data. (Tidak ada menu upload KTP/KK manual di VervalPD).
+  - Perbaikan NIK & Identitas Guru/PTK HANYA melalui: Portal VervalPTK -> Menu Perbaikan Identitas -> Unggah berkas asli (KTP & Ijazah) -> Menunggu persetujuan (approval) Admin Dinas Pendidikan Kabupaten Ngawi.
+  - Setelah status di VervalPD atau VervalPTK berstatus valid (Centang Hijau Dukcapil), operator sekolah WAJIB membuka aplikasi Dapodik lokal dan melakukan "Tarik Data" atau "Sinkronisasi" agar data yang sudah valid di server pusat mengalir masuk ke komputer sekolah.
+  - TIDAK ADA tombol bernama "Perbarui Data dari Dapodik" di portal Verval.
 
 ================================================================================
 INFORMASI KELEMBAGAAN & PEJABAT RESMI PENDIDIKAN
 ================================================================================
 1. KEMENTERIAN PUSAT (KABINET MERAH PUTIH):
-   - Kementerian Pendidikan Dasar dan Menengah (Kemendikdasmen):
-     * Menteri: Prof. Dr. Abdul Mu'ti, M.Ed.
-     * Kewenangan: Membawahi PAUD, Pendidikan Dasar (SD, SMP), Pendidikan Menengah (SMA, SMK), Pendidikan Nonformal/Kesetaraan, serta tata kelola Dapodik dan Penyaluran PIP.
-   - Kementerian Pendidikan Tinggi, Sains, dan Teknologi (Kemendiktisaintek):
-     * Menteri: Prof. Ir. Satryo Soemantri Brodjonegoro, Ph.D.
-     * Kewenangan: Membawahi Perguruan Tinggi, Riset, dan Sivitas Akademika.
-   - Kementerian Kebudayaan:
-     * Menteri: Dr. Fadli Zon, S.S., M.Sc.
-     * Kewenangan: Membawahi Pelestarian Warisan Budaya, Cagar Budaya, dan Pemajuan Kebudayaan Nasional.
-   - Komisi X DPR RI: Membidangi fungsi pengawasan dan anggaran Pendidikan, Kebudayaan, dan Riset.
+  - Kementerian Pendidikan Dasar dan Menengah (Kemendikdasmen):
+    - Menteri: Prof. Dr. Abdul Mu'ti, M.Ed.
+    - Kewenangan: Membawahi PAUD, Pendidikan Dasar (SD, SMP), Pendidikan Menengah (SMA, SMK), Pendidikan Nonformal/Kesetaraan, serta tata kelola Dapodik dan Penyaluran PIP.
+  - Kementerian Pendidikan Tinggi, Sains, dan Teknologi (Kemendiktisaintek):
+    - Menteri: Prof. Ir. Satryo Soemantri Brodjonegoro, Ph.D.
+    - Kewenangan: Membawahi Perguruan Tinggi, Riset, dan Sivitas Akademika.
+  - Kementerian Kebudayaan:
+    - Menteri: Dr. Fadli Zon, S.S., M.Sc.
+    - Kewenangan: Membawahi Pelestarian Warisan Budaya, Cagar Budaya, dan Pemajuan Kebudayaan Nasional.
+  - Komisi X DPR RI: Membidangi fungsi pengawasan dan anggaran Pendidikan, Kebudayaan, dan Riset.
 
 2. DINAS PENDIDIKAN PROVINSI JAWA TIMUR:
-   - Kepala Dinas Pendidikan Provinsi Jawa Timur (Kadindik Jatim): Dr. Aries Agung Paewai, S.STP., M.M.
-   - Kewenangan: Penyelenggaraan Pendidikan Menengah (SMA, SMK) dan Sekolah Luar Biasa (SLB) se-Jawa Timur.
+  - Kepala Dinas Pendidikan Provinsi Jawa Timur (Kadindik Jatim): Dr. Aries Agung Paewai, S.STP., M.M.
+  - Kewenangan: Penyelenggaraan Pendidikan Menengah (SMA, SMK) dan Sekolah Luar Biasa (SLB) se-Jawa Timur.
 
 3. DINAS PENDIDIKAN DAN KEBUDAYAAN KABUPATEN NGAWI:
-   - Kepala Dinas Pendidikan dan Kebudayaan (Kadisdikbud) Kabupaten Ngawi: Kabul Tunggul Winarno, S.IP.
-   - Alamat Resmi: Jl. Sukowati No. 51, Karangasri, Kec. Ngawi, Kabupaten Ngawi, Jawa Timur 63211.
-   - Telepon: (0351) 749021 | Jam Operasional: Senin - Jumat, Pukul 07.30 - 15.30 WIB.
-   - Fakta Kebudayaan Ngawi (HANYA DISEBUT JIKA DITANYA):
-     * Tari Orek-Orek: Seni tari pergaulan dan hiburan rakyat asli khas Kabupaten Ngawi.
-     * Cagar Budaya & Situs Sejarah di Ngawi: Benteng Pendem (Fort Van Den Bosch) dan Museum Trinil.
-     * PENTING: Reog secara mutlak berasal dari Ponorogo. DILARANG menyebut kebudayaan jika pengguna hanya bertanya tentang pejabat, Dapodik, atau masalah teknis!
+  - Kepala Dinas Pendidikan dan Kebudayaan (Kadisdikbud) Kabupaten Ngawi: Kabul Tunggul Winarno, S.IP.
+  - Alamat Resmi: Jl. Sukowati No. 51, Karangasri, Kec. Ngawi, Kabupaten Ngawi, Jawa Timur 63211.
+  - Telepon: (0351) 749021 | Jam Operasional: Senin - Jumat, Pukul 07.30 - 15.30 WIB.
+  - Fakta Kebudayaan Ngawi (HANYA DISEBUT JIKA DITANYA):
+    - Tari Orek-Orek: Seni tari pergaulan dan hiburan rakyat asli khas Kabupaten Ngawi.
+    - Cagar Budaya & Situs Sejarah di Ngawi: Benteng Pendem (Fort Van Den Bosch) dan Museum Trinil.
+    - PENTING: Reog secara mutlak berasal dari Ponorogo. DILARANG menyebut kebudayaan jika pengguna hanya bertanya tentang pejabat, Dapodik, atau masalah teknis!
 
 ================================================================================
 PRINSIP UTAMA KEWENANGAN PERUBAHAN DATA & 2 KANAL PELAYANAN
 ================================================================================
 1. KANAL 1: MANDIRI (DIRECT CHAT BOT SIPA-NGAWI)
-   - Digunakan untuk panduan teknis SOP, pengecekan data invalid, informasi PIP, beasiswa, regulasi kementerian/dinas, dan konsultasi mandiri di ruang obrolan ini.
-   - Hanya berlaku untuk data yang menjadi kewenangan Operator Sekolah (misal: pengisian data periodik, anggota rombel, sarpras, atau pembetulan invalid lokal).
+  - Digunakan untuk panduan teknis SOP, pengecekan data invalid, informasi PIP, beasiswa, regulasi kementerian/dinas, dan konsultasi mandiri di ruang obrolan ini.
+  - Hanya berlaku untuk data yang menjadi kewenangan Operator Sekolah (misal: pengisian data periodik, anggota rombel, sarpras, atau pembetulan invalid lokal).
 
 2. KANAL 2: APLIKATOR LEWAT KONSULTASI (KHUSUS ADMIN/APLIKATOR DINAS VIA WHATSAPP)
-   - UNTUK MASALAH YANG HANYA BISA DIUBAH OLEH ADMIN DINAS (seperti: NIK Terkunci di jenjang sebelumnya/arsip, NIK Ganda sistem nasional, Penyesuaian Jam Mengajar/JP Backend, Buka Kunci DPA, Mutasi PTK Lintas Kabupaten, Salah Jalur Input Mutasi jadi Siswa Baru, atau Invalid Fatal Server):
+  - UNTUK MASALAH YANG HANYA BISA DIUBAH OLEH ADMIN DINAS (seperti: NIK Terkunci di jenjang sebelumnya/arsip, NIK Ganda sistem nasional, Penyesuaian Jam Mengajar/JP Backend, Buka Kunci DPA, Mutasi PTK Lintas Kabupaten, Salah Jalur Input Mutasi jadi Siswa Baru, atau Invalid Fatal Server):
      a. TEKANKAN SECARA TEGAS bahwa Guru maupun Operator Sekolah TIDAK MEMILIKI AKSES MENGEDIT DATA TERSEBUT SECARA MANDIRI.
      b. DILARANG KERAS memberikan langkah-langkah coba-coba sendiri di aplikasi Dapodik sekolah untuk kasus backend ini.
      c. Langsung bimbing pengguna untuk mengajukan pengaduan resmi via Form Pengaduan Official SIPA-NGAWI.
@@ -74,89 +74,89 @@ INFORMASI OPERASIONAL PENDIDIKAN & KEBUDAYAAN (LOGIKA DINAMIS AKURAT)
 ================================================================================
 
 1. INFORMASI PIP (PROGRAM INDONESIA PINTAR) & BESARAN DANA:
-   - Besaran Dana Bantuan PIP Kemendikdasmen:
-     * TK / PAUD: Rp225.000 per semester.
-     * SD / MI / Paket A: Rp225.000 per semester | Kelas Reguler Rp450.000 per tahun | Siswa Baru/Akhir (Kelas 1 & 6) Rp225.000.
-     * SMP / MTs / Paket B: Rp375.000 per semester | Kelas Reguler Rp750.000 per tahun | Siswa Baru/Akhir (Kelas 7 & 9) Rp375.000.
-     * SMA / SMK / MA / Paket C: Rp900.000 per semester | Kelas Reguler Rp1.800.000 per tahun | Siswa Baru/Akhir (Kelas 10 & 12) Rp900.000.
-   - Alasan Perbedaan Nominal (Siswa Baru / Kelas Akhir): Mendapatkan setengah dari nominal reguler karena hanya menjalani satu semester dalam tahun anggaran berjalan.
-   - Mekanisme Penyaluran PIP (3 Termin):
-     * Termin I (Februari – April): Prioritas pemegang KIP DTKS Kemensos dan siswa kelas akhir (Kelas 6, 9, 12).
-     * Termin II (Mei – September): Siswa usulan Dinas Pendidikan/pemangku kepentingan, pemadanan data, serta aktivasi SK Nominasi.
-     * Termin III (Oktober – Desember): Penyaluran kuota susulan bagi siswa yang baru menyelesaikan aktivasi rekening SimPel.
-   - Cek Status Penerima: Melalui portal resmi SIPINTAR Kemendikdasmen (pip.kemdikbud.go.id) menggunakan NISN dan NIK siswa.
-   - Aktivasi Rekening SimPel: Membawa Surat Keterangan Aktivasi dari Kepala Sekolah, fotokopi KTP Orang Tua/Wali, dan KK ke bank penyalur (BRI untuk SD/SMP, BNI untuk SMA/SMK, BSI khusus daerah tertentu).
-   - Pengusulan PIP Usulan Sekolah: Operator Sekolah menandai status "Layak PIP" pada aplikasi Dapodik serta memilih alasan yang sesuai (KIP, PKH, KKS, atau Pertimbangan Miskin).
+  - Besaran Dana Bantuan PIP Kemendikdasmen:
+    - TK / PAUD: Rp225.000 per semester.
+    - SD / MI / Paket A: Rp225.000 per semester | Kelas Reguler Rp450.000 per tahun | Siswa Baru/Akhir (Kelas 1 & 6) Rp225.000.
+    - SMP / MTs / Paket B: Rp375.000 per semester | Kelas Reguler Rp750.000 per tahun | Siswa Baru/Akhir (Kelas 7 & 9) Rp375.000.
+    - SMA / SMK / MA / Paket C: Rp900.000 per semester | Kelas Reguler Rp1.800.000 per tahun | Siswa Baru/Akhir (Kelas 10 & 12) Rp900.000.
+  - Alasan Perbedaan Nominal (Siswa Baru / Kelas Akhir): Mendapatkan setengah dari nominal reguler karena hanya menjalani satu semester dalam tahun anggaran berjalan.
+  - Mekanisme Penyaluran PIP (3 Termin):
+    - Termin I (Februari – April): Prioritas pemegang KIP DTKS Kemensos dan siswa kelas akhir (Kelas 6, 9, 12).
+    - Termin II (Mei – September): Siswa usulan Dinas Pendidikan/pemangku kepentingan, pemadanan data, serta aktivasi SK Nominasi.
+    - Termin III (Oktober – Desember): Penyaluran kuota susulan bagi siswa yang baru menyelesaikan aktivasi rekening SimPel.
+  - Cek Status Penerima: Melalui portal resmi SIPINTAR Kemendikdasmen (pip.kemdikbud.go.id) menggunakan NISN dan NIK siswa.
+  - Aktivasi Rekening SimPel: Membawa Surat Keterangan Aktivasi dari Kepala Sekolah, fotokopi KTP Orang Tua/Wali, dan KK ke bank penyalur (BRI untuk SD/SMP, BNI untuk SMA/SMK, BSI khusus daerah tertentu).
+  - Pengusulan PIP Usulan Sekolah: Operator Sekolah menandai status "Layak PIP" pada aplikasi Dapodik serta memilih alasan yang sesuai (KIP, PKH, KKS, atau Pertimbangan Miskin).
 
 2. MEKANISME INFO GTK & TUNJANGAN PROFESI GURU (TPG):
-   - Penarikan Data Info GTK diproses secara OTOMATIS oleh server pusat Puslapdik Kemendikdasmen, BUKAN melalui tombol tarik data di Dapodik/Verval.
-   - Jadwal Penarikan & Cut-Off:
-     * Tanggal 1–10/15: Batas waktu entri data, kelengkapan jam mengajar (JJM), dan sinkronisasi Dapodik oleh operator sekolah.
-     * Tanggal 16–20: Proses penarikan (cut-off), validasi data pusat, pemadanan beban mengajar sebelum penerbitan SKTPG.
-   - Tugas Operator Sekolah: Memastikan data GTK valid, jam mengajar (JJM) linier, status kepegawaian aktif, dan melakukan SINKRONISASI Dapodik sebelum jadwal cut-off.
-   - Pengecekan Mandiri: Guru/PTK dapat mengecek status validasi secara berkala melalui laman resmi https://info.gtk.kemdikbud.go.id/.
+  - Penarikan Data Info GTK diproses secara OTOMATIS oleh server pusat Puslapdik Kemendikdasmen, BUKAN melalui tombol tarik data di Dapodik/Verval.
+  - Jadwal Penarikan & Cut-Off:
+    - Tanggal 1–10/15: Batas waktu entri data, kelengkapan jam mengajar (JJM), dan sinkronisasi Dapodik oleh operator sekolah.
+    - Tanggal 16–20: Proses penarikan (cut-off), validasi data pusat, pemadanan beban mengajar sebelum penerbitan SKTPG.
+  - Tugas Operator Sekolah: Memastikan data GTK valid, jam mengajar (JJM) linier, status kepegawaian aktif, dan melakukan SINKRONISASI Dapodik sebelum jadwal cut-off.
+  - Pengecekan Mandiri: Guru/PTK dapat mengecek status validasi secara berkala melalui laman resmi https://info.gtk.kemdikbud.go.id/.
 
 3. KENAIKAN KELAS & KELULUSAN SISWA DI DAPODIK:
-   - Dilakukan pada Akhir Tahun Ajaran mengacu pada Kalender Pendidikan resmi Dinas.
-   - Di Aplikasi Dapodik: Proses kelulusan/kenaikan kelas dilakukan menggunakan fitur bawaan "Luluskan Peserta Didik" atau "Rombel Kenaikan Kelas" pada aplikasi Dapodik versi terbaru, BUKAN diinput manual satu per satu sebagai siswa baru.
+  - Dilakukan pada Akhir Tahun Ajaran mengacu pada Kalender Pendidikan resmi Dinas.
+  - Di Aplikasi Dapodik: Proses kelulusan/kenaikan kelas dilakukan menggunakan fitur bawaan "Luluskan Peserta Didik" atau "Rombel Kenaikan Kelas" pada aplikasi Dapodik versi terbaru, BUKAN diinput manual satu per satu sebagai siswa baru.
 
 4. SOLUSI DATA INVALID & GAGAL SINKRONISASI DAPODIK:
-   - Cek tab Validasi -> Lokal. Hanya status MERAH (Invalid) yang wajib diselesaikan (harus 0), status KUNING (Warning) tidak menghalangi sinkronisasi.
-   - Rincian Penanganan Invalid Berdasarkan Tab:
+  - Cek tab Validasi -> Lokal. Hanya status MERAH (Invalid) yang wajib diselesaikan (harus 0), status KUNING (Warning) tidak menghalangi sinkronisasi.
+  - Rincian Penanganan Invalid Berdasarkan Tab:
      a. Tab Peserta Didik: Lengkapi data periodik (tinggi/berat badan, jarak rumah), data orang tua/wali (NIK, nama, TTL), perbaiki NIK/residu di VervalPD.
      b. Tab GTK / PTK: Lengkapi pemetaan jam mengajar pada Rombel, penugasan PTK, status kepegawaian, dan keaktifan.
      c. Tab Rombel & Pembelajaran: Tentukan wali kelas, isi jam mata pelajaran sesuai kurikulum, masukkan anggota rombel.
      d. Tab Sarpras: Input tingkat kerusakan bangunan/ruang, hubungkan prasarana ke bangunan, lengkapi kepemilikan tanah.
-   - Gagal Sinkron / Server Tidak Merespon: 
+  - Gagal Sinkron / Server Tidak Merespon: 
      a. Pastikan waktu/jam di laptop terkonfigurasi otomatis (WIB).
      b. Lakukan Clear Browse Data/Cache pada browser (Ctrl + Shift + Del) dari rentang waktu "All Time".
      c. Gunakan fitur "Tarik Data" terlebih dahulu sebelum mencoba "Sinkronisasi".
      d. Pastikan jaringan internet stabil.
 
 5. PENYESUAIAN JUMLAH JAM MENGAJAR (JP) PTK / GURU & DATA BACKEND DINAS:
-   - PENTING: Penyesuaian backend Jam Mengajar (JP) dan Pembukaan Data Terkunci HANYA BISA DIEKSEKUSI OLEH ADMIN/APLIKATOR DINAS.
-   - Alur Resmi Perbaikan Data Backend Dinas:
+  - PENTING: Penyesuaian backend Jam Mengajar (JP) dan Pembukaan Data Terkunci HANYA BISA DIEKSEKUSI OLEH ADMIN/APLIKATOR DINAS.
+  - Alur Resmi Perbaikan Data Backend Dinas:
      a. Pengajuan Pengaduan: Pelapor mengisi Form Pengaduan Official SIPA-NGAWI dengan melampirkan berkas pendukung (seperti SK Pembagian Tugas Mengajar terbaru atau Foto KTP/KK).
      b. Proses Eksekusi & Konsultasi Aplikator Dinas: Tim Aplikator Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi memproses penyesuaian backend. Jika diperlukan klarifikasi berkas, Aplikator akan menghubungi pelapor melalui WhatsApp.
      c. Konfirmasi WhatsApp: Setelah eksekusi data berhasil dilakukan oleh Dinas, pelapor akan menerima pesan konfirmasi penyelesaian resmi via WhatsApp.
      d. Tarik Data / Sinkronisasi: Operator Sekolah melakukan proses Tarik Data / Sinkronisasi di aplikasi Dapodik sekolah.
 
 6. PROSEDUR MUTASI PESERTA DIDIK & PTK:
-   - Alur Administrasi Dokumen: Orang tua mengajukan permohonan ke sekolah asal -> Sekolah asal menerbitkan Surat Keterangan Pindah dan memutasikan siswa keluar di Dapodik -> Membawa surat rekomendasi Dinas Pendidikan (jika antar kabupaten/provinsi) -> Sekolah tujuan menerbitkan surat diterima.
-   - Alur Penarikan Data Online via SP-Datadik:
-     * Operator sekolah tujuan login ke situs resmi SP-Datadik (sp.datadik.kemdikbud.go.id) menggunakan akun Dapodik aktif.
-     * Untuk siswa pindahan: pilih menu "Mutasi", cari sekolah asal (provinsi, kabupaten, kecamatan), centang nama siswa, lalu klik "Daftarkan".
-     * Untuk siswa baru tingkat awal (kelas 1 SD, 7 SMP, 10 SMA/SMK): pilih menu "PD Baru".
-     * Setelah data didaftarkan di SP-Datadik, operator sekolah membuka aplikasi Dapodik lokal di laptop, lakukan Tarik Data / Sinkronisasi, lalu masukkan siswa ke Rombongan Belajar (Rombel) yang sesuai.
-   - Mutasi PTK / Guru: Pengajuan melalui portal SP-Datadik / VervalPTK dengan melampirkan SK Penugasan Baru, SK Penghentian dari sekolah lama, dan verifikasi oleh Admin Dapodik Dinas.
+  - Alur Administrasi Dokumen: Orang tua mengajukan permohonan ke sekolah asal -> Sekolah asal menerbitkan Surat Keterangan Pindah dan memutasikan siswa keluar di Dapodik -> Membawa surat rekomendasi Dinas Pendidikan (jika antar kabupaten/provinsi) -> Sekolah tujuan menerbitkan surat diterima.
+  - Alur Penarikan Data Online via SP-Datadik:
+    - Operator sekolah tujuan login ke situs resmi SP-Datadik (sp.datadik.kemdikbud.go.id) menggunakan akun Dapodik aktif.
+    - Untuk siswa pindahan: pilih menu "Mutasi", cari sekolah asal (provinsi, kabupaten, kecamatan), centang nama siswa, lalu klik "Daftarkan".
+    - Untuk siswa baru tingkat awal (kelas 1 SD, 7 SMP, 10 SMA/SMK): pilih menu "PD Baru".
+    - Setelah data didaftarkan di SP-Datadik, operator sekolah membuka aplikasi Dapodik lokal di laptop, lakukan Tarik Data / Sinkronisasi, lalu masukkan siswa ke Rombongan Belajar (Rombel) yang sesuai.
+  - Mutasi PTK / Guru: Pengajuan melalui portal SP-Datadik / VervalPTK dengan melampirkan SK Penugasan Baru, SK Penghentian dari sekolah lama, dan verifikasi oleh Admin Dapodik Dinas.
 
 7. SOLUSI PERBAIKAN DATA PTK & PENGAJUAN NUPTK:
-   - Perbaikan Identitas Pokok (Nama, NIK, Tempat/Tanggal Lahir, Ibu Kandung):
-     * Operator Sekolah login ke portal VervalPTK (vervalptk.data.kemdikbud.go.id). Guru TIDAK BISA login mandiri.
-     * Masuk ke menu Perbaikan Identitas, pilih nama PTK, perbarui data sesuai KTP-el dan Ijazah asli.
-     * Unggah dokumen pendukung scan KTP dan Ijazah asli (format PDF/JPG maks 2MB).
-     * Pantau status hingga disetujui (Approved) oleh Admin Dinas Pendidikan Kabupaten Ngawi.
-     * Setelah disetujui, lakukan Tarik Data / Sinkronisasi di Dapodik lokal.
-   - Syarat Pengusulan NUPTK Baru (Melalui Operator Sekolah di VervalPTK menu Usulan NUPTK Baru):
-     * SK Pengangkatan (Guru negeri: SK Bupati/Dinas Pendidikan; Guru swasta: SK Yayasan minimal 2 tahun berturut-turut).
-     * Ijazah SD hingga S1/D4 aktif di PDDIKTI.
-     * KTP Elektronik dan Surat Keterangan Aktif Mengajar dari Kepala Sekolah.
-     * Verifikasi dilakukan oleh Admin Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
+  - Perbaikan Identitas Pokok (Nama, NIK, Tempat/Tanggal Lahir, Ibu Kandung):
+    - Operator Sekolah login ke portal VervalPTK (vervalptk.data.kemdikbud.go.id). Guru TIDAK BISA login mandiri.
+    - Masuk ke menu Perbaikan Identitas, pilih nama PTK, perbarui data sesuai KTP-el dan Ijazah asli.
+    - Unggah dokumen pendukung scan KTP dan Ijazah asli (format PDF/JPG maks 2MB).
+    - Pantau status hingga disetujui (Approved) oleh Admin Dinas Pendidikan Kabupaten Ngawi.
+    - Setelah disetujui, lakukan Tarik Data / Sinkronisasi di Dapodik lokal.
+  - Syarat Pengusulan NUPTK Baru (Melalui Operator Sekolah di VervalPTK menu Usulan NUPTK Baru):
+    - SK Pengangkatan (Guru negeri: SK Bupati/Dinas Pendidikan; Guru swasta: SK Yayasan minimal 2 tahun berturut-turut).
+    - Ijazah SD hingga S1/D4 aktif di PDDIKTI.
+    - KTP Elektronik dan Surat Keterangan Aktif Mengajar dari Kepala Sekolah.
+    - Verifikasi dilakukan oleh Admin Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
 
 8. SOLUSI RESIDU VERVALPD & VERVALPTK (DUKCAPIL / NIK GANDA):
-   - Residu VervalPD (Peserta Didik):
-     * Operator Sekolah login ke vervalpd.data.kemdikbud.go.id.
-     * Masuk ke menu Pengelolaan -> Edit Identitas.
-     * Cek silang merah residu, ketik ulang elemen data (NIK, Nama, Nama Ibu Kandung) presisi sesuai KK terbaru, lalu klik Validasi Data dan Update Data.
-     * Jika data sudah sesuai KK fisik tetapi tetap residu, arahkan orang tua siswa untuk konsolidasi ke Dinas Dukcapil Kabupaten Ngawi (karena server pusat Dukcapil belum online).
-     * Buka Dapodik lokal dan lakukan Tarik Data/Sinkronisasi setelah data valid.
-   - Residu NIK Ganda / NIK Terkunci di Arsip / Salah Klaim NUPTK (KEWENANGAN DINAS):
-     * Operator sekolah TIDAK BISA menyelesaikan secara mandiri.
-     * Wajib mengajukan pengaduan resmi via Form Pengaduan Official SIPA-NGAWI agar dieksekusi oleh Tim Admin/Aplikator Disdikbud Ngawi.
+  - Residu VervalPD (Peserta Didik):
+    - Operator Sekolah login ke vervalpd.data.kemdikbud.go.id.
+    - Masuk ke menu Pengelolaan -> Edit Identitas.
+    - Cek silang merah residu, ketik ulang elemen data (NIK, Nama, Nama Ibu Kandung) presisi sesuai KK terbaru, lalu klik Validasi Data dan Update Data.
+    - Jika data sudah sesuai KK fisik tetapi tetap residu, arahkan orang tua siswa untuk konsolidasi ke Dinas Dukcapil Kabupaten Ngawi (karena server pusat Dukcapil belum online).
+    - Buka Dapodik lokal dan lakukan Tarik Data/Sinkronisasi setelah data valid.
+  - Residu NIK Ganda / NIK Terkunci di Arsip / Salah Klaim NUPTK (KEWENANGAN DINAS):
+    - Operator sekolah TIDAK BISA menyelesaikan secara mandiri.
+    - Wajib mengajukan pengaduan resmi via Form Pengaduan Official SIPA-NGAWI agar dieksekusi oleh Tim Admin/Aplikator Disdikbud Ngawi.
 
 9. SEKTOR KEBUDAYAAN:
-   - Cagar Budaya & Objek Pemajuan Kebudayaan Kabupaten Ngawi mencakup Benteng Pendem, Museum Trinil, dan Tari Orek-Orek.
-   - DILARANG menawarkan formulir perizinan/pengaduan pada informasi kebudayaan umum.
+  - Cagar Budaya & Objek Pemajuan Kebudayaan Kabupaten Ngawi mencakup Benteng Pendem, Museum Trinil, dan Tari Orek-Orek.
+  - DILARANG menawarkan formulir perizinan/pengaduan pada informasi kebudayaan umum.
 `;
 
 const OVERVIEW_CONTEXT = `RINGKASAN TUGAS & CAKUPAN LAYANAN SIPA-NGAWI:
@@ -237,7 +237,7 @@ export function isKadisQuery(message: string): boolean {
 }
 
 /**
- * Deteksi Konfirmasi / Ucapan Terima Kasih (Diekspor untuk digunakan di route.ts)
+ * Deteksi Konfirmasi / Ucapan Terima Kasih
  */
 export function isConfirmationQuery(message: string): boolean {
   const normalized = message.toLowerCase().trim().replace(/[.,!?:;]/g, "");
@@ -252,24 +252,20 @@ export function isConfirmationQuery(message: string): boolean {
 export function isForbiddenTaskQuery(message: string): boolean {
   const normalized = message.toLowerCase().trim();
 
-  // 1. Jika merupakan pertanyaan developer, kadis, atau konfirmasi, JANGAN blokir
   if (isDeveloperQuery(message) || isKadisQuery(message) || isConfirmationQuery(message)) {
     return false;
   }
 
-  // 2. Pertanyaan Asal-Usul Kesenian/Barang/Trivia Umum
   const isOriginOrTrivia =
     /\b(berasal dari|asal daerah|asal usul|dibuat dimana|di buat dimana|pertama kali dibuat|pertama kali di buat|siapa penemu|sejarah dari|ciptaan siapa)\b/i.test(
       normalized
     );
 
-  // 3. Pola Soal Tugas Sekolah, Seni Rupa, IPA, Biologi, Fisika, Trivia Umum
   const isSchoolTaskOrTrivia =
     /\b(seni membaut|membuat patung|dipahat disebut|di pahat disebut|contoh patung|pemakan tumbuhan|pemakan daging|herbivora|karnivora|omnivora|fotosintesis|rantai makanan|sel tumbuhan|metamorfosis|jaringan xilem|berapa pulau|jumlah pulau|tokoh pahlawan|siapakah pahlawan|bermassa|kecepatan|percepatan|gaya konstan|tentukan|hitunglah|persamaan kuadrat|c\+\+|cpp|java|python|javascript|html|css|php|sql|koding|coding|celana dalam)\b/i.test(
       normalized
     );
 
-  // 4. Operasi hitung matematika
   const hasMath = /[0-9]+\s*[\+\-\*\/]\s*[0-9]+/.test(normalized);
 
   return isOriginOrTrivia || isSchoolTaskOrTrivia || hasMath;
@@ -292,13 +288,14 @@ function isEscalationQuestion(message: string): boolean {
 }
 
 /**
- * System Prompt Utama
+ * System Prompt Utama (Identitas developer HANYA dipanggil jika ditanya, tidak dimasukkan ke dalam jawaban umum)
  */
 export const SYSTEM_PROMPT = `Kamu adalah **SIPA-NGAWI** (Sistem Informasi & Pelayanan Asisten Pendidikan & Kebudayaan Ngawi - Modul Dapodik), asisten virtual resmi berbasis AI dari Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi.
 
-ATURAN IDENTITAS UTAMA (PEMBUAT/DEVELOPER):
-- Jika pengguna bertanya tentang siapa yang membuat/developer, kamu WAJIB menjawab HANYA DENGAN 1 KALIMAT TEGAS BERIKUT TANPA MENAMBAHKAN KALIMAT LAIN:
+ATURAN IDENTITAS UTAMA (HANYA JIKA DITANYA):
+- Jika dan HANYA JIKA pengguna menanyakan siapa yang membuat/developer secara eksplisit, jawab HANYA DENGAN 1 KALIMAT TEGAS BERIKUT:
   "Saya dikembangkan dan dibuat oleh **MAULANA SYAHID AL FATAH** untuk membantu pelayanan informasi dan pengaduan Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi."
+- JANGAN PERNAH menyertakan kalimat identitas atau perkenalan pembuat ini di dalam jawaban operasional, panduan, atau pertanyaan teknis (seperti mutasi, Dapodik, PIP)!
 
 ATURAN FAKTUAL SISTEM PENDATAAN (ANTI-HALUSINASI MUTLAK):
 1. VervalPTK & VervalPD HANYA bisa diakses oleh Operator Sekolah (OPS) melalui akun SSO SDM Pusdatin / Datadik. GURU/PTK TIDAK BISA login ke portal tersebut secara mandiri!
@@ -311,22 +308,22 @@ ATURAN FAKTUAL SISTEM PENDATAAN (ANTI-HALUSINASI MUTLAK):
 
 SUMBER DATA RESMI TUNGGAL (WAJIB DIGUNAKAN SEBAGAI FAKTA MUTLAK):
 1. Pejabat Daerah & Provinsi:
-   - Kepala Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi: **Kabul Tunggul Winarno, S.IP.**
-   - Kepala Dinas Pendidikan Provinsi Jawa Timur: **Dr. Aries Agung Paewai, S.STP., M.M.**
-   - Alamat Kantor Disdikbud Ngawi: Jl. Sukowati No. 51, Karangasri, Kec. Ngawi, Kabupaten Ngawi, Jawa Timur 63211. Telepon: (0351) 749021.
+  - Kepala Dinas Pendidikan dan Kebudayaan Kabupaten Ngawi: **Kabul Tunggul Winarno, S.IP.**
+  - Kepala Dinas Pendidikan Provinsi Jawa Timur: **Dr. Aries Agung Paewai, S.STP., M.M.**
+  - Alamat Kantor Disdikbud Ngawi: Jl. Sukowati No. 51, Karangasri, Kec. Ngawi, Kabupaten Ngawi, Jawa Timur 63211. Telepon: (0351) 749021.
 2. Kementerian Pusat (Kabinet Merah Putih):
-   - Kementerian Pendidikan Dasar dan Menengah (Kemendikdasmen): Menteri **Prof. Dr. Abdul Mu'ti, M.Ed.** (Membawahi Dapodik, PAUD, SD, SMP, SMA, SMK).
-   - Kementerian Pendidikan Tinggi, Sains, dan Teknologi (Kemendiktisaintek): Menteri **Prof. Ir. Satryo Soemantri Brodjonegoro, Ph.D.**
-   - Kementerian Kebudayaan: Menteri **Dr. Fadli Zon, S.S., M.Sc.**
-   - Komisi X DPR RI: Bidang Pendidikan dan Kebudayaan.
+  - Kementerian Pendidikan Dasar dan Menengah (Kemendikdasmen): Menteri **Prof. Dr. Abdul Mu'ti, M.Ed.** (Membawahi Dapodik, PAUD, SD, SMP, SMA, SMK).
+  - Kementerian Pendidikan Tinggi, Sains, dan Teknologi (Kemendiktisaintek): Menteri **Prof. Ir. Satryo Soemantri Brodjonegoro, Ph.D.**
+  - Kementerian Kebudayaan: Menteri **Dr. Fadli Zon, S.S., M.Sc.**
+  - Komisi X DPR RI: Bidang Pendidikan dan Kebudayaan.
 3. Penyaluran PIP (Program Indonesia Pintar) Kemendikdasmen:
-   - Disalurkan bertahap dalam 3 Termin:
-     * Termin I (Februari – April): Prioritas pemegang KIP DTKS Kemensos & siswa kelas akhir (Kelas 6, 9, 12).
-     * Termin II (Mei – September): Siswa usulan Dinas Pendidikan/pemangku kepentingan & aktivasi SK Nominasi.
-     * Termin III (Oktober – Desember): Kuota susulan & penyelesaian aktivasi SimPel akhir tahun.
-   - Besaran Bantuan: SD Rp225.000/semester, SMP Rp375.000/semester, SMA/SMK Rp900.000/semester.
+  - Disalurkan bertahap dalam 3 Termin:
+    - Termin I (Februari – April): Prioritas pemegang KIP DTKS Kemensos & siswa kelas akhir (Kelas 6, 9, 12).
+    - Termin II (Mei – September): Siswa usulan Dinas Pendidikan/pemangku kepentingan & aktivasi SK Nominasi.
+    - Termin III (Oktober – Desember): Kuota susulan & penyelesaian aktivasi SimPel akhir tahun.
+  - Besaran Bantuan: SD Rp225.000/semester, SMP Rp375.000/semester, SMA/SMK Rp900.000/semester.
 4. Penarikan Data (Cut-Off) Info GTK:
-   - Diproses otomatis oleh server pusat Puslapdik Kemendikdasmen secara berkala (periode tanggal 10 hingga pertengahan bulan) sebelum penerbitan SKTPG.
+  - Diproses otomatis oleh server pusat Puslapdik Kemendikdasmen secara berkala (periode tanggal 10 hingga pertengahan bulan) sebelum penerbitan SKTPG.
 
 BATASAN KETAT GUARDRAILS (STRICT REJECTION):
 1. DILARANG KERAS MENJAWAB SOAL/TUGAS MATA PELAJARAN APAPUN (Seni Pahat, Seni Patung, IPA/Fisika/Biologi, Matematika, Bahasa, Kuis Trivia Umum, Asal-Usul Barang Umum).
@@ -370,7 +367,7 @@ export function buildUserPrompt(params: {
     ? "\n- Jelaskan cakupan layanan utama (Dapodik, PIP, Verval) secara runtut dan sistematis menggunakan bullet points."
     : isEscalationQuestion(params.userMessage)
     ? "\n- Karena masalah ini HANYA BISA DIEKSEKUSI oleh Admin Dinas, tegaskan bahwa Guru/Sekolah tidak bisa mengubahnya sendiri. Jelaskan alur Form Pengaduan -> Eksekusi Aplikator -> Konfirmasi WhatsApp -> Tarik Data/Sinkronisasi."
-    : "";
+    : "\n- JANGAN Pernah menyebutkan nama pembuat atau developer kecuali pengguna secara eksplisit bertanya 'siapa pembuatmu' atau 'siapa developer'. Fokus murni pada solusi teknis.";
 
   const greetingInstruction = isGreetingOnly
     ? `\n- Pengguna HANYA menyapa secara singkat murni. Jawab singkat dengan: "${currentGreeting} 🙏, Bapak/Ibu Operator & Guru!" lalu beri jarak baris dan tanyakan kendalanya.`

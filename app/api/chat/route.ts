@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import {
@@ -182,7 +181,7 @@ function getCurrentDateContext(): string {
 }
 
 // ======================================================
-// FAST-PATH DETECTION
+// FAST-PATH DETECTION (EXACT MATCH / STRICT)
 // ======================================================
 
 function isPureGreetingCheck(message: string): boolean {
@@ -208,6 +207,7 @@ function isPureGreetingCheck(message: string): boolean {
     "selamat malam",
   ];
 
+  // Wajib sama persis agar kalimat panjang tidak terjebak di sini
   return greetings.includes(normalized);
 }
 
@@ -266,7 +266,7 @@ function isTrivialQuery(message: string): boolean {
 }
 
 function isDateTimeQuery(message: string): boolean {
-  const lower = message.toLowerCase();
+  const lower = message.toLowerCase().trim();
 
   const timeKeywords = [
     "hari ini hari apa",
@@ -282,23 +282,7 @@ function isDateTimeQuery(message: string): boolean {
     "hari ini tanggal",
   ];
 
-  if (timeKeywords.some((keyword) => lower.includes(keyword))) {
-    return true;
-  }
-
-  const hasTimeAnchor =
-    lower.includes("sekarang") ||
-    lower.includes("hari ini") ||
-    lower.includes("saat ini");
-
-  const hasUnit =
-    lower.includes("tanggal") ||
-    lower.includes("hari") ||
-    lower.includes("bulan") ||
-    lower.includes("tahun") ||
-    lower.includes("jam");
-
-  return hasTimeAnchor && hasUnit;
+  return timeKeywords.includes(lower);
 }
 
 // ======================================================
@@ -592,7 +576,6 @@ export async function POST(request: NextRequest) {
         ticketNumber
       );
 
-      // Redis is the primary persistent ticket storage.
       if (redis) {
         try {
           await redis.lpush(
@@ -610,14 +593,12 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Temporary fallback.
       ticketMemoryBatch.unshift(newTicket);
 
       if (ticketMemoryBatch.length > 30) {
         ticketMemoryBatch = ticketMemoryBatch.slice(0, 30);
       }
 
-      // Google Sheets integration.
       const webhookUrl =
         process.env.GOOGLE_SHEETS_WEBHOOK;
 
@@ -678,7 +659,7 @@ export async function POST(request: NextRequest) {
     }
 
     // --------------------------------------------------
-    // 6. FAST-PATH RESPONSES
+    // 6. FAST-PATH RESPONSES (STRICT MATCH)
     // --------------------------------------------------
 
     if (isTestingQuery(message)) {
@@ -776,8 +757,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: unknown) {
-    // Internal logs only. Do not expose internal stack
-    // traces, credentials, or provider errors to users.
     console.error("[SIPA-NGAWI API ERROR]", error);
 
     return NextResponse.json(
